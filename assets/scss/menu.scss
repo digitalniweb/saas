@@ -1,0 +1,61 @@
+.v-toolbar {
+	overflow: visible !important;
+	.v-toolbar__content {
+		ul#navitems {
+			a,
+			button {
+				justify-content: start !important;
+			}
+			& > li {
+				margin: 0 2px;
+				& > ul {
+					&.leftDirection {
+						left: auto;
+						right: 0;
+					}
+					ul {
+						top: 0;
+						left: 100%;
+						&.leftDirection {
+							left: auto;
+							right: 100%;
+						}
+					}
+				}
+			}
+			ul {
+				min-width: 200px;
+				box-shadow: 0 5px 15px -10px #888;
+			}
+		}
+
+		ul {
+			position: relative;
+			margin: 0;
+			padding: 0 !important;
+
+			li {
+				display: inline-block;
+				position: relative;
+
+				ul {
+					background: #fff;
+					display: flex;
+					visibility: hidden;
+					top: 100%;
+					left: 0;
+					position: absolute;
+
+					li {
+						width: 100%;
+					}
+				}
+
+				&:hover > ul {
+					visibility: visible;
+					flex-wrap: wrap;
+				}
+			}
+		}
+	}
+}
