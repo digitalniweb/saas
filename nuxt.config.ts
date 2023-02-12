@@ -9,7 +9,11 @@ export default defineNuxtConfig({
 		"~/assets/scss/import.scss",
 	],
 	build: {
-		transpile: ["vuetify"],
+		transpile: ["vuetify", "nuxtErrorHandler"],
 	},
 	pages: true,
+	runtimeConfig: {
+		apiSecret: process.env.NUXT_API_SECRET,
+		public: { apiBase: process.env.NUXT_PUBLIC_API_BASE || "/api" },
+	},
 });
