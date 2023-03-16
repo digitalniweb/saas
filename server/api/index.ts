@@ -2,7 +2,7 @@ import { randomString } from "../../digitalniweb-custom/functions/randomGenerato
 export default eventHandler(async (event) => {
 	// console.log(event);
 	const config = useRuntimeConfig();
-	console.log(config);
+	// console.log(config);
 
 	return {
 		secret: config.apiSecret,
