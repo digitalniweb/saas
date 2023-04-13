@@ -1,19 +1,39 @@
 <template>
 	<v-app-bar>
-		<MenuList :levelitems="items" :ulid="'navitems'" />
+		<MenuTop :items="menu" />
 	</v-app-bar>
 </template>
 <script setup>
-	const items = [
+	const menu = ref([
 		{
 			url: "/",
 			name: "home",
+		},
+		{
+			url: "/",
+			name: "submenus",
 			children: [
 				{
-					name: "subhome",
+					name: "submenu",
 					url: "/",
+					children: [
+						{
+							name: "test",
+							url: "/",
+						},
+					],
+				},
+				{
+					name: "submenu nested",
+					url: "/",
+					children: [
+						{
+							name: "nested",
+							url: "/",
+						},
+					],
 				},
 			],
 		},
-	];
+	]);
 </script>

@@ -1,8 +1,9 @@
 <template>
 	<v-app>
 		<WebBlocksMenu />
-		<p>{{ $route.params }}</p>
-		<slot />
+		<v-main>
+			<slot />
+		</v-main>
 	</v-app>
 </template>
 <script setup></script>

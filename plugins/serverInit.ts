@@ -9,6 +9,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 	/* await Subscriber.psubscribe("serviceRegistry-responseInformation-*"); // handled in registerCurrentService()
 	let serviceRegistryInfo = await requestServiceRegistryInfo();
 	if (!serviceRegistryInfo)
-		throw new Error("Couldn't get serviceRegistry information."); */
-	// await registerCurrentApp();
+		throw new Error("Couldn't get serviceRegistry information.");
+	await registerCurrentApp(); */
 });
