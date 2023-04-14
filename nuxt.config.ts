@@ -1,5 +1,5 @@
 export default defineNuxtConfig({
-	modules: ["@pinia/nuxt"],
+	modules: ["@pinia/nuxt", "~/modules/appInit"],
 	typescript: {
 		typeCheck: true,
 	},
