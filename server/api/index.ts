@@ -1,12 +1,15 @@
+import appCache from "~/digitalniweb-custom/helpers/appCache";
 import { randomString } from "../../digitalniweb-custom/functions/randomGenerator";
+
 export default eventHandler(async (event) => {
 	// console.log(event);
-	const config = useRuntimeConfig();
-	// console.log(config);
+	//console.log(randomString());
+
+	// const config = useRuntimeConfig();
+	// console.log(config.apiSecret);
+	console.log(appCache.get("serviceRegistry"));
 
 	return {
-		secret: config.apiSecret,
+		message: "It's working!",
 	};
-	//console.log(randomString());
 });
-// export default app;
