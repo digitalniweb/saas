@@ -1,4 +1,10 @@
+// import { microserviceCall } from "../../../digitalniweb-custom/helpers/remoteProcedureCall";
+
 export default eventHandler(async (event) => {
+	/* let data = await microserviceCall({
+		name: "websites",
+		path: "/api/test",
+	}); */
 	return {
 		all: {},
 		en: {

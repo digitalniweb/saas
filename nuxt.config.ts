@@ -1,5 +1,5 @@
 export default defineNuxtConfig({
-	modules: ["@pinia/nuxt", "~/modules/appInit"],
+	modules: ["@pinia/nuxt"],
 	pinia: {
 		autoImports: [
 			// automatically imports `defineStore`
