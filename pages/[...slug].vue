@@ -25,3 +25,4 @@
 	</p>
 	<button>Create Your Website</button>
 </template>
+<script setup></script>

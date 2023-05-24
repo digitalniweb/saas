@@ -22,4 +22,22 @@ export default defineNuxtConfig({
 		apiSecret: process.env.NUXT_API_SECRET,
 		public: { apiBase: process.env.NUXT_PUBLIC_API_BASE || "/api" },
 	},
+	app: {
+		head: {
+			link: [
+				{
+					rel: "icon",
+					type: "image/png",
+					href: "/favicon.png",
+					media: "(prefers-color-scheme: light)",
+				},
+				{
+					rel: "icon",
+					type: "image/png",
+					href: "/favicon-dark.png",
+					media: "(prefers-color-scheme: dark)",
+				},
+			],
+		},
+	},
 });

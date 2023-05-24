@@ -1,7 +1,102 @@
 <template>
-	<v-app>
-		admin
-		<slot />
+	<v-app id="admin">
+		<v-navigation-drawer v-model="drawer">
+			<v-list>
+				<v-list-item v-for="[icon, text] in links" :key="icon" link>
+					<template v-slot:prepend>
+						<v-icon>{{ icon }}</v-icon>
+					</template>
+
+					<v-list-item-title>{{ text }}</v-list-item-title>
+				</v-list-item>
+			</v-list>
+		</v-navigation-drawer>
+
+		<v-main>
+			<v-container fluid>
+				<v-row>
+					<v-col>
+						<v-app-bar-nav-icon
+							@click="drawer = !drawer"
+						></v-app-bar-nav-icon>
+					</v-col>
+					<v-spacer></v-spacer>
+					<v-col class="text-right">
+						<v-menu>
+							<template v-slot:activator="{ props }">
+								<v-btn
+									class="cursor-pointer mx-1"
+									size="small"
+									icon="mdi-bell-outline"
+									v-bind="props"
+									flat
+								></v-btn>
+							</template>
+
+							<v-list>
+								<v-list-item
+									v-for="(item, i) in items"
+									:key="i"
+								>
+									<v-list-item-title>{{
+										item.title
+									}}</v-list-item-title>
+								</v-list-item>
+							</v-list>
+						</v-menu>
+						<v-menu>
+							<template v-slot:activator="{ props }">
+								<v-avatar
+									variant="elevated"
+									class="cursor-pointer mx-1"
+									size="small"
+									icon="mdi-account"
+									v-bind="props"
+								></v-avatar>
+							</template>
+
+							<v-list>
+								<v-list-item
+									v-for="(item, i) in avatarItems"
+									:key="i"
+									:prepend-icon="item.icon"
+									:to="item.url"
+								>
+									<v-list-item-title>{{
+										item.title
+									}}</v-list-item-title>
+								</v-list-item>
+							</v-list>
+						</v-menu>
+					</v-col>
+				</v-row>
+				<v-row>
+					<v-col>
+						<slot />
+					</v-col>
+				</v-row>
+			</v-container>
+		</v-main>
 	</v-app>
 </template>
-<script setup></script>
+
+<script setup>
+	const drawer = ref(null);
+
+	const avatarItems = ref([
+		{
+			icon: "mdi-home",
+			url: "/",
+			title: "Zpět na web",
+		},
+		{
+			icon: "mdi-account-arrow-right-outline",
+			url: "/",
+			title: "Odhlásit se",
+		},
+	]);
+	const links = ref([["mdi-bell-outline", "menu 1"]]);
+	useHead({
+		title: "Admin",
+	});
+</script>
