@@ -23,6 +23,8 @@
 		Ready to get started? Click the button below and create your own website
 		with Digitalweb.com today.
 	</p>
-	<button>Create Your Website</button>
+	<p>
+		<v-btn color="primary">Create Your Website</v-btn>
+	</p>
 </template>
 <script setup></script>

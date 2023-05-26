@@ -4,7 +4,7 @@
 	</v-app-bar>
 </template>
 <script setup>
-	// load menu from /api/menu
-
-	const { data: menu } = useFetch("/api/menu");
+	import { useMenus } from "@/store/menus";
+	import { storeToRefs } from "pinia";
+	const { articles: menu } = await storeToRefs(useMenus());
 </script>

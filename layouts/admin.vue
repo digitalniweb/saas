@@ -1,12 +1,19 @@
 <template>
 	<v-app id="admin">
 		<v-navigation-drawer v-model="drawer">
-			<v-list>
-				<v-list-item v-for="[icon, text] in links" :key="icon" link>
-					<template v-slot:prepend>
-						<v-icon>{{ icon }}</v-icon>
-					</template>
-
+			<p class="text-overline pa-5">
+				<v-avatar size="32px">
+					<v-img src="/img/logo.png" />
+				</v-avatar>
+				Admin
+			</p>
+			<v-list width="100%" class="text-left">
+				<v-list-item
+					v-for="[icon, text] in links"
+					:key="icon"
+					link
+					:prepend-icon="icon"
+				>
 					<v-list-item-title>{{ text }}</v-list-item-title>
 				</v-list-item>
 			</v-list>
@@ -14,7 +21,7 @@
 
 		<v-main>
 			<v-container fluid>
-				<v-row>
+				<v-row class="border-b-sm">
 					<v-col>
 						<v-app-bar-nav-icon
 							@click="drawer = !drawer"

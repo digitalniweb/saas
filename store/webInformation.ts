@@ -8,7 +8,7 @@ export const useWebInformation = defineStore("webInformation", {
 	getters: {},
 	actions: {
 		async loadData() {
-			let webInfo = await useFetch("/api/webInformation");
+			let webInfo = await useFetch("/api/website/webInformation");
 			this.en = webInfo.data.value?.en ?? {};
 			this.all = webInfo.data.value?.all ?? {};
 		},

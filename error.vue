@@ -39,6 +39,8 @@
 
 	if (props.error.statusCode === 404 || "404") {
 		props.error.message = "Oops! Page not found 😔";
+	} else {
+		props.error.message = "Oops! Something went wrong 😔";
 	}
 
 	const errorStyle = elementStyle({
