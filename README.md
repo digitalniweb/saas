@@ -27,3 +27,7 @@ Check out the [deployment documentation](https://nuxt.com/docs/getting-started/d
 ```
 npx nuxi upgrade
 ```
+
+## Icons
+
+List of [mdi icons](https://pictogrammers.com/library/mdi/) to use
