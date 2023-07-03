@@ -40,4 +40,5 @@ export default defineNuxtConfig({
 			],
 		},
 	},
+	ignore: ["digitalniweb-custom", "digitalniweb-types", "sequelize"],
 });

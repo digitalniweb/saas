@@ -1,4 +1,6 @@
 import { Options } from "sequelize";
+import dotenv from "dotenv";
+dotenv.config();
 
 interface ConfigTs {
 	development: Options;

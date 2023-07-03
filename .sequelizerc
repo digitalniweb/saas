@@ -5,14 +5,16 @@ const path = require("path");
 require("dotenv").config();
 
 module.exports = {
-	config: path.resolve("dist/server/config", "config.js"),
+	config: path.resolve("sequelize/server/config", "config.js"),
 	"models-path": path.resolve(
-		"dist/server/models/" + process.env.MICROSERVICE_NAME
+		"sequelize/server/models/" + process.env.MICROSERVICE_NAME
 	),
 	"seeders-path": path.resolve(
-		"dist/server/seeders/" + process.env.MICROSERVICE_NAME
+		"sequelize/server/seeders/" + process.env.MICROSERVICE_NAME
 	),
 	"migrations-path": [
-		path.resolve("dist/server/migrations/" + process.env.MICROSERVICE_NAME),
+		path.resolve(
+			"sequelize/server/migrations/" + process.env.MICROSERVICE_NAME
+		),
 	],
 };

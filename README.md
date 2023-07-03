@@ -1,3 +1,11 @@
+## Migrations
+
+Use following code to compile .ts to .js files for migrations for Sequelize
+
+```bash
+npm run buildMigrations
+```
+
 ## Development Server
 
 Start the development server on http://localhost:3000
