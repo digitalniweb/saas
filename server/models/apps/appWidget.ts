@@ -5,9 +5,10 @@ import { DataTypes } from "sequelize";
 import db from "../index.js";
 
 import { apps } from "../../../digitalniweb-types/models/apps.js";
-import AppWidget = apps.AppWidget;
 
-const AppWidget = db.define<AppWidget>(
+import AppWidgetType = apps.AppWidget;
+
+const AppWidget = db.define<AppWidgetType>(
 	"AppWidget",
 	{
 		id: {

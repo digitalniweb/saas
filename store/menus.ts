@@ -8,7 +8,7 @@ export const useMenus = defineStore("menus", {
 	actions: {
 		async loadData() {
 			let articlesmenu = await useFetch("/api/website/menu");
-			this.articles = articlesmenu.data.value ?? [];
+			this.articles = articlesmenu?.data?.value ?? [];
 		},
 	},
 });
