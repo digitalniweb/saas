@@ -1,8 +1,7 @@
 import { QueryInterface, DataTypes } from "sequelize";
 
 import AppWidget from "../models/apps/appWidget.js";
-import { apps } from "../../digitalniweb-types/models/apps.js";
-import AppWidgetType = apps.AppWidget;
+import { AppWidget as AppWidgetType } from "../../digitalniweb-types/models/apps.js";
 
 export default {
 	up: async (queryInterface: QueryInterface): Promise<void> => {

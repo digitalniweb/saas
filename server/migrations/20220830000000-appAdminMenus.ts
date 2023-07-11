@@ -1,8 +1,7 @@
 import { QueryInterface, DataTypes } from "sequelize";
 
 import AppAdminMenu from "../models/apps/appAdminMenu.js";
-import { apps } from "../../digitalniweb-types/models/apps.js";
-import AppAdminMenuType = apps.AppAdminMenu;
+import { AppAdminMenu as AppAdminMenuType } from "../../digitalniweb-types/models/apps.js";
 
 export default {
 	up: async (queryInterface: QueryInterface): Promise<void> => {
