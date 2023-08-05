@@ -1,6 +1,6 @@
 "use strict";
 import { DataTypes } from "sequelize";
-import db from "../index.js";
+import db from "../index";
 const AppLanguage = db.define("AppLanguage", {
     id: {
         type: DataTypes.INTEGER,
