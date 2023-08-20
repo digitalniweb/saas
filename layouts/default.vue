@@ -7,6 +7,7 @@
 		{{ en.name }}
 		{{ en.title }}
 		<WebBlocksFooter />
+		<contentUser />
 	</v-app>
 </template>
 <script setup>
