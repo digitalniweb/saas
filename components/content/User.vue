@@ -9,14 +9,14 @@
 					src="https://images.pexels.com/photos/196655/pexels-photo-196655.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
 				>
 					<v-overlay class="absolute" z-index="0"></v-overlay>
-					<v-toolbar-title class="relative white--text">{{
-						headline
-					}}</v-toolbar-title>
+					<v-toolbar-title class="relative white--text">
+						{{ headline }}
+					</v-toolbar-title>
 				</v-toolbar>
 				<v-card-text>
 					<v-form ref="form" lazy-validation :disabled="disabled">
 						<v-row v-if="formdata.Tenant">
-							<v-col cols="12" lg="4" v-if="$auth.loggedIn">
+							<v-col cols="12" lg="4" v-if="loggedIn">
 								<v-card
 									img="https://images.pexels.com/photos/50987/money-card-business-credit-card-50987.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
 									to="/"
@@ -27,14 +27,14 @@
 										z-index="0"
 										light
 									></v-overlay>
-									<v-card-title
+									<!-- <v-card-title
 										class="text-h4 white--text relative justify-center"
 									>
 										{{ formdata.Tenant.credits }}
 										<v-icon right color="yellow" small
 											>mdi-currency-sign</v-icon
 										>
-									</v-card-title>
+									</v-card-title> -->
 
 									<v-card-subtitle
 										class="white--text relative text-center"
@@ -49,14 +49,14 @@
 									</v-card-actions>
 								</v-card>
 							</v-col>
-							<v-col cols="12" lg="4" v-if="$auth.loggedIn">
-								<v-card
-									:to="
+							<v-col cols="12" lg="4" v-if="loggedIn">
+								<!-- :to="
 										getModulePath({
 											module: 'tenant-websites',
 											returnString: true,
 										})
-									"
+									" -->
+								<v-card
 									img="https://images.pexels.com/photos/1029757/pexels-photo-1029757.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
 									height="100%"
 									class="d-flex justify-center align-center"
@@ -103,7 +103,7 @@
 											(v && v.length > 1) ||
 											'Vyplňte prosím Vaše jméno',
 									]"
-									validate-on-blur
+									validate-on="blur"
 									dense
 								/>
 							</v-col>
@@ -122,7 +122,7 @@
 											(v && v.length > 1) ||
 											'Vyplňte prosím Vaše příjmení',
 									]"
-									validate-on-blur
+									validate-on="blur"
 									dense
 								/>
 							</v-col>
@@ -134,15 +134,15 @@
 									counter="20"
 									prepend-icon="mdi-cellphone"
 									v-model="formdata.Tenant.telephone"
-									:rules="isMobilePhone"
-									validate-on-blur
+									:rules="isMobilePhone()"
+									validate-on="blur"
 									dense
 							/></v-col>
 							<v-col cols="12">
 								<v-select
 									:items="countries"
 									label="Stát"
-									v-model="formdata.Tenant.CountryId"
+									v-model="formdata.Tenant.countryId"
 									prepend-icon="mdi-map"
 									dense
 									disabled
@@ -163,7 +163,7 @@
 											(v && v.length > 2) ||
 											'Vyplňte prosím město',
 									]"
-									validate-on-blur
+									validate-on="blur"
 									dense
 							/></v-col>
 							<v-col cols="12" md="4">
@@ -174,8 +174,8 @@
 									counter="10"
 									prepend-icon="mdi-map-marker"
 									v-model="formdata.Tenant.zip"
-									:rules="isPostalCode"
-									validate-on-blur
+									:rules="isPostalCode()"
+									validate-on="blur"
 									dense
 							/></v-col>
 							<v-col cols="12" md="6">
@@ -193,7 +193,7 @@
 											(v && v.length > 3) ||
 											'Vyplňte prosím ulici',
 									]"
-									validate-on-blur
+									validate-on="blur"
 									dense
 							/></v-col>
 							<v-col cols="12" md="3">
@@ -210,7 +210,7 @@
 											/^\d*$/.test(v || '') ||
 											'Vyplňte prosím orientační číslo',
 									]"
-									validate-on-blur
+									validate-on="blur"
 									dense
 									counter="6"
 							/></v-col>
@@ -226,7 +226,7 @@
 											/^\d*$/.test(v || '') ||
 											'Vyplňte prosím číslo popisné',
 									]"
-									validate-on-blur
+									validate-on="blur"
 									dense
 									counter="6"
 							/></v-col>
@@ -234,7 +234,7 @@
 								<h2 class="overline mb-3">
 									<v-btn
 										tile
-										:text="formdata.Tenant.company"
+										v-if="formdata.Tenant.company"
 										color="green"
 										:dark="!formdata.Tenant.company"
 										@click="formdata.Tenant.company = false"
@@ -245,7 +245,7 @@
 									/
 									<v-btn
 										tile
-										:text="!formdata.Tenant.company"
+										v-if="!formdata.Tenant.company"
 										color="green"
 										:dark="formdata.Tenant.company"
 										@click="formdata.Tenant.company = true"
@@ -271,12 +271,13 @@
 											"
 											:rules="[
 												(v) =>
-													!formdata.Tenant.company ||
+													!formdata?.Tenant
+														?.company ||
 													!!formdata.Tenant
 														.companyName ||
 													'Vyplňte název firmy.',
 											]"
-											validate-on-blur
+											validate-on="blur"
 											dense
 											counter="200"
 										/>
@@ -289,11 +290,12 @@
 											v-model="formdata.Tenant.tin"
 											:rules="[
 												(v) =>
-													!formdata.Tenant.company ||
+													!formdata?.Tenant
+														?.company ||
 													!!formdata.Tenant.tin ||
 													'Vyplňte IČO',
 											]"
-											validate-on-blur
+											validate-on="blur"
 											dense
 											counter="15"
 										/>
@@ -306,11 +308,12 @@
 											v-model="formdata.Tenant.vatId"
 											:rules="[
 												(v) =>
-													!formdata.Tenant.company ||
+													!formdata?.Tenant
+														?.company ||
 													!!formdata.Tenant.vatId ||
 													'Vyplňte DIČ',
 											]"
-											validate-on-blur
+											validate-on="blur"
 											dense
 											counter="15"
 										/>
@@ -330,25 +333,26 @@
 									prepend-icon="mdi-email"
 									type="email"
 									v-model="formdata.email"
-									:rules="emailRules"
-									validate-on-blur
+									:rules="emailRules()"
+									validate-on="blur"
 									dense
 									counter="100"
 								/>
 							</v-col>
+
 							<v-col cols="12" md="6">
 								<v-text-field
 									id="password"
 									label="Heslo"
 									name="password"
 									prepend-icon="mdi-lock"
-									v-model="formdata.password"
+									v-model="password"
 									:rules="
 										type === 'registration'
-											? passwordRules
-											: passwordRulesNotMandatory
+											? passwordRules()
+											: passwordRulesNotMandatory()
 									"
-									validate-on-blur
+									validate-on="blur"
 									:append-icon="
 										'mdi-' +
 										(showPassword
@@ -363,6 +367,7 @@
 									:type="showPassword ? 'text' : 'password'"
 									dense
 								/>
+								<customPasswordScore :password="password" />
 							</v-col>
 							<v-col cols="12" md="6">
 								<v-text-field
@@ -370,9 +375,12 @@
 									label="Ověření hesla"
 									name="passwordCheck"
 									prepend-icon="mdi-lock"
-									v-model="formdata.passwordCheck"
-									:rules="passwordCheckRules"
-									validate-on-blur
+									v-model="passwordCheck"
+									:rules="[
+										passwordCheck === password ||
+											'Musí se shodovat s Vámi zadaným heslem!',
+									]"
+									validate-on="blur"
 									:append-icon="
 										'mdi-' +
 										(showPassword
@@ -398,34 +406,13 @@
 									dense
 									v-if="formdata.Tenant"
 								/>
-								<v-checkbox
-									v-model="formdata.agreement"
-									:rules="[
-										(v) =>
-											!!v ||
-											'Musíte souhlasit s obchodními podmínkami',
-									]"
-									dense
-									:disabled="type === 'profile'"
-									style="pointer-events: all"
-								>
-									<template v-slot:label
-										>Souhlasím s
-										<a
-											href="/obchodni-podminky"
-											target="_blank"
-											@click.stop
-											>obchodními podmínkami</a
-										>
-									</template>
-								</v-checkbox>
 							</v-col>
 						</v-row>
 					</v-form>
 				</v-card-text>
 				<v-card-actions>
 					<v-btn
-						v-if="!$auth.loggedIn"
+						v-if="!loggedIn"
 						color="primary"
 						block
 						@click="registerUser"
@@ -452,12 +439,78 @@
 		</v-col>
 	</v-row>
 </template>
-<script setup>
+<script setup lang="ts">
+	import {
+		Tenant as TenantType,
+		User as UserType,
+	} from "~/digitalniweb-types/models/users";
+	import isMobilePhoneVal from "validator/es/lib/isMobilePhone";
+	import isPostalCodeVal from "validator/es/lib/isPostalCode";
+
+	const { isStrongPassword, generatePassword } = useStrongPassword();
+
+	type additionalFormdataOptions = {
+		agreement: boolean;
+		passwordCheck: string;
+	};
+
+	const loggedIn = ref(false);
+
+	const disabled = ref(false);
+
+	const countries = [{ value: 1, text: "Česká republika" }];
+
 	const headline = ref("headline");
 	const formdata = ref({
-		Tenant: {},
-	});
-	const $auth = ref({ loggedIn: true });
-	const type = ref("profile");
+		Tenant: {
+			academicDegree: "Ing.",
+			firstName: "John",
+			lastName: "Doe",
+			telephone: "123-456-7890",
+			city: "Sample City",
+			zip: "12345",
+			streetAddress: "123 Main Street",
+			countryId: 1,
+			houseNumber: 123,
+			landRegistryNumber: 456,
+			company: true,
+			companyName: "ABC Inc.",
+			tin: "123456789",
+			vatId: "VAT123",
+			subscribeNewsletters: true,
+		} as TenantType,
+	} as UserType & additionalFormdataOptions);
+
+	const password = ref("");
+	const passwordCheck = ref("");
 	const showPassword = ref(false);
+
+	const type = ref("registration");
+
+	const isMobilePhone = () => [
+		(v: string) => !!v || "Vyplňte prosím toto pole",
+		(v: string) =>
+			isMobilePhoneVal(v || "") || "Vyplňte prosím Vaše telefonní číslo",
+	];
+	const isPostalCode = () => [
+		(v: string) => !!v || "Vyplňte prosím toto pole",
+		(v: string) =>
+			isPostalCodeVal(v || "", "any") ||
+			"Vyplňte prosím Vaše poštovní směrovací číslo",
+	];
+	const emailRules = () => [
+		(v: string) => !!v || "Vyplňte prosím toto pole",
+		(v: string) =>
+			/.+@.+\..+/.test(v) || "Zadejte prosim platné přihlašovací údaje",
+	];
+	const passwordRules = () => [
+		(v: string) => !!v || "Vyplňte prosím toto pole",
+		(v: string) => isStrongPassword(v) || "Zadejte prosím silné heslo",
+	];
+	const passwordRulesNotMandatory = () => [
+		(v: string) =>
+			!!!v || isStrongPassword(v) || "Zadejte prosím silné heslo",
+	];
+	const saveUser = () => {};
+	const registerUser = () => {};
 </script>

@@ -8,6 +8,7 @@ export default defineNuxtConfig({
 	},
 	typescript: {
 		typeCheck: true,
+		strict: true,
 	},
 	css: [
 		"vuetify/styles",

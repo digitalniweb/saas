@@ -6,8 +6,8 @@
 		</v-main>
 		{{ en.name }}
 		{{ en.title }}
-		<WebBlocksFooter />
 		<contentUser />
+		<WebBlocksFooter />
 	</v-app>
 </template>
 <script setup>

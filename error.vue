@@ -3,12 +3,11 @@
 		<div
 			class="pa-10 bg-white align-self-start ma-5 elevation-9 rounded-lg"
 		>
-			<p class="text-h1">
+			<p class="text-h1 mb-5">
 				{{ error.statusCode }}
 			</p>
-			<p class="mb-5">
-				{{ error.message }}
-			</p>
+			<p class="mb-5" v-html="errorMessage"></p>
+			<div class="mb-5" v-if="errorStack" v-html="errorStack"></div>
 			<p>
 				<v-btn
 					@click="handleError"
@@ -37,13 +36,19 @@
 	 */
 	const props = defineProps({ error: Object });
 
-	if (props.error.statusCode === 404 || "404") {
-		props.error.message = "Oops! Page not found 😔";
+	const errorMessage = ref("Oops! Something went wrong 😔");
+	const errorStack = ref("");
+
+	if (process.env.NODE_ENV === "production") {
+		if (props.error.statusCode == 404) {
+			props.value = "Oops! Page not found 😔";
+		}
 	} else {
-		props.error.message = "Oops! Something went wrong 😔";
+		errorMessage.value = "Message: " + props.error.message;
+		errorStack.value = props.error.stack;
 	}
 
-	const errorStyle = elementStyle({
+	const errorStyle = useElementStyle({
 		"background-image": "url('/img/error.jpg')",
 		"background-size": "cover",
 		height: "100vh",
@@ -51,8 +56,6 @@
 	const handleError = () => clearError({ redirect: "/" });
 
 	useServerSeoMeta({
-		title: `${props.error.statusCode}${
-			props.error.message && ` - ${props.error.message}`
-		}`,
+		title: `${props.error.statusCode} - ${errorMessage.value}`,
 	});
 </script>

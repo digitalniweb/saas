@@ -12,6 +12,6 @@
 	const { data: footer } = await useFetch("/api/website/footer");
 
 	const footerStyle = computed(() =>
-		elementStyle(footer.value.appereance.style)
+		useElementStyle(footer.value.appereance.style)
 	);
 </script>

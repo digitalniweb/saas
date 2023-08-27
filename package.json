@@ -2,37 +2,40 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"buildMigrations": "npx tsc --project .\\tsconfig.sequelize.json",
 		"build": "nuxt build",
 		"dev": "nuxt dev",
 		"start": "nuxt start",
 		"generate": "nuxt generate",
 		"preview": "nuxt preview",
-		"postinstall": "nuxt prepare"
+		"postinstall": "nuxt prepare",
+		"buildSequelize": "npx tsc --project tsconfig.sequelize.json && npx tsc --project tsconfig.sequelize-config.json && echo {\"type\":\"commonjs\"} > ./sequelize/package.json",
+		"migrations": "npm run buildSequelize && npx sequelize-cli db:migrate",
+		"migrationsUndoAll": "npm run buildSequelize && npx sequelize-cli db:migrate:undo:all",
+		"seeders": "npm run buildSequelize && npx sequelize-cli db:seed:all"
 	},
 	"devDependencies": {
-		"@nuxt/types": "^2.17.0",
-		"@types/node": "^20.4.1",
+		"@nuxt/types": "^2.17.1",
+		"@types/node": "^20.5.6",
 		"@types/sequelize": "^4.28.15",
-		"babel-preset-env": "^1.7.0",
-		"babel-register": "^6.26.0",
-		"nuxt": "^3.6.5"
+		"@types/validator": "^13.11.1",
+		"nuxt": "^3.7.0"
 	},
 	"dependencies": {
 		"@mdi/font": "^7.2.96",
 		"@pinia/nuxt": "^0.4.11",
 		"axios": "^1.4.0",
 		"dotenv": "^16.3.1",
+		"generate-password": "^1.7.0",
 		"ioredis": "^5.3.2",
 		"mariadb": "^3.2.0",
-		"mysql2": "^3.5.1",
+		"mysql2": "^3.6.0",
 		"node-cache": "^5.1.2",
-		"pinia": "^2.1.4",
-		"sass": "^1.63.6",
+		"pinia": "^2.1.6",
+		"sass": "^1.66.1",
 		"sequelize": "^6.32.1",
 		"sequelize-cli": "^6.6.1",
-		"vue-tsc": "^1.8.4",
-		"vuetify": "^3.3.7",
-		"winston": "^3.10.0"
+		"validator": "^13.11.0",
+		"vue-tsc": "^1.8.8",
+		"vuetify": "^3.3.14"
 	}
 }

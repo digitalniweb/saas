@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import AppLanguage from "server/models/apps/appLanguage";
+import AppLanguage from "~/server/models/apps/appLanguage";
 
 export const useLanguages = defineStore("languages", {
 	state: () => ({
