@@ -4,7 +4,7 @@
 	</v-app-bar>
 </template>
 <script setup>
-	import { useMenus } from "@/store/menus";
+	import { useMenusStore } from "@/store/menus";
 	import { storeToRefs } from "pinia";
-	const { articles: menu } = await storeToRefs(useMenus());
+	const { articles: menu } = await storeToRefs(useMenusStore());
 </script>

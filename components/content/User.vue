@@ -83,7 +83,7 @@
 									label="Titul"
 									name="academicDegree"
 									counter="10"
-									prepend-icon="mdi-school"
+									prepend-inner-icon="mdi-school"
 									v-model="formdata.Tenant.academicDegree"
 									dense
 								/>
@@ -94,7 +94,7 @@
 									label="Křestní jméno"
 									counter="30"
 									name="firstName"
-									prepend-icon="mdi-account"
+									prepend-inner-icon="mdi-account"
 									v-model="formdata.Tenant.firstName"
 									:rules="[
 										(v) =>
@@ -113,7 +113,7 @@
 									label="Příjmení"
 									name="lastName"
 									counter="30"
-									prepend-icon="mdi-account"
+									prepend-inner-icon="mdi-account"
 									v-model="formdata.Tenant.lastName"
 									:rules="[
 										(v) =>
@@ -132,7 +132,7 @@
 									label="Telefonní číslo"
 									name="telephone"
 									counter="20"
-									prepend-icon="mdi-cellphone"
+									prepend-inner-icon="mdi-cellphone"
 									v-model="formdata.Tenant.telephone"
 									:rules="isMobilePhone()"
 									validate-on="blur"
@@ -142,8 +142,10 @@
 								<v-select
 									:items="countries"
 									label="Stát"
-									v-model="formdata.Tenant.countryId"
-									prepend-icon="mdi-map"
+									v-model="selectedCountry"
+									item-title="text"
+									item-value="id"
+									prepend-inner-icon="mdi-map"
 									dense
 									disabled
 								></v-select>
@@ -153,7 +155,7 @@
 									id="city"
 									label="Město"
 									name="city"
-									prepend-icon="mdi-map-marker"
+									prepend-inner-icon="mdi-map-marker"
 									v-model="formdata.Tenant.city"
 									counter="50"
 									:rules="[
@@ -172,7 +174,7 @@
 									label="PSČ"
 									name="zip"
 									counter="10"
-									prepend-icon="mdi-map-marker"
+									prepend-inner-icon="mdi-map-marker"
 									v-model="formdata.Tenant.zip"
 									:rules="isPostalCode()"
 									validate-on="blur"
@@ -184,7 +186,7 @@
 									label="Ulice"
 									name="streetAddress"
 									counter="50"
-									prepend-icon="mdi-map-marker"
+									prepend-inner-icon="mdi-map-marker"
 									v-model="formdata.Tenant.streetAddress"
 									:rules="[
 										(v) =>
@@ -201,7 +203,7 @@
 									id="houseNumber"
 									label="Číslo orientační"
 									name="houseNumber"
-									prepend-icon="mdi-map-marker"
+									prepend-inner-icon="mdi-map-marker"
 									v-model="formdata.Tenant.houseNumber"
 									:rules="[
 										(v) =>
@@ -219,7 +221,7 @@
 									id="landRegistryNumber"
 									label="Číslo popisné"
 									name="landRegistryNumber"
-									prepend-icon="mdi-map-marker"
+									prepend-inner-icon="mdi-map-marker"
 									v-model="formdata.Tenant.landRegistryNumber"
 									:rules="[
 										(v) =>
@@ -234,9 +236,11 @@
 								<h2 class="overline mb-3">
 									<v-btn
 										tile
-										v-if="formdata.Tenant.company"
-										color="green"
-										:dark="!formdata.Tenant.company"
+										:color="
+											formdata.Tenant.company === true
+												? 'default'
+												: 'green'
+										"
 										@click="formdata.Tenant.company = false"
 									>
 										<v-icon left>mdi-account</v-icon>
@@ -245,9 +249,11 @@
 									/
 									<v-btn
 										tile
-										v-if="!formdata.Tenant.company"
-										color="green"
-										:dark="formdata.Tenant.company"
+										:color="
+											formdata.Tenant.company === false
+												? 'default'
+												: 'green'
+										"
 										@click="formdata.Tenant.company = true"
 									>
 										<v-icon left>mdi-domain</v-icon>
@@ -264,7 +270,7 @@
 									<v-col cols="12">
 										<v-text-field
 											label="Název firmy"
-											prepend-icon="mdi-domain"
+											prepend-inner-icon="mdi-domain"
 											type="text"
 											v-model="
 												formdata.Tenant.companyName
@@ -285,7 +291,7 @@
 									<v-col cols="6">
 										<v-text-field
 											label="IČO"
-											prepend-icon="mdi-card-account-details-outline"
+											prepend-inner-icon="mdi-card-account-details-outline"
 											type="text"
 											v-model="formdata.Tenant.tin"
 											:rules="[
@@ -303,7 +309,7 @@
 									<v-col cols="6">
 										<v-text-field
 											label="DIČ"
-											prepend-icon="mdi-card-account-details-outline"
+											prepend-inner-icon="mdi-card-account-details-outline"
 											type="text"
 											v-model="formdata.Tenant.vatId"
 											:rules="[
@@ -330,7 +336,7 @@
 							<v-col cols="12">
 								<v-text-field
 									label="Email (bude sloužit jako přihlašovací údaj)"
-									prepend-icon="mdi-email"
+									prepend-inner-icon="mdi-email"
 									type="email"
 									v-model="formdata.email"
 									:rules="emailRules()"
@@ -345,49 +351,49 @@
 									id="password"
 									label="Heslo"
 									name="password"
-									prepend-icon="mdi-lock"
+									prepend-inner-icon="mdi-lock"
 									v-model="password"
 									:rules="
 										type === 'registration'
 											? passwordRules()
 											: passwordRulesNotMandatory()
 									"
-									validate-on="blur"
-									:append-icon="
+									validate-on="input lazy"
+									:append-inner-icon="
 										'mdi-' +
 										(showPassword
 											? 'eye-outline'
 											: 'eye-off-outline')
 									"
-									append-outer-icon="mdi-head-cog-outline"
-									@click:append="
+									append-icon="mdi-head-cog-outline"
+									@click:append-inner="
 										() => (showPassword = !showPassword)
 									"
-									@click:append-outer="generatePassword()"
+									@click:append="generateStrongPassword()"
 									:type="showPassword ? 'text' : 'password'"
 									dense
 								/>
-								<customPasswordScore :password="password" />
+								<CustomPasswordScore :password="password" />
 							</v-col>
 							<v-col cols="12" md="6">
 								<v-text-field
 									id="passwordCheck"
 									label="Ověření hesla"
 									name="passwordCheck"
-									prepend-icon="mdi-lock"
+									prepend-inner-icon="mdi-lock"
 									v-model="passwordCheck"
 									:rules="[
 										passwordCheck === password ||
 											'Musí se shodovat s Vámi zadaným heslem!',
 									]"
-									validate-on="blur"
-									:append-icon="
+									validate-on="input lazy"
+									:append-inner-icon="
 										'mdi-' +
 										(showPassword
 											? 'eye-outline'
 											: 'eye-off-outline')
 									"
-									@click:append="
+									@click:append-inner="
 										() => (showPassword = !showPassword)
 									"
 									:type="showPassword ? 'text' : 'password'"
@@ -458,8 +464,6 @@
 
 	const disabled = ref(false);
 
-	const countries = [{ value: 1, text: "Česká republika" }];
-
 	const headline = ref("headline");
 	const formdata = ref({
 		Tenant: {
@@ -479,7 +483,15 @@
 			vatId: "VAT123",
 			subscribeNewsletters: true,
 		} as TenantType,
+		email: "test@test.cz",
 	} as UserType & additionalFormdataOptions);
+
+	const countries = ref([{ id: 1, text: "Česká republika" }]);
+	const selectedCountry = ref(
+		countries.value.find(
+			(country) => country.id === formdata.value?.Tenant?.countryId
+		)
+	);
 
 	const password = ref("");
 	const passwordCheck = ref("");
@@ -511,6 +523,11 @@
 		(v: string) =>
 			!!!v || isStrongPassword(v) || "Zadejte prosím silné heslo",
 	];
+	const generateStrongPassword = async () => {
+		let generatedPassword = await generatePassword();
+		password.value = generatedPassword;
+		passwordCheck.value = generatedPassword;
+	};
 	const saveUser = () => {};
 	const registerUser = () => {};
 </script>

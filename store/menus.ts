@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 
-export const useMenus = defineStore("menus", {
+export const useMenusStore = defineStore("menus", {
 	state: () => ({
 		articles: [] as object[], // main menu with articles (add and change type in here for menu)
 	}),

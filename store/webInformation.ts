@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 
-export const useWebInformation = defineStore("webInformation", {
+export const useWebInformationStore = defineStore("webInformation", {
 	state: () => ({
 		all: {}, // for all mutations
 		en: {},

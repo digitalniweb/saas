@@ -6,14 +6,15 @@
 		</v-main>
 		{{ en.name }}
 		{{ en.title }}
-		<contentUser />
+		<ContentUser />
 		<WebBlocksFooter />
+		<CustomSnackBars />
 	</v-app>
 </template>
 <script setup>
-	import { useWebInformation } from "@/store/webInformation";
+	import { useWebInformationStore } from "@/store/webInformation";
 	import { storeToRefs } from "pinia";
-	const { all, en } = storeToRefs(useWebInformation());
+	const { all, en } = storeToRefs(useWebInformationStore());
 	useServerSeoMeta({
 		title: "My Amazing Site",
 		ogTitle: "My Amazing Site",

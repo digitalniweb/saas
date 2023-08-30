@@ -1,13 +1,13 @@
-import { useWebInformation } from "~/store/webInformation";
-import { useLanguages } from "~/store/languages";
-import { useMenus } from "~/store/menus";
+import { useWebInformationStore } from "~/store/webInformation";
+import { useLanguagesStore } from "~/store/languages";
+import { useMenusStore } from "~/store/menus";
 export default defineNuxtPlugin(async (nuxtApp) => {
-	const webInformation = useWebInformation();
+	const webInformation = useWebInformationStore();
 	await webInformation.loadData();
 
-	const languages = useLanguages();
+	const languages = useLanguagesStore();
 	await languages.loadData();
 
-	const articleMenu = useMenus();
+	const articleMenu = useMenusStore();
 	await articleMenu.loadData();
 });

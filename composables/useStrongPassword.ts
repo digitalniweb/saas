@@ -1,8 +1,11 @@
 import isStrongPasswordValidator from "validator/es/lib/isStrongPassword";
 import validatorTypes from "validator";
-import generator from "generate-password";
+import { generatePassword as generateStrongPassword } from "~/digitalniweb-custom/functions/randomGenerator";
 
-// this is gotten from "validatorTypes.isStrongPassword() 'options' parameter"
+import { useSnackBarsStore } from "@/store/snackBars";
+const store = useSnackBarsStore();
+
+// this type comes from "validatorTypes.isStrongPassword() 'options' parameter"
 type strongPasswordOptions = validatorTypes.StrongPasswordOptions & {
 	returnScore?: false | undefined;
 };
@@ -34,39 +37,27 @@ export const useStrongPassword = () => {
 		passwordMinLength = 12,
 		passwordMaxLength = 20
 	) => {
-		let password = generator.generate({
-			length: Math.floor(
-				Math.random() * (passwordMaxLength - passwordMinLength) +
-					passwordMinLength
-			),
-			lowercase: true,
-			uppercase: true,
-			numbers: true,
-			symbols: true,
-			strict: true,
-		});
-		// !!! needs to be done
-		/* formdata.password = password;
-		formdata.passwordCheck = password;
+		let password = generateStrongPassword(
+			passwordMinLength,
+			passwordMaxLength
+		);
 
-		$refs.form.resetValidation();
 		try {
 			await navigator.clipboard.writeText(password);
-			$store.dispatch("setSnackBars", {
+			store.setSnackBar({
 				text: "Heslo bylo vygenerováno a uloženo do Vaší schránky.<br> Uložte si jej na bezpečné místo pomocí kláves ctrl+v",
 				icon: "check",
 				color: "light-green",
 				timeout: 10000,
 			});
 		} catch (err) {
-			$store.dispatch("setSnackBars", {
+			store.setSnackBar({
 				text: "Heslo bylo vygenerováno. Prosím zkopírujte si jej a uložte na bezpečné místo.",
 				icon: "alert-circle-check-outline",
 				color: "light-blue",
 				timeout: 10000,
 			});
-			showPassword = true;
-		} */
+		}
 		return password;
 	};
 

@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import AppLanguage from "~/server/models/apps/appLanguage";
 
-export const useLanguages = defineStore("languages", {
+export const useLanguagesStore = defineStore("languages", {
 	state: () => ({
 		appLanguages: [] as (typeof AppLanguage)[], // all possible app's mutations
 		languages: [], // current website's languages
