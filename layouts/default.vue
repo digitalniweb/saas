@@ -6,7 +6,6 @@
 		</v-main>
 		{{ en.name }}
 		{{ en.title }}
-		<ContentUser />
 		<WebBlocksFooter />
 		<CustomSnackBars />
 	</v-app>

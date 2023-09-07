@@ -10,7 +10,7 @@
 		<template v-slot:activator="{ props }">
 			<v-btn
 				v-bind="props"
-				:href="item.url"
+				:to="item.url"
 				color="primary"
 				variant="tonal"
 				class="mx-2"

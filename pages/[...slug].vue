@@ -26,5 +26,56 @@
 	<p>
 		<v-btn color="primary">Create Your Website</v-btn>
 	</p>
+	<component :is="currentComponent" />
 </template>
-<script setup></script>
+<script setup lang="ts">
+	// Here needs to be list of all global components which we want to dynamically use. Then we need to import these components from '#components' and add this to 'components' variable
+	type componentNames = "WebBlocksMenu" | "ContentUser";
+
+	import { WebBlocksMenu, ContentUser } from "#components";
+	import { GlobalComponents } from "vue";
+
+	type components = Pick<GlobalComponents, componentNames>;
+	const components = {
+		WebBlocksMenu,
+		ContentUser,
+	};
+	const route = useRoute();
+	const componentName = ref<componentNames | "div">("div");
+	let currentComponent = computed((): any =>
+		componentName.value !== "div" ? components[componentName.value] : "div"
+	);
+	const loadPage = () => {
+		if (route.path === "/user") componentName.value = "ContentUser";
+		else componentName.value = "div";
+	};
+	watch(
+		route,
+		() => {
+			loadPage();
+		},
+		{ deep: true, immediate: true }
+	);
+	/*
+	// this doesn't unfortunatelly work
+	const route = useRoute();
+	const componentName = ref("WebBlocksMenu");
+	let currentComponent = computed(() =>
+		resolveComponent(componentName.value)
+	);
+	const loadPage = () => {
+		let i = Math.round(Math.random() * 100) % 2;
+		console.log(i);
+
+		componentName.value = i == 0 ? "ContentUser" : "WebBlocksMenu";
+	};
+	watch(
+		route,
+		() => {
+			console.log("test");
+
+			loadPage();
+		},
+		{ deep: true, immediate: true }
+	); */
+</script>

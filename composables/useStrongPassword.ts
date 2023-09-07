@@ -3,13 +3,13 @@ import validatorTypes from "validator";
 import { generatePassword as generateStrongPassword } from "~/digitalniweb-custom/functions/randomGenerator";
 
 import { useSnackBarsStore } from "@/store/snackBars";
-const store = useSnackBarsStore();
 
 // this type comes from "validatorTypes.isStrongPassword() 'options' parameter"
 type strongPasswordOptions = validatorTypes.StrongPasswordOptions & {
 	returnScore?: false | undefined;
 };
 export const useStrongPassword = () => {
+	const store = useSnackBarsStore();
 	const strongPasswordOptions: strongPasswordOptions = {
 		minLength: 12,
 		minLowercase: 1,

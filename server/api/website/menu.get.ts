@@ -19,26 +19,26 @@ export default eventHandler(async (event) => {
 			name: "home",
 		},
 		{
-			url: "/",
+			url: "/submenus",
 			name: "submenus",
 			children: [
 				{
-					name: "submenu",
-					url: "/",
+					name: "user",
+					url: "/user",
 					children: [
 						{
 							name: "test",
-							url: "/",
+							url: "/test",
 						},
 					],
 				},
 				{
 					name: "submenu nested",
-					url: "/",
+					url: "/nested",
 					children: [
 						{
 							name: "nested",
-							url: "/",
+							url: "/nested-2",
 						},
 					],
 				},

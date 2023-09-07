@@ -27,14 +27,15 @@
 										z-index="0"
 										light
 									></v-overlay>
-									<!-- <v-card-title
+									<v-card-title
 										class="text-h4 white--text relative justify-center"
+										v-if="formdata.credit !== null"
 									>
-										{{ formdata.Tenant.credits }}
+										{{ formdata.credit }}
 										<v-icon right color="yellow" small
 											>mdi-currency-sign</v-icon
 										>
-									</v-card-title> -->
+									</v-card-title>
 
 									<v-card-subtitle
 										class="white--text relative text-center"

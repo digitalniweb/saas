@@ -1,6 +1,6 @@
 <template>
 	<v-app-bar>
-		<MenuTop :items="menu" />
+		<MenuList :levelitems="menu" :ulid="'navitems'" />
 	</v-app-bar>
 </template>
 <script setup>
