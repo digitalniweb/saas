@@ -1,22 +1,36 @@
 import { defineStore } from "pinia";
-import AppLanguage from "~/server/models/apps/appLanguage";
+import { appLanguages, languages } from "~/digitalniweb-types";
 
 export const useLanguagesStore = defineStore("languages", {
 	state: () => ({
-		appLanguages: [] as (typeof AppLanguage)[], // all possible app's mutations
-		languages: [], // current website's languages
-		mainId: null, // current main language id
-		currentId: null, // currently picked language
+		appLanguages: {} as appLanguages, // all possible app's mutations
+		languages: [] as languages[], // current website's languages
+		main: null as languages | null, // current main language id
+		current: null as languages | null, // currently picked language
 	}),
 	getters: {},
 	actions: {
 		async loadData() {
-			let appLanguages = await useFetch<(typeof AppLanguage)[]>(
-				"/api/app/languages"
-			);
-			this.appLanguages = appLanguages.data.value ?? [];
-			let websiteLanguages = await useFetch("/api/website/languages");
-			this.languages = websiteLanguages.data?.value ?? [];
+			let globalDataLanguages = await useFetch("/api/app/languages");
+
+			if (globalDataLanguages.error.value) {
+				// I don't know if this can ever get logged out
+				// !!! If it does it should get logged by logs_ms
+				console.log(
+					"useLanguagesStore globalDataLanguages error",
+					globalDataLanguages.error.value
+				);
+			}
+
+			let appLanguages = globalDataLanguages.data.value as appLanguages;
+
+			this.appLanguages = appLanguages ?? [];
+
+			/* let websiteLanguages = await useFetch("/api/website/languages", {
+				query: { id: 1 },
+			});
+			this.languages =
+				(websiteLanguages.data.value as unknown as languages[]) ?? []; */
 		},
 	},
 });

@@ -5,6 +5,8 @@
 import { microservices } from "~/digitalniweb-types";
 import { microserviceRegistryInfo } from "~/digitalniweb-types/customFunctions/globalData";
 
+import { Microservice as MicroserviceType } from "~/digitalniweb-types/models/globalData.js";
+
 /**
  * In "Microservices" this function returns the service registry information for a microservice
  */
@@ -21,4 +23,13 @@ export async function getServiceRegistryInfo(): Promise<
 	microserviceRegistryInfo | false
 > {
 	return false;
+}
+
+/**
+ * In "globalData" microservice this function returns a 'Microservice'
+ */
+export async function getMainServiceRegistry(
+	microservice: microservices
+): Promise<MicroserviceType | null> {
+	return null;
 }

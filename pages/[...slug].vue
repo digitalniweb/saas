@@ -30,14 +30,13 @@
 </template>
 <script setup lang="ts">
 	// Here needs to be list of all global components which we want to dynamically use. Then we need to import these components from '#components' and add this to 'components' variable
-	type componentNames = "WebBlocksMenu" | "ContentUser";
+	type componentNames = "ContentUser";
 
-	import { WebBlocksMenu, ContentUser } from "#components";
-	import { GlobalComponents } from "vue";
+	import { ContentUser } from "#components";
+	import { GlobalComponents } from "nuxt/dist/app/compat/vue-demi";
 
 	type components = Pick<GlobalComponents, componentNames>;
 	const components = {
-		WebBlocksMenu,
 		ContentUser,
 	};
 	const route = useRoute();
