@@ -1,8 +1,6 @@
 export default eventHandler(async (event) => {
 	// console.log(event);
-
-	const config = useRuntimeConfig();
-	console.log(config.app);
+	// const config = useRuntimeConfig();
 
 	return {
 		message: "It's working!",

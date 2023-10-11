@@ -5,7 +5,6 @@ export default eventHandler(async (event) => {
 		name: "websites",
 		path: "/api/getcurrentwebsite",
 	});
-	console.log(data);
 
 	return {
 		all: {},
