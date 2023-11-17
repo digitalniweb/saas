@@ -1,6 +1,6 @@
 <template>
 	<v-row align="center" justify="center" class="my-5 pt-5">
-		<v-col cols="12" sm="10" md="8" xl="6">
+		<v-col cols="12">
 			<v-card class="elevation-12">
 				<v-toolbar
 					color="primary"

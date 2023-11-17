@@ -33,7 +33,9 @@
 	type componentNames = "ContentUser";
 
 	import { ContentUser } from "#components";
-	import { GlobalComponents } from "nuxt/dist/app/compat/vue-demi";
+	import { computed, ref, watch } from "#imports";
+	import { useRoute } from "nuxt/app";
+	import type { GlobalComponents } from "nuxt/dist/app/compat/vue-demi";
 
 	type components = Pick<GlobalComponents, componentNames>;
 	const components = {

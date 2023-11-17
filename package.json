@@ -14,28 +14,30 @@
 		"seeders": "npm run buildSequelize && npx sequelize-cli db:seed:all"
 	},
 	"devDependencies": {
-		"@nuxt/types": "^2.17.1",
-		"@types/node": "^20.5.6",
-		"@types/sequelize": "^4.28.15",
-		"@types/validator": "^13.11.1",
-		"nuxt": "^3.7.3"
+		"@nuxt/types": "^2.17.2",
+		"@types/jsonwebtoken": "^9.0.4",
+		"@types/node": "^20.8.8",
+		"@types/sequelize": "^4.28.17",
+		"@types/validator": "^13.11.5",
+		"nuxt": "^3.8.1"
 	},
 	"dependencies": {
-		"@mdi/font": "^7.2.96",
+		"@mdi/font": "^7.3.67",
 		"@pinia/nuxt": "^0.4.11",
-		"axios": "^1.4.0",
+		"axios": "^1.5.1",
 		"dotenv": "^16.3.1",
 		"ioredis": "^5.3.2",
+		"jsonwebtoken": "^9.0.2",
 		"mariadb": "^3.2.0",
 		"mysql2": "^3.6.0",
 		"node-cache": "^5.1.2",
-		"nuxi": "^3.8.0",
-		"pinia": "^2.1.6",
-		"sass": "^1.66.1",
-		"sequelize": "^6.32.1",
+		"nuxi": "^3.9.1",
+		"pinia": "^2.1.7",
+		"sass": "^1.69.4",
+		"sequelize": "^6.33.0",
 		"sequelize-cli": "^6.6.1",
 		"validator": "^13.11.0",
-		"vue-tsc": "^1.8.8",
-		"vuetify": "^3.3.14"
+		"vue-tsc": "^1.8.21",
+		"vuetify": "^3.3.23"
 	}
 }

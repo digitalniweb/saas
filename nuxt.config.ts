@@ -9,6 +9,11 @@ export default defineNuxtConfig({
 	typescript: {
 		typeCheck: true,
 		strict: true,
+		tsConfig: {
+			compilerOptions: {
+				verbatimModuleSyntax: false,
+			},
+		},
 	},
 	css: [
 		"vuetify/styles",
