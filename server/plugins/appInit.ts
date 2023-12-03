@@ -49,6 +49,7 @@ export default defineNitroPlugin(async (nitroApp) => {
 					url: process.env["APP_HOSTNAME"],
 				},
 			})) as Website | false;
+
 			if (!websiteInfo) {
 				throw {
 					type: "database",
@@ -58,6 +59,10 @@ export default defineNitroPlugin(async (nitroApp) => {
 			}
 		}
 	} catch (error: any) {
-		log(error);
+		log({
+			type: "functions",
+			status: "error",
+			error,
+		});
 	}
 });
