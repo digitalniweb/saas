@@ -4,8 +4,6 @@
 		<v-main>
 			<slot />
 		</v-main>
-		{{ en.name }}
-		{{ en.title }}
 		<WebBlocksFooter />
 		<CustomSnackBars />
 	</v-app>

@@ -3,6 +3,7 @@ import validatorTypes from "validator";
 import { generatePassword as generateStrongPassword } from "~/digitalniweb-custom/functions/randomGenerator";
 
 import { useSnackBarsStore } from "@/store/snackBars";
+import { languages } from "~/digitalniweb-types";
 
 // this type comes from "validatorTypes.isStrongPassword() 'options' parameter"
 type strongPasswordOptions = validatorTypes.StrongPasswordOptions & {
@@ -17,6 +18,13 @@ export const useStrongPassword = () => {
 		minNumbers: 1,
 		minSymbols: 1,
 	};
+	const passwordRegisterRules = (lang: languages = "cs") => {
+		let message = {
+			cs: `Zadejte prosím silné heslo (minimálně ${strongPasswordOptions.minLength} znaků, z toho minimálně ${strongPasswordOptions.minLowercase} malé a ${strongPasswordOptions.minUppercase} velké písmeno, ${strongPasswordOptions.minNumbers} číslice, ${strongPasswordOptions.minSymbols} symbol)`,
+		} as { [key in languages]: string };
+		return message[lang];
+	};
+
 	const isStrongPassword = (
 		password = "",
 		options = strongPasswordOptions
@@ -66,5 +74,6 @@ export const useStrongPassword = () => {
 		isStrongPassword,
 		getPasswordScore,
 		generatePassword,
+		passwordRegisterRules,
 	};
 };

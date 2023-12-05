@@ -1,4 +1,4 @@
-import { microserviceCall } from "../../../digitalniweb-custom/helpers/remoteProcedureCall";
+// import { microserviceCall } from "../../../digitalniweb-custom/helpers/remoteProcedureCall";
 
 export default eventHandler(async (event) => {
 	try {
@@ -43,6 +43,10 @@ export default eventHandler(async (event) => {
 					],
 				},
 			],
+		},
+		{
+			url: "/login",
+			name: "login",
 		},
 	];
 });

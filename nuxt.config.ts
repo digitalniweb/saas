@@ -14,6 +14,7 @@ export default defineNuxtConfig({
 		tsConfig: {
 			compilerOptions: {
 				verbatimModuleSyntax: false,
+				moduleResolution: "bundler",
 			},
 		},
 	},

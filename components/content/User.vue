@@ -1,6 +1,6 @@
 <template>
 	<v-row align="center" justify="center" class="my-5 pt-5">
-		<v-col cols="12">
+		<v-col cols="12" lg="4" xl="6">
 			<v-card class="elevation-12">
 				<v-toolbar
 					color="primary"
@@ -16,7 +16,7 @@
 				<v-card-text>
 					<v-form ref="form" lazy-validation :disabled="disabled">
 						<v-row v-if="formdata.Tenant">
-							<v-col cols="12" lg="4" v-if="loggedIn">
+							<v-col cols="12" v-if="loggedIn">
 								<v-card
 									img="https://images.pexels.com/photos/50987/money-card-business-credit-card-50987.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
 									to="/"
@@ -50,7 +50,7 @@
 									</v-card-actions>
 								</v-card>
 							</v-col>
-							<v-col cols="12" lg="4" v-if="loggedIn">
+							<v-col cols="12" v-if="loggedIn">
 								<!-- :to="
 										getModulePath({
 											module: 'tenant-websites',
@@ -80,6 +80,7 @@
 							</v-col>
 							<v-col cols="12" md="2">
 								<v-text-field
+									variant="underlined"
 									id="academicDegree"
 									label="Titul"
 									name="academicDegree"
@@ -91,6 +92,7 @@
 							</v-col>
 							<v-col cols="12" md="5">
 								<v-text-field
+									variant="underlined"
 									id="firstName"
 									label="Křestní jméno"
 									counter="30"
@@ -110,6 +112,7 @@
 							</v-col>
 							<v-col cols="12" md="5">
 								<v-text-field
+									variant="underlined"
 									id="lastName"
 									label="Příjmení"
 									name="lastName"
@@ -129,6 +132,7 @@
 							</v-col>
 							<v-col cols="12">
 								<v-text-field
+									variant="underlined"
 									id="telephone"
 									label="Telefonní číslo"
 									name="telephone"
@@ -153,6 +157,7 @@
 							</v-col>
 							<v-col cols="12" md="8">
 								<v-text-field
+									variant="underlined"
 									id="city"
 									label="Město"
 									name="city"
@@ -171,6 +176,7 @@
 							/></v-col>
 							<v-col cols="12" md="4">
 								<v-text-field
+									variant="underlined"
 									id="zip"
 									label="PSČ"
 									name="zip"
@@ -183,6 +189,7 @@
 							/></v-col>
 							<v-col cols="12" md="6">
 								<v-text-field
+									variant="underlined"
 									id="streetAddress"
 									label="Ulice"
 									name="streetAddress"
@@ -201,6 +208,7 @@
 							/></v-col>
 							<v-col cols="12" md="3">
 								<v-text-field
+									variant="underlined"
 									id="houseNumber"
 									label="Číslo orientační"
 									name="houseNumber"
@@ -219,6 +227,7 @@
 							/></v-col>
 							<v-col cols="12" md="3">
 								<v-text-field
+									variant="underlined"
 									id="landRegistryNumber"
 									label="Číslo popisné"
 									name="landRegistryNumber"
@@ -270,6 +279,7 @@
 								<v-row>
 									<v-col cols="12">
 										<v-text-field
+											variant="underlined"
 											label="Název firmy"
 											prepend-inner-icon="mdi-domain"
 											type="text"
@@ -291,6 +301,7 @@
 									</v-col>
 									<v-col cols="6">
 										<v-text-field
+											variant="underlined"
 											label="IČO"
 											prepend-inner-icon="mdi-card-account-details-outline"
 											type="text"
@@ -309,6 +320,7 @@
 									</v-col>
 									<v-col cols="6">
 										<v-text-field
+											variant="underlined"
 											label="DIČ"
 											prepend-inner-icon="mdi-card-account-details-outline"
 											type="text"
@@ -336,11 +348,12 @@
 							</v-col>
 							<v-col cols="12">
 								<v-text-field
+									variant="underlined"
 									label="Email (bude sloužit jako přihlašovací údaj)"
 									prepend-inner-icon="mdi-email"
-									type="email"
+									type="text"
 									v-model="formdata.email"
-									:rules="emailRules()"
+									:rules="useEmailRules()"
 									validate-on="blur"
 									dense
 									counter="100"
@@ -349,11 +362,12 @@
 
 							<v-col cols="12" md="6">
 								<v-text-field
+									variant="underlined"
 									id="password"
 									label="Heslo"
 									name="password"
 									prepend-inner-icon="mdi-lock"
-									v-model="password"
+									v-model="formdata.password"
 									:rules="
 										type === 'registration'
 											? passwordRules()
@@ -374,17 +388,21 @@
 									:type="showPassword ? 'text' : 'password'"
 									dense
 								/>
-								<CustomPasswordScore :password="password" />
+								<CustomPasswordScore
+									:password="formdata.password"
+								/>
 							</v-col>
 							<v-col cols="12" md="6">
 								<v-text-field
+									variant="underlined"
 									id="passwordCheck"
 									label="Ověření hesla"
 									name="passwordCheck"
 									prepend-inner-icon="mdi-lock"
-									v-model="passwordCheck"
+									v-model="formdata.passwordCheck"
 									:rules="[
-										passwordCheck === password ||
+										formdata.passwordCheck ===
+											formdata.password ||
 											'Musí se shodovat s Vámi zadaným heslem!',
 									]"
 									validate-on="input lazy"
@@ -413,6 +431,26 @@
 									dense
 									v-if="formdata.Tenant"
 								/>
+								<v-checkbox
+									v-model="formdata.agreement"
+									:rules="[
+										(v) =>
+											!!v ||
+											'Musíte souhlasit s obchodními podmínkami',
+									]"
+									dense
+									:disabled="type === 'profile'"
+								>
+									<template v-slot:label
+										>Souhlasím s
+										<a
+											href="/obchodni-podminky"
+											target="_blank"
+											@click.stop
+											>obchodními podmínkami</a
+										>
+									</template>
+								</v-checkbox>
 							</v-col>
 						</v-row>
 					</v-form>
@@ -454,7 +492,8 @@
 	import isMobilePhoneVal from "validator/es/lib/isMobilePhone";
 	import isPostalCodeVal from "validator/es/lib/isPostalCode";
 
-	const { isStrongPassword, generatePassword } = useStrongPassword();
+	const { isStrongPassword, generatePassword, passwordRegisterRules } =
+		useStrongPassword();
 
 	type additionalFormdataOptions = {
 		agreement: boolean;
@@ -485,6 +524,8 @@
 			subscribeNewsletters: true,
 		} as TenantType,
 		email: "test@test.cz",
+		passwordCheck: "",
+		agreement: false,
 	} as UserType & additionalFormdataOptions);
 
 	const countries = ref([{ id: 1, text: "Česká republika" }]);
@@ -494,8 +535,6 @@
 		)
 	);
 
-	const password = ref("");
-	const passwordCheck = ref("");
 	const showPassword = ref(false);
 
 	const type = ref("registration");
@@ -511,14 +550,9 @@
 			isPostalCodeVal(v || "", "any") ||
 			"Vyplňte prosím Vaše poštovní směrovací číslo",
 	];
-	const emailRules = () => [
-		(v: string) => !!v || "Vyplňte prosím toto pole",
-		(v: string) =>
-			/.+@.+\..+/.test(v) || "Zadejte prosim platné přihlašovací údaje",
-	];
 	const passwordRules = () => [
 		(v: string) => !!v || "Vyplňte prosím toto pole",
-		(v: string) => isStrongPassword(v) || "Zadejte prosím silné heslo",
+		(v: string) => isStrongPassword(v) || passwordRegisterRules(),
 	];
 	const passwordRulesNotMandatory = () => [
 		(v: string) =>
@@ -526,8 +560,8 @@
 	];
 	const generateStrongPassword = async () => {
 		let generatedPassword = await generatePassword();
-		password.value = generatedPassword;
-		passwordCheck.value = generatedPassword;
+		formdata.value.password = generatedPassword;
+		formdata.value.passwordCheck = generatedPassword;
 	};
 	const saveUser = () => {};
 	const registerUser = () => {};
