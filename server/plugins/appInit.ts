@@ -17,20 +17,24 @@ export default defineNitroPlugin(async (nitroApp) => {
 		let app = await registerCurrentApp();
 
 		if (process.env.APP_TYPE !== "saas-host") return;
-		let websiteInfo: Website | false | null = await microserviceCall({
-			name: "websites",
-			path: "/api/getwebsiteinfo",
-			data: {
-				url: process.env["HOST"],
-			},
-		});
-
-		if (websiteInfo === false)
+		let websiteInfo: Website;
+		try {
+			let { data }: { data: Website } = await microserviceCall({
+				name: "websites",
+				path: "/api/getwebsiteinfo",
+				data: {
+					url: process.env["HOST"],
+				},
+			});
+			websiteInfo = data;
+		} catch (error) {
 			throw {
 				type: "database",
 				status: "error",
 				error: `Error while getting Website ${process.env["HOST"]}`,
 			} as customLogObject;
+		}
+
 		if (websiteInfo === null) {
 			let websiteData: CreationAttributes<Website> = {
 				active: true,
@@ -40,7 +44,7 @@ export default defineNitroPlugin(async (nitroApp) => {
 				mainLanguageId: app.LanguageId,
 			};
 			// create a new website and url in websites_ms
-			websiteInfo = (await microserviceCall({
+			let { data }: { data: Website } = await microserviceCall({
 				name: "websites",
 				path: "/api/createwebsite",
 				method: "POST",
@@ -48,7 +52,8 @@ export default defineNitroPlugin(async (nitroApp) => {
 					website: websiteData,
 					url: process.env["APP_HOSTNAME"],
 				},
-			})) as Website | false;
+			});
+			websiteInfo = data;
 
 			if (!websiteInfo) {
 				throw {

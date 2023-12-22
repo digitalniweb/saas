@@ -1,13 +1,13 @@
 export default defineNuxtConfig({
 	modules: ["@pinia/nuxt"],
-	pinia: {
+	/* pinia: {
 		// this works but typescript says 'autoImports' doesn't exist. Try to uncomment the @ts-ignore in any time if it is correct and if so then remove the @ts-ignore
 		// @ts-ignore
 		autoImports: [
 			// automatically imports `defineStore`
 			"defineStore", // import { defineStore } from 'pinia'
 		],
-	},
+	}, */
 	typescript: {
 		typeCheck: true,
 		strict: true,

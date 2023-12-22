@@ -1,15 +1,17 @@
 import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureCall";
 import { Language } from "~/digitalniweb-types/models/globalData";
-import { languages } from "~/digitalniweb-types";
+// import { languages } from "~/digitalniweb-types";
 
 export default eventHandler(async (event) => {
-	let websiteLanguages = (await microserviceCall({
-		name: "websites",
-		path: "/api/languages/website/",
-		method: "GET",
-	})) as Language[];
+	let { data: websiteLanguagesData }: { data: Language[] } =
+		await microserviceCall({
+			name: "websites",
+			path: "/api/languages/website/",
+			method: "GET",
+		});
+	let websiteLanguages = websiteLanguagesData;
 
-	let languages = [] as languages[];
-	websiteLanguages.forEach((lang) => languages.push(lang.code));
+	// let languages = [] as languages[];
+	// websiteLanguages.forEach((lang) => languages.push(lang.code));
 	return websiteLanguages;
 });

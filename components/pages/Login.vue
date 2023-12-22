@@ -125,6 +125,9 @@
 </template>
 <script setup lang="ts">
 	import { VForm } from "vuetify/components";
+	import { useUserStore } from "@/store/user";
+	import { loginInformation } from "~/digitalniweb-types";
+	const userStore = useUserStore();
 
 	const { strongPasswordOptions } = useStrongPassword();
 	const disabled = ref(false);
@@ -141,11 +144,19 @@
 	const loginUser = async () => {
 		let validate = await form?.value?.validate();
 		if (!validate?.valid) return;
-		let user = await useFetch("/api/user/login", {
+		let loginData: loginInformation = {
+			email: formdata.value.email, //test@test.cz
+			password: formdata.value.password, // !@#123aAAAaa
+		};
+		await userStore.login(loginData);
+		/* let user = await useFetch("/api/user/login", {
 			method: "POST",
-			body: formdata,
+			body: {
+				email: formdata.value.email,
+				password: formdata.value.password,
+			},
 		});
-		console.log(user);
+		console.log(user); */
 	};
 	const resetPassword = async () => {
 		const validate = await resetForm?.value?.validate();

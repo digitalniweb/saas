@@ -1,4 +1,4 @@
-type snackBar = {
+export type snackBar = {
 	id: number;
 	show: boolean;
 	color: string;

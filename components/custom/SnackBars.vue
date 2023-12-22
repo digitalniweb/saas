@@ -20,7 +20,7 @@
 <script lang="ts" setup>
 	import { useSnackBarsStore } from "@/store/snackBars";
 	import { storeToRefs } from "pinia";
-	const store = useSnackBarsStore();
+	const store = await useSnackBarsStore();
 	const { snackBars } = storeToRefs(store);
 
 	const snackBarClose = (snackBar: any) => {

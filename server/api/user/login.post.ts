@@ -1,17 +1,36 @@
 import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureCall";
 import { User } from "~/digitalniweb-types/models/users";
-import { readBody } from "h3";
+import { readBody, getHeader } from "h3";
+import { log } from "~/digitalniweb-custom/helpers/logger";
+import { loginInformation } from "~/digitalniweb-types";
+import { customLogObject } from "~/digitalniweb-types/customHelpers/logger";
 
 export default eventHandler(async (event) => {
 	try {
-		let body = await readBody(event);
+		let ua = getHeader(event, "user-agent");
+		if (!ua)
+			throw {
+				type: "routing",
+				status: "warning",
+				error: "User-agent not defined while logging in.",
+			} as customLogObject;
 
-		let user = (await microserviceCall({
+		let body = (await readBody(event)) as loginInformation;
+		body.ua = ua;
+		let { data: userData }: { data: User } = await microserviceCall({
 			name: "users",
-			path: "/api/login",
+			method: "POST",
+			path: "/api/users/authenticate",
 			data: body,
 			scope: "all",
-		})) as User | null;
+		});
+		let user = userData;
 		return user;
-	} catch (error) {}
+	} catch (error: any) {
+		log({
+			type: "routing",
+			error,
+		});
+		return false;
+	}
 });

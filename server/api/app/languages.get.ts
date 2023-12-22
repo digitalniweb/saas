@@ -12,12 +12,14 @@ export default eventHandler(async (event): Promise<appLanguages | unknown> => {
 		let languagesArray = {} as appLanguages;
 
 		// get app languages from 'globalData'
-		let appLanguages = (await microserviceCall({
-			name: "globalData",
-			path: "/api/languages/listbyids",
-			method: "GET",
-			data: { ids: languagesIds },
-		})) as Language[];
+		let { data: appLanguagesData }: { data: Language[] } =
+			await microserviceCall({
+				name: "globalData",
+				path: "/api/languages/listbyids",
+				method: "GET",
+				data: { ids: languagesIds },
+			});
+		let appLanguages = appLanguagesData;
 
 		appLanguages.forEach((language) => {
 			languagesArray[language.code] = language;
