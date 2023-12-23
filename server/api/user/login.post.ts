@@ -3,7 +3,10 @@ import { User } from "~/digitalniweb-types/models/users";
 import { readBody, getHeader } from "h3";
 import { log } from "~/digitalniweb-custom/helpers/logger";
 import { loginInformation } from "~/digitalniweb-types";
-import { customLogObject } from "~/digitalniweb-types/customHelpers/logger";
+import {
+	commonError,
+	customLogObject,
+} from "~/digitalniweb-types/customHelpers/logger";
 
 export default eventHandler(async (event) => {
 	try {
@@ -17,15 +20,19 @@ export default eventHandler(async (event) => {
 
 		let body = (await readBody(event)) as loginInformation;
 		body.ua = ua;
-		let { data: userData }: { data: User } = await microserviceCall({
+		let data = await microserviceCall({
 			name: "users",
 			method: "POST",
 			path: "/api/users/authenticate",
 			data: body,
 			scope: "all",
 		});
-		let user = userData;
-		return user;
+
+		if (data?.status >= 400) event.node.res.statusCode = data.status;
+
+		let responseData = data.data as User | commonError; // if data.status >= 400 -> commonError
+
+		return responseData;
 	} catch (error: any) {
 		log({
 			type: "routing",

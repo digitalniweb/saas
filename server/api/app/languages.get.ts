@@ -2,6 +2,7 @@ import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureC
 import AppLanguage from "../../models/apps/appLanguage";
 import { appLanguages } from "~/digitalniweb-types";
 import { Language } from "~/digitalniweb-types/models/globalData";
+import { log } from "~/digitalniweb-custom/helpers/logger";
 
 export default eventHandler(async (event): Promise<appLanguages | unknown> => {
 	try {
@@ -21,13 +22,16 @@ export default eventHandler(async (event): Promise<appLanguages | unknown> => {
 			});
 		let appLanguages = appLanguagesData;
 
-		appLanguages.forEach((language) => {
+		appLanguages?.forEach((language) => {
 			languagesArray[language.code] = language;
 		});
 
 		return languagesArray;
-	} catch (error) {
-		// !!! this should get logged in logs_ms
-		console.log(error);
+	} catch (error: any) {
+		log({
+			type: "routing",
+			error,
+		});
+		return false;
 	}
 });
