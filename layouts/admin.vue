@@ -1,17 +1,13 @@
 <template>
 	<v-app id="admin">
 		<v-navigation-drawer v-model="drawer">
-			<p class="text-overline pa-5">
-				<v-avatar size="32px">
-					<v-img src="/img/logo.png" />
-				</v-avatar>
-				Admin
-			</p>
 			<v-list width="100%" class="text-left">
+				<v-list-item prepend-avatar="/img/logo.png" title="Admin">
+				</v-list-item>
 				<v-list-item
-					v-for="[icon, text] in links"
+					v-for="[icon, text, href] in links"
 					:key="icon"
-					link
+					:to="href"
 					:prepend-icon="icon"
 				>
 					<v-list-item-title>{{ text }}</v-list-item-title>
@@ -42,7 +38,7 @@
 
 							<v-list>
 								<v-list-item
-									v-for="(item, i) in items"
+									v-for="(item, i) in notificationItems"
 									:key="i"
 								>
 									<v-list-item-title>{{
@@ -90,6 +86,8 @@
 <script setup>
 	const drawer = ref(null);
 
+	const notificationItems = ref([]);
+
 	const avatarItems = ref([
 		{
 			icon: "mdi-home",
@@ -102,7 +100,7 @@
 			title: "Odhlásit se",
 		},
 	]);
-	const links = ref([["mdi-bell-outline", "menu 1"]]);
+	const links = ref([["mdi-bell-outline", "menu 1", "/"]]);
 	useHead({
 		title: "Admin",
 	});

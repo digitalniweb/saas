@@ -23,11 +23,13 @@ export const useUserStore = defineStore("user", {
 		},
 		async login(data: loginInformation) {
 			console.log("data", data);
-			let user = await useFetch("/api/user/login", {
+			let loginResponse = await useFetch("/api/user/login", {
 				method: "POST",
 				body: data,
 			});
-			console.log("user", user);
+			// console.log("user", loginResponse.data?.value);
+			// console.log("err", loginResponse?.error?.value?.data);
+			return loginResponse;
 		},
 	},
 });

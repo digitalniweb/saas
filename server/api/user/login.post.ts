@@ -34,10 +34,11 @@ export default eventHandler(async (event) => {
 
 		return responseData;
 	} catch (error: any) {
-		log({
-			type: "routing",
-			error,
-		});
+		if (error?.status >= 500)
+			log({
+				type: "routing",
+				error,
+			});
 		return false;
 	}
 });

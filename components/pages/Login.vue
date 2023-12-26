@@ -126,13 +126,16 @@
 <script setup lang="ts">
 	import { VForm } from "vuetify/components";
 	import { useUserStore } from "@/store/user";
+	import { useLanguagesStore } from "@/store/languages";
+
 	import { loginInformation } from "~/digitalniweb-types";
 	const userStore = useUserStore();
+	const languageStore = useLanguagesStore();
 
 	const { strongPasswordOptions } = useStrongPassword();
 	const disabled = ref(false);
 	const showReset = ref(false);
-	const notValidLogin = ref(false);
+	const notValidLogin = ref("");
 	const resetSent = ref(false);
 	const formdata = ref({
 		email: "",
@@ -142,21 +145,49 @@
 	const form = ref<InstanceType<typeof VForm>>();
 	const resetForm = ref<InstanceType<typeof VForm>>();
 	const loginUser = async () => {
+		let blockedLoginTill = localStorage.getItem("blockedLoginTill");
+		if (blockedLoginTill) {
+			if (new Date() > new Date(blockedLoginTill)) {
+				// Warning + time
+				let formatter = new Intl.DateTimeFormat(
+					languageStore.current || "en",
+					{
+						weekday: "long",
+						year: "numeric",
+						month: "long",
+						day: "numeric",
+						hour: "numeric",
+						minute: "numeric",
+						second: "numeric",
+					}
+				);
+
+				notValidLogin.value =
+					"Před dalšími pokusy vyčkejte prosím do " +
+					formatter.format(new Date(blockedLoginTill));
+				return false;
+			}
+			localStorage.removeItem("blockedLoginTill");
+		}
 		let validate = await form?.value?.validate();
 		if (!validate?.valid) return;
 		let loginData: loginInformation = {
-			email: formdata.value.email, //test@test.cz
+			email: formdata.value.email, // test@test.cz
 			password: formdata.value.password, // !@#123aAAAaa
 		};
-		await userStore.login(loginData);
-		/* let user = await useFetch("/api/user/login", {
-			method: "POST",
-			body: {
-				email: formdata.value.email,
-				password: formdata.value.password,
-			},
-		});
-		console.log(user); */
+		try {
+			await userStore.login(loginData);
+			/* let user = await useFetch("/api/user/login", {
+				method: "POST",
+				body: {
+					email: formdata.value.email,
+					password: formdata.value.password,
+				},
+			});
+			console.log(user); */
+		} catch (error) {
+			console.log("error", error);
+		}
 	};
 	const resetPassword = async () => {
 		const validate = await resetForm?.value?.validate();
