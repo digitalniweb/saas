@@ -34,11 +34,16 @@ export default eventHandler(async (event) => {
 
 		return responseData;
 	} catch (error: any) {
+		console.log(error);
+
 		if (error?.status >= 500)
 			log({
 				type: "routing",
 				error,
 			});
-		return false;
+		return {
+			code: 500,
+			message: "Something went wrong while logging in!",
+		} as commonError;
 	}
 });

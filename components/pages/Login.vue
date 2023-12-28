@@ -9,7 +9,7 @@
 					src="https://images.pexels.com/photos/6964507/pexels-photo-6964507.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
 				>
 					<v-overlay class="absolute" z-index="0"></v-overlay>
-					<v-toolbar-title class="relative white--text"
+					<v-toolbar-title class="relative text-white"
 						>Přihlásit se</v-toolbar-title
 					>
 				</v-toolbar>
@@ -45,11 +45,13 @@
 						/>
 					</v-form>
 				</v-card-text>
-				<p
+				<v-chip
+					variant="flat"
+					color="red"
 					v-if="notValidLogin"
-					class="red--text px-5"
+					class="mx-5"
 					v-html="notValidLogin"
-				></p>
+				></v-chip>
 				<v-card-actions>
 					<v-btn
 						color="primary"
@@ -176,17 +178,14 @@
 			password: formdata.value.password, // !@#123aAAAaa
 		};
 		try {
-			await userStore.login(loginData);
-			/* let user = await useFetch("/api/user/login", {
-				method: "POST",
-				body: {
-					email: formdata.value.email,
-					password: formdata.value.password,
-				},
-			});
-			console.log(user); */
+			let userInfo = await userStore.login(loginData);
+			if (userInfo.error.value?.data) {
+				notValidLogin.value = userInfo.error.value?.data?.message || "";
+				return;
+			}
+			console.log(userInfo.data?.value);
 		} catch (error) {
-			console.log("error", error);
+			notValidLogin.value = "Něco se pokazilo.";
 		}
 	};
 	const resetPassword = async () => {

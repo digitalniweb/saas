@@ -1,6 +1,8 @@
 // import { defineStore } from "pinia";
 // import jwt from "jsonwebtoken";
 import { loggedUser, loginInformation } from "~/digitalniweb-types";
+import { commonError } from "~/digitalniweb-types/customHelpers/logger";
+import { User } from "~/digitalniweb-types/models/users";
 
 interface State {
 	token: string | null;
@@ -23,10 +25,13 @@ export const useUserStore = defineStore("user", {
 		},
 		async login(data: loginInformation) {
 			console.log("data", data);
-			let loginResponse = await useFetch("/api/user/login", {
-				method: "POST",
-				body: data,
-			});
+			let loginResponse = await useFetch<User, commonError>(
+				"/api/user/login",
+				{
+					method: "POST",
+					body: data,
+				}
+			);
 			// console.log("user", loginResponse.data?.value);
 			// console.log("err", loginResponse?.error?.value?.data);
 			return loginResponse;

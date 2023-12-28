@@ -2,7 +2,11 @@
 	<v-app id="admin">
 		<v-navigation-drawer v-model="drawer">
 			<v-list width="100%" class="text-left">
-				<v-list-item prepend-avatar="/img/logo.png" title="Admin">
+				<v-list-item
+					prepend-avatar="/img/logo.png"
+					title="nickname"
+					subtitle="Admin"
+				>
 				</v-list-item>
 				<v-list-item
 					v-for="[icon, text, href] in links"
@@ -102,6 +106,6 @@
 	]);
 	const links = ref([["mdi-bell-outline", "menu 1", "/"]]);
 	useHead({
-		title: "Admin",
+		title: "Administration",
 	});
 </script>

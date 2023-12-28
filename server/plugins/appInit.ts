@@ -67,6 +67,7 @@ export default defineNitroPlugin(async (nitroApp) => {
 		log({
 			type: "functions",
 			status: "error",
+			message: "'appInit' failed.",
 			error,
 		});
 	}
