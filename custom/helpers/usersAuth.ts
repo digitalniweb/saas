@@ -3,6 +3,7 @@ import { omittedLoggedUserParams } from "../../digitalniweb-custom/variables/use
 import { User } from "../../digitalniweb-types/models/users";
 import { loggedUser } from "../../digitalniweb-types";
 import { commonError } from "../../digitalniweb-types/customHelpers/logger";
+import { getGlobalRoles } from "~/digitalniweb-custom/helpers/getGlobalData";
 
 interface Options {
 	type?: string;
@@ -12,10 +13,10 @@ interface Options {
 
 const accessTokenExpireTime: string = "2m";
 
-function userLoginData(
+async function userLoginData(
 	userData: User,
 	addRefreshToken: boolean = false
-): loggedUser | commonError {
+): Promise<loggedUser | commonError> {
 	try {
 		let user = {} as loggedUser;
 		for (const prop in userData) {
@@ -30,6 +31,15 @@ function userLoginData(
 			user[prop as keyof loggedUser] = userData[prop as keyof loggedUser];
 		}
 
+		let roles = await getGlobalRoles();
+		if (!roles) return { message: "Couldn't get roles from globalData" };
+
+		let role = roles.find((r) => r.id === user.roleId);
+		if (typeof role === "undefined")
+			return { message: "Role is undefined" };
+
+		user.role = role;
+
 		let accessToken: string = generateToken(user, {});
 		if (addRefreshToken) {
 			let refreshToken: string = generateToken(
@@ -43,10 +53,11 @@ function userLoginData(
 		}
 		user.token = accessToken;
 		return user;
-	} catch {
+	} catch (error) {
 		return {
 			code: 403,
 			message: "Token couldn't be generated.",
+			error,
 		} as commonError;
 	}
 }
