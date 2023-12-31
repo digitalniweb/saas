@@ -7,6 +7,7 @@ import {
 	commonError,
 	customLogObject,
 } from "~/digitalniweb-types/customHelpers/logger";
+import { userLoginData } from "../../../custom/helpers/usersAuth";
 
 export default eventHandler(async (event) => {
 	try {
@@ -31,8 +32,8 @@ export default eventHandler(async (event) => {
 		if (data?.status >= 400) event.node.res.statusCode = data.status;
 
 		let responseData = data.data as User | commonError; // if data.status >= 400 -> commonError
-
-		return responseData;
+		if ("code" in responseData && responseData.code) return responseData;
+		return userLoginData(responseData as User, true);
 	} catch (error: any) {
 		console.log(error);
 

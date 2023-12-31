@@ -523,7 +523,8 @@
 			vatId: "VAT123",
 			subscribeNewsletters: true,
 		} as TenantType,
-		email: "test@test.cz",
+		email: "",
+		password: "",
 		passwordCheck: "",
 		agreement: false,
 	} as UserType & additionalFormdataOptions);

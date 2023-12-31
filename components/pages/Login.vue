@@ -174,16 +174,17 @@
 		let validate = await form?.value?.validate();
 		if (!validate?.valid) return;
 		let loginData: loginInformation = {
-			email: formdata.value.email, // test@test.cz
-			password: formdata.value.password, // !@#123aAAAaa
+			email: formdata.value.email, // adminWrong@test.cz
+			password: formdata.value.password, // 123456789!aA
 		};
 		try {
 			let userInfo = await userStore.login(loginData);
-			if (userInfo.error.value?.data) {
+			if (userInfo !== true && userInfo?.error?.value?.data) {
 				notValidLogin.value = userInfo.error.value?.data?.message || "";
 				return;
 			}
-			console.log(userInfo.data?.value);
+			notValidLogin.value = "";
+			console.log(userInfo);
 		} catch (error) {
 			notValidLogin.value = "Něco se pokazilo.";
 		}
