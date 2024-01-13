@@ -3,7 +3,7 @@ import { useLanguagesStore } from "~/store/languages";
  * /cs|en/:slug - default pages
  * /admin/cs|en/:slug - admin pages
  */
-export default defineNuxtRouteMiddleware((to, from) => {
+export default defineNuxtRouteMiddleware((to) => {
 	const languages = useLanguagesStore();
 
 	// !!! logic of this can be used in recognition of what module this is

@@ -1,7 +1,15 @@
 import jwt from "jsonwebtoken";
-import { omittedLoggedUserParams } from "../../digitalniweb-custom/variables/user";
+import {
+	userJWTParams,
+	userLoginResponseParams,
+	userRefreshTokenParams,
+} from "../../digitalniweb-custom/variables/user";
 import { User } from "../../digitalniweb-types/models/users";
-import { loggedUser } from "../../digitalniweb-types";
+import {
+	userJWT,
+	userLoginResponse,
+	userRefreshToken,
+} from "../../digitalniweb-types/users";
 import { commonError } from "../../digitalniweb-types/customHelpers/logger";
 import { getGlobalRoles } from "~/digitalniweb-custom/helpers/getGlobalData";
 
@@ -14,45 +22,59 @@ interface Options {
 const accessTokenExpireTime: string = "2m";
 
 async function userLoginData(
-	userData: User,
+	user: User,
+	usersMsId: number,
 	addRefreshToken: boolean = false
-): Promise<loggedUser | commonError> {
+): Promise<userLoginResponse | commonError> {
 	try {
-		let user = {} as loggedUser;
-		for (const prop in userData) {
-			if (!userData.hasOwnProperty(prop)) continue;
-			if (
-				omittedLoggedUserParams.includes(
-					prop as (typeof omittedLoggedUserParams)[number]
-				)
-			)
-				continue;
-			// @ts-ignore this is correct, but typescript complains
-			user[prop as keyof loggedUser] = userData[prop as keyof loggedUser];
-		}
+		if (isNaN(usersMsId))
+			throw {
+				message: `User login got 'usersMsId=${typeof usersMsId}'`,
+			};
+		let userLogged = {} as userLoginResponse;
+		userLoginResponseParams.forEach((prop) => {
+			if (user[prop] === undefined) return;
+			(userLogged as any)[prop] = user[prop];
+			// the 'as any' is shortcut for this:
+			// if (prop === "id") userLogged[prop] = user[prop];
+			// else if (prop === "roleId") userLogged[prop] = user[prop];
+			// else if (prop === "uuid") userLogged[prop] = user[prop];
+			// else if (prop === "nickname") userLogged[prop] = user[prop];
+			// // etc.
+			// else userLogged[prop] = user[prop];
+		});
 
 		let roles = await getGlobalRoles();
 		if (!roles) return { message: "Couldn't get roles from globalData" };
 
-		let role = roles.find((r) => r.id === user.roleId);
+		let role = roles.find((r) => r.id === userLogged.roleId);
 		if (typeof role === "undefined")
 			return { message: "Role is undefined" };
 
-		user.role = role;
+		userLogged.role = role;
+		userLogged.usersMsId = usersMsId;
 
-		let accessToken: string = generateToken(user, {});
+		let jwtData = {} as userJWT;
+		userJWTParams.forEach((prop) => {
+			if (userLogged[prop] === undefined) return;
+			(jwtData as any)[prop] = userLogged[prop];
+		});
+		let refreshTokenData = {} as userRefreshToken;
+		userRefreshTokenParams.forEach((prop) => {
+			if (userLogged[prop] === undefined) return;
+			(refreshTokenData as any)[prop] = userLogged[prop];
+		});
+
+		let accessToken: string = generateToken(jwtData, {});
 		if (addRefreshToken) {
-			let refreshToken: string = generateToken(
-				{ id: user.id },
-				{
-					type: "refresh",
-					refreshTokenSalt: userData.refreshTokenSalt,
-				}
-			);
-			user.refresh_token = refreshToken;
+			let refreshToken: string = generateToken(refreshTokenData, {
+				type: "refresh",
+				refreshTokenSalt: user.refreshTokenSalt,
+			});
+			userLogged.refresh_token = refreshToken;
 		}
-		user.token = accessToken;
-		return user;
+		userLogged.access_token = accessToken;
+		return userLogged;
 	} catch (error) {
 		return {
 			code: 403,

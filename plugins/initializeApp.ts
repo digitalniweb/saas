@@ -1,7 +1,10 @@
 import { useWebInformationStore } from "~/store/webInformation";
 import { useLanguagesStore } from "~/store/languages";
 import { useMenusStore } from "~/store/menus";
+import { useUserStore } from "~/store/user";
 export default defineNuxtPlugin(async (nuxtApp) => {
+	const userStore = useUserStore();
+	userStore.verifyToken("refresh");
 	const webInformation = useWebInformationStore();
 	await webInformation.loadData();
 

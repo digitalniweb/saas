@@ -1,8 +1,15 @@
-import { loggedUser, loginInformation } from "~/digitalniweb-types";
+import { loginInformation } from "~/digitalniweb-types";
+import {
+	tokenInfo,
+	tokenType,
+	userLoginResponse,
+	userStore,
+} from "~/digitalniweb-types/users";
 import { commonError } from "~/digitalniweb-types/customHelpers/logger";
+import { userStoreParams } from "~/digitalniweb-custom/variables/user";
 
 interface State {
-	user: loggedUser | null;
+	user: userStore | null;
 }
 
 export const useUserStore = defineStore("user", {
@@ -10,28 +17,71 @@ export const useUserStore = defineStore("user", {
 		user: null,
 	}),
 	actions: {
-		setToken(token: string) {
-			if (this.user) this.user.token = token;
-			// this.user = jwt.decode(token) as loggedUser;
+		getToken(type: tokenType) {
+			return localStorage.getItem(
+				type == "access" ? "access_token" : "refresh_token"
+			);
+		},
+		setToken(token: string, type: tokenType) {
+			localStorage.setItem(
+				type == "access" ? "access_token" : "refresh_token",
+				token
+			);
+		},
+		deleteToken(type: tokenType) {
+			localStorage.removeItem(
+				type == "access" ? "access_token" : "refresh_token"
+			);
+		},
+		async verifyToken(type: tokenType) {
+			if (process.server) return;
+			let token: string | null;
+			token = this.getToken(type);
+			if (!token) return;
+			let data = await useFetch<userLoginResponse, commonError>(
+				"/api/user/verifyToken",
+				{
+					method: "POST",
+					body: { token, type } as tokenInfo,
+				}
+			);
 		},
 		logout() {
 			this.user = null;
+			this.deleteToken("access");
+			this.deleteToken("refresh");
 		},
 		async login(data: loginInformation) {
-			console.log("data", data);
-			let loginResponse = await useFetch<loggedUser, commonError>(
+			let loginResponse = await useFetch<userLoginResponse, commonError>(
 				"/api/user/login",
 				{
 					method: "POST",
 					body: data,
+					// this shouldn't be here but in calls which need authorization/authentication
+					// headers: {
+					// 	...useAddJWTAuthHeader(),
+					// },
 				}
 			);
 
 			// if error
 			if (loginResponse?.error?.value?.data) return loginResponse;
 
-			// else user
-			this.user = loginResponse.data?.value;
+			if (loginResponse.data?.value?.access_token)
+				this.setToken(loginResponse.data.value.access_token, "access");
+
+			if (loginResponse.data?.value?.refresh_token)
+				this.setToken(
+					loginResponse.data.value.refresh_token,
+					"refresh"
+				);
+
+			if (!this.user) this.user = {} as userStore;
+			userStoreParams.forEach((prop) => {
+				if (loginResponse?.data?.value?.[prop] === undefined) return;
+				(this.user as any)[prop] = loginResponse.data.value[prop];
+			});
+
 			return true;
 		},
 	},

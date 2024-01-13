@@ -100,7 +100,7 @@
 		},
 		{
 			icon: "mdi-account-arrow-right-outline",
-			url: "/",
+			url: "/logout",
 			title: "Odhlásit se",
 		},
 	]);

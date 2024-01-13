@@ -33,10 +33,12 @@ export default eventHandler(async (event) => {
 
 		let responseData = data.data as User | commonError; // if data.status >= 400 -> commonError
 		if ("code" in responseData && responseData.code) return responseData;
-		return userLoginData(responseData as User, true);
+		return userLoginData(
+			responseData as User,
+			Number(data.headers?.["x-ms-id"]),
+			true
+		);
 	} catch (error: any) {
-		console.log(error);
-
 		if (error?.status >= 500)
 			log({
 				type: "routing",

@@ -129,8 +129,12 @@
 	import { VForm } from "vuetify/components";
 	import { useUserStore } from "@/store/user";
 	import { useLanguagesStore } from "@/store/languages";
+	import { useRouter } from "vue-router";
 
 	import { loginInformation } from "~/digitalniweb-types";
+
+	const router = useRouter();
+
 	const userStore = useUserStore();
 	const languageStore = useLanguagesStore();
 
@@ -184,7 +188,7 @@
 				return;
 			}
 			notValidLogin.value = "";
-			console.log(userInfo);
+			redirectAfterLogin();
 		} catch (error) {
 			notValidLogin.value = "Něco se pokazilo.";
 		}
@@ -203,4 +207,46 @@
 			(v && v.length >= (strongPasswordOptions.minLength || 8)) ||
 			"Zadejte prosim platné přihlašovací údaje",
 	];
+
+	const redirectAfterLogin = async function () {
+		// !!! commented stuff is from vue 2 needs to be ported to vue 3
+		if (userStore?.$state.user?.role?.RoleType?.name === "admin") {
+			// await this.$store.dispatch("getAdminmenu", { force: true });
+			if (
+				router.currentRoute.value.query.redirect &&
+				(router.currentRoute.value.query.redirect as string).startsWith(
+					"/admin"
+				)
+			)
+				return router.push(
+					router.currentRoute.value.query.redirect as string
+				);
+			return router.push("/admin/");
+		} else if (userStore?.$state.user?.role?.RoleType?.name === "user") {
+			if (userStore?.$state.user?.Tenant) {
+				// if (
+				// 	router.currentRoute.value.query.redirect &&
+				// 	(router.currentRoute.value.query.redirect ===
+				// 		this.getModulePath({
+				// 			module: "tenant-order",
+				// 			returnString: true,
+				// 		}) ||
+				// 		router.currentRoute.value.query.redirect ===
+				// 			this.getModulePath({
+				// 				module: "tenant-profile",
+				// 				returnString: true,
+				// 			}))
+				// )
+				// 	return router.push(
+				// 		router.currentRoute.value.query.redirect as string
+				// 	);
+				// return router.push(
+				// 	this.getModulePath({
+				// 		module: "tenant-profile",
+				// 	})
+				// );
+			}
+			return router.push("/");
+		}
+	};
 </script>
