@@ -3,6 +3,7 @@ import AppLanguage from "../../models/apps/appLanguage";
 import { appLanguages } from "~/digitalniweb-types";
 import { Language } from "~/digitalniweb-types/models/globalData";
 import { log } from "~/digitalniweb-custom/helpers/logger";
+import { InferAttributes } from "sequelize";
 
 export default eventHandler(async (event): Promise<appLanguages | unknown> => {
 	try {
@@ -13,13 +14,14 @@ export default eventHandler(async (event): Promise<appLanguages | unknown> => {
 		let languagesArray = {} as appLanguages;
 
 		// get app languages from 'globalData'
-		let { data: appLanguagesData }: { data: Language[] } =
-			await microserviceCall({
-				name: "globalData",
-				path: "/api/languages/listbyids",
-				method: "GET",
-				data: { ids: languagesIds },
-			});
+		let { data: appLanguagesData } = await microserviceCall<
+			InferAttributes<Language>[]
+		>({
+			name: "globalData",
+			path: "/api/languages/listbyids",
+			method: "GET",
+			data: { ids: languagesIds },
+		});
 		let appLanguages = appLanguagesData;
 
 		appLanguages?.forEach((language) => {

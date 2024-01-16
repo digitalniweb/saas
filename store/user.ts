@@ -1,12 +1,15 @@
 import { loginInformation } from "~/digitalniweb-types";
 import {
-	tokenInfo,
 	tokenType,
+	tokensJWT,
+	userJWT,
 	userLoginResponse,
 	userStore,
 } from "~/digitalniweb-types/users";
 import { commonError } from "~/digitalniweb-types/customHelpers/logger";
 import { userStoreParams } from "~/digitalniweb-custom/variables/user";
+import { filterStoreparams } from "~/custom/users";
+import { JwtPayload } from "jsonwebtoken";
 
 interface State {
 	user: userStore | null;
@@ -33,18 +36,26 @@ export const useUserStore = defineStore("user", {
 				type == "access" ? "access_token" : "refresh_token"
 			);
 		},
-		async verifyToken(type: tokenType) {
+		async verifyAccessToken() {
 			if (process.server) return;
-			let token: string | null;
-			token = this.getToken(type);
-			if (!token) return;
-			let data = await useFetch<userLoginResponse, commonError>(
-				"/api/user/verifyToken",
-				{
-					method: "POST",
-					body: { token, type } as tokenInfo,
-				}
-			);
+			let accessToken = this.getToken("access");
+			let refreshToken = this.getToken("refresh");
+			if (!accessToken || !refreshToken) return;
+			let data = await useFetch<
+				userLoginResponse | JwtPayload,
+				commonError
+			>("/api/user/verifyAccessToken", {
+				method: "POST",
+				body: { accessToken, refreshToken } as tokensJWT,
+			});
+			if (!data.data.value || data.error.value) {
+				this.deleteToken("access");
+				this.deleteToken("refresh");
+				return;
+			}
+			if (!this.user) this.user = {} as userStore;
+			if (!data?.data?.value) return null;
+			this.user = filterStoreparams(data.data.value);
 		},
 		logout() {
 			this.user = null;
@@ -77,10 +88,8 @@ export const useUserStore = defineStore("user", {
 				);
 
 			if (!this.user) this.user = {} as userStore;
-			userStoreParams.forEach((prop) => {
-				if (loginResponse?.data?.value?.[prop] === undefined) return;
-				(this.user as any)[prop] = loginResponse.data.value[prop];
-			});
+			if (!loginResponse?.data?.value) return null;
+			this.user = filterStoreparams(loginResponse.data.value);
 
 			return true;
 		},

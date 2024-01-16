@@ -12,6 +12,7 @@ import {
 } from "../../digitalniweb-types/users";
 import { commonError } from "../../digitalniweb-types/customHelpers/logger";
 import { getGlobalRoles } from "~/digitalniweb-custom/helpers/getGlobalData";
+import { InferAttributes } from "sequelize";
 
 interface Options {
 	type?: string;
@@ -22,7 +23,7 @@ interface Options {
 const accessTokenExpireTime: string = "2m";
 
 async function userLoginData(
-	user: User,
+	user: InferAttributes<User>,
 	usersMsId: number,
 	addRefreshToken: boolean = false
 ): Promise<userLoginResponse | commonError> {

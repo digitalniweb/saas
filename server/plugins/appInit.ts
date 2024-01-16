@@ -17,9 +17,9 @@ export default defineNitroPlugin(async (nitroApp) => {
 		let app = await registerCurrentApp();
 
 		if (process.env.APP_TYPE !== "saas-host") return;
-		let websiteInfo: Website;
+		let websiteInfo: Website | null;
 		try {
-			let { data }: { data: Website } = await microserviceCall({
+			let { data } = await microserviceCall<Website>({
 				name: "websites",
 				path: "/api/getwebsiteinfo",
 				data: {
@@ -44,7 +44,7 @@ export default defineNitroPlugin(async (nitroApp) => {
 				mainLanguageId: app.LanguageId,
 			};
 			// create a new website and url in websites_ms
-			let { data }: { data: Website } = await microserviceCall({
+			let { data } = await microserviceCall<Website>({
 				name: "websites",
 				path: "/api/createwebsite",
 				method: "POST",
