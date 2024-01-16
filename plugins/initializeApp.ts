@@ -4,7 +4,7 @@ import { useMenusStore } from "~/store/menus";
 import { useUserStore } from "~/store/user";
 export default defineNuxtPlugin(async (nuxtApp) => {
 	const userStore = useUserStore();
-	userStore.verifyAccessToken();
+	await userStore.verifyAccessToken();
 	const webInformation = useWebInformationStore();
 	await webInformation.loadData();
 

@@ -126,7 +126,6 @@
 	</v-expand-transition>
 </template>
 <script setup lang="ts">
-	import { onMounted } from "vue";
 	import { VForm } from "vuetify/components";
 	import { useUserStore } from "@/store/user";
 	import { useLanguagesStore } from "@/store/languages";
@@ -139,7 +138,7 @@
 	const userStore = useUserStore();
 	const languageStore = useLanguagesStore();
 
-	onMounted(async () => {
+	onBeforeMount(async () => {
 		if (userStore.user?.role?.RoleType?.name === "admin")
 			await navigateTo("/admin");
 	});
