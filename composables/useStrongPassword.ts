@@ -1,12 +1,11 @@
 import isStrongPasswordValidator from "validator/es/lib/isStrongPassword";
-import validatorTypes from "validator";
+import { StrongPasswordOptions } from "validator";
 import { generatePassword as generateStrongPassword } from "~/digitalniweb-custom/functions/randomGenerator";
 
 import { useSnackBarsStore } from "@/store/snackBars";
 import { languages } from "~/digitalniweb-types";
 
-// this type comes from "validatorTypes.isStrongPassword() 'options' parameter"
-type strongPasswordOptions = validatorTypes.StrongPasswordOptions & {
+type strongPasswordOptions = StrongPasswordOptions & {
 	returnScore?: false | undefined;
 };
 export const useStrongPassword = () => {
@@ -34,7 +33,7 @@ export const useStrongPassword = () => {
 	const getPasswordScore = (
 		password = "",
 		options = strongPasswordOptions
-	) => {
+	): number => {
 		return isStrongPasswordValidator(password, {
 			...options,
 			returnScore: true,

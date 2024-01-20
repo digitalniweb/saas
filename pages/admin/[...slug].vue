@@ -1,4 +1,7 @@
 <template>
+	<ClientOnly>
+		<Editor v-if="editorConfig" :init="editorConfig" />
+	</ClientOnly>
 	<v-card v-for="card in cards" :key="card" cols="12">
 		<v-list lines="two">
 			<v-list-subheader>{{ card }}</v-list-subheader>
@@ -26,6 +29,9 @@
 	</v-card>
 </template>
 <script setup>
+	import { useEditor } from "~/composables/useEditor";
+	const { Editor, editorConfig } = useEditor();
+
 	definePageMeta({
 		layout: "admin",
 	});
