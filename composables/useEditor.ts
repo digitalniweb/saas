@@ -4,6 +4,8 @@ let tinymce: tinymceImport | undefined;
 // import innerLink from "./plugins/innerLink.js"; // this file can be anywhere, get it from vue2 project
 let editorConfig: Partial<EditorOptions> = {};
 
+import { useLanguagesStore } from "@/store/languages";
+
 if (process.client) {
 	tinymce = (await import("tinymce")).default;
 
@@ -13,12 +15,6 @@ if (process.client) {
 	tinymce.baseURL = "/tinymce";
 
 	// Editor = (await import("@tinymce/tinymce-vue")).default;
-
-	// need to be done - add useStore language and refactor it
-	// let language_url =
-	// 	store.state.language.admin.currentMutation === "en"
-	// 		? ""
-	// 		: "/tinymce/langs/" + store.state.language.admin.currentMutation + ".js";
 
 	editorConfig = {
 		promotion: false,
@@ -33,9 +29,7 @@ if (process.client) {
 		// (dis)allow valid elements and attributes
 		valid_elements: "*[*]",
 
-		//languages
-		// language: store.state.language.admin.currentMutation,
-		// language_url,
+		//languages are set down in export function because of pinia store
 
 		// file urls
 		relative_urls: false,
@@ -98,6 +92,11 @@ if (process.client) {
 }
 
 export const useEditor = () => {
+	const languageStore = useLanguagesStore();
+
+	let language_url = "/tinymce/langs/" + languageStore.$state.current + ".js";
+	editorConfig.language_url = language_url;
+	editorConfig.language = languageStore.$state.current ?? "";
 	return {
 		Editor: process.client ? Editor : null,
 		editorConfig,

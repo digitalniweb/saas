@@ -1,9 +1,9 @@
-// import { defineStore } from "pinia";
+import { log } from "~/digitalniweb-custom/helpers/logger";
 import { appLanguages, languages } from "~/digitalniweb-types";
 
 export const useLanguagesStore = defineStore("languages", {
 	state: () => ({
-		appLanguages: {} as appLanguages, // all possible app's mutations
+		appLanguages: {} as appLanguages | null, // all possible app's mutations
 		languages: [] as languages[], // current website's languages
 		main: null as languages | null, // current main language id
 		current: null as languages | null, // currently picked language
@@ -11,20 +11,25 @@ export const useLanguagesStore = defineStore("languages", {
 	getters: {},
 	actions: {
 		async loadData() {
-			let globalDataLanguages = await useFetch("/api/app/languages");
+			let globalDataLanguages = await useFetch<appLanguages>(
+				"/api/app/languages"
+			);
 
 			if (globalDataLanguages.error.value) {
-				// I don't know if this can ever get logged out
-				// !!! If it does it should get logged by logs_ms
-				console.log(
-					"useLanguagesStore globalDataLanguages error",
-					globalDataLanguages.error.value
-				);
+				log({
+					type: "functions",
+					message: "useLanguagesStore globalDataLanguages error",
+					error: globalDataLanguages.error.value,
+				});
 			}
 
-			let appLanguages = globalDataLanguages.data.value as appLanguages;
+			let appLanguages = globalDataLanguages.data.value;
 
-			this.appLanguages = appLanguages ?? [];
+			this.appLanguages = appLanguages;
+
+			const config = useRuntimeConfig();
+			this.main = config.public.defaultLanguage as languages;
+			this.current = config.public.defaultLanguage as languages;
 
 			/* let websiteLanguages = await useFetch("/api/website/languages", {
 				query: { id: 1 },

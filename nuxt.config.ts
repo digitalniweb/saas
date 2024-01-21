@@ -29,7 +29,10 @@ export default defineNuxtConfig({
 	pages: true,
 	runtimeConfig: {
 		apiSecret: process.env.NUXT_API_SECRET,
-		public: { apiBase: process.env.NUXT_PUBLIC_API_BASE || "/api" },
+		public: {
+			apiBase: process.env.NUXT_PUBLIC_API_BASE || "/api",
+			defaultLanguage: process.env.DEFAULT_LANGUAGE || "en",
+		},
 	},
 	app: {
 		head: {
