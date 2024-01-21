@@ -48,5 +48,9 @@ export default eventHandler(async (event) => {
 			url: "/login",
 			name: "login",
 		},
+		{
+			url: "/admin",
+			name: "admin",
+		},
 	];
 });

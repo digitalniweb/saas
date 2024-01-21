@@ -32,6 +32,9 @@
 		},
 		{ deep: true, immediate: true }
 	);
+	definePageMeta({
+		layout: "default",
+	});
 	/*
 	// this doesn't unfortunatelly work
 	const route = useRoute();

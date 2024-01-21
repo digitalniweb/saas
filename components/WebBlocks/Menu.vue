@@ -6,5 +6,5 @@
 <script setup>
 	import { useMenusStore } from "@/store/menus";
 	import { storeToRefs } from "pinia";
-	const { articles: menu } = await storeToRefs(useMenusStore());
+	const { articles: menu } = storeToRefs(useMenusStore());
 </script>

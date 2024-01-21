@@ -7,9 +7,7 @@
 	</v-footer>
 </template>
 <script setup>
-	// load menu from /api/website/footer.get
-
-	const { data: footer } = await useFetch("/api/website/footer");
+	const { data: footer } = useFetch("/api/website/footer");
 
 	const footerStyle = computed(() =>
 		useElementStyle(footer.value.appereance.style)

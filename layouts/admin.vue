@@ -104,7 +104,10 @@
 			title: "Odhlásit se",
 		},
 	]);
-	const links = ref([["mdi-bell-outline", "menu 1", "/"]]);
+	const links = ref([
+		["mdi-bell-outline", "Hlavní strana Admin", "/admin"],
+		["mdi-bell-outline", "Test", "/admin/test"],
+	]);
 	useHead({
 		title: "Administration",
 	});
