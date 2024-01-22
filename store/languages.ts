@@ -16,11 +16,12 @@ export const useLanguagesStore = defineStore("languages", {
 			);
 
 			if (globalDataLanguages.error.value) {
-				log({
-					type: "functions",
-					message: "useLanguagesStore globalDataLanguages error",
-					error: globalDataLanguages.error.value,
-				});
+				// !!! need to use useFetch('/api/log',{customLogObject}) to call log from backend, this is wrong, otherwise ioredis Publisher complains with 'process.version' error
+				// log({
+				// 	type: "functions",
+				// 	message: "useLanguagesStore globalDataLanguages error",
+				// 	error: globalDataLanguages.error.value,
+				// });
 			}
 
 			let appLanguages = globalDataLanguages.data.value;

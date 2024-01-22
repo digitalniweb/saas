@@ -94,9 +94,9 @@ if (process.client) {
 export const useEditor = () => {
 	const languageStore = useLanguagesStore();
 
-	let language_url = "/tinymce/langs/" + languageStore.$state.current + ".js";
+	let language_url = "/tinymce/langs/" + languageStore.current + ".js";
 	editorConfig.language_url = language_url;
-	editorConfig.language = languageStore.$state.current ?? "";
+	editorConfig.language = languageStore.current ?? "";
 	return {
 		Editor: process.client ? Editor : null,
 		editorConfig,
