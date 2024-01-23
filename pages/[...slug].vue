@@ -3,17 +3,17 @@
 </template>
 <script setup lang="ts">
 	// Here needs to be list of all global components which we want to dynamically use. Then we need to import these components from '#components' and add this to 'components' variable
-	type componentNames = "ContentUser" | "PagesLogin";
+	type componentNames = "WebContentUser" | "WebPagesLogin";
 
-	import { ContentUser, PagesLogin } from "#components";
+	import { WebContentUser, WebPagesLogin } from "#components";
 	import { computed, ref, watch } from "#imports";
 	import { useRoute } from "nuxt/app";
 	import type { GlobalComponents } from "vue-demi";
 
 	type components = Pick<GlobalComponents, componentNames>;
 	const components = {
-		ContentUser,
-		PagesLogin,
+		WebContentUser,
+		WebPagesLogin,
 	};
 	const route = useRoute();
 	const componentName = ref<componentNames | "div">("div");
@@ -21,8 +21,8 @@
 		componentName.value !== "div" ? components[componentName.value] : "div"
 	);
 	const loadPage = () => {
-		if (route.path === "/user") componentName.value = "ContentUser";
-		else if (route.path === "/login") componentName.value = "PagesLogin";
+		if (route.path === "/user") componentName.value = "WebContentUser";
+		else if (route.path === "/login") componentName.value = "WebPagesLogin";
 		else componentName.value = "div";
 	};
 	watch(

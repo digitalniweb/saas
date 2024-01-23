@@ -8,6 +8,7 @@
 					subtitle="Admin"
 				>
 				</v-list-item>
+				<AdminBlocksMenu />
 				<v-list-item
 					v-for="[icon, text, href] in links"
 					:key="icon"

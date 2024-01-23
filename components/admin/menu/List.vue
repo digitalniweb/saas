@@ -1,23 +1,8 @@
-<template>
-	<ul :class="ulclass" :id="ulid">
-		<li v-for="(item, id) in levelitems" :key="id">
-			<v-btn :to="item.url" nuxt>
-				<v-icon v-if="item.icon" class="mr-2">
-					mdi-{{ item.icon }}
-				</v-icon>
-				{{ item.name }}
-				<v-icon v-if="item.children" class="ml-2">
-					mdi-chevron-down
-				</v-icon>
-			</v-btn>
-			<MenuList :levelitems="item.children" />
-		</li>
-	</ul>
-</template>
+<template>test</template>
 
 <script>
 	export default {
-		name: "MenuList",
+		name: "AdminMenuList",
 		components: {},
 		data: function () {
 			return {
