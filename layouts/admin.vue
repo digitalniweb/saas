@@ -9,14 +9,6 @@
 				>
 				</v-list-item>
 				<AdminBlocksMenu />
-				<v-list-item
-					v-for="[icon, text, href] in links"
-					:key="icon"
-					:to="href"
-					:prepend-icon="icon"
-				>
-					<v-list-item-title>{{ text }}</v-list-item-title>
-				</v-list-item>
 			</v-list>
 		</v-navigation-drawer>
 
@@ -104,10 +96,6 @@
 			url: "/logout",
 			title: "Odhlásit se",
 		},
-	]);
-	const links = ref([
-		["mdi-shield-home-outline", "Hlavní strana Admin", "/admin"],
-		["mdi-cogs", "Informace o webu", "/admin/webinformation"],
 	]);
 	useHead({
 		title: "Administration",

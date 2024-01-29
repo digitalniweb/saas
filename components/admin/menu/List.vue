@@ -1,25 +1,21 @@
-<template>test</template>
+<template>
+	<v-list-item
+		v-for="[icon, text, href] in links"
+		:key="icon"
+		:to="href"
+		:prepend-icon="icon"
+	>
+		<v-list-item-title>{{ text }}</v-list-item-title>
+	</v-list-item>
+</template>
 
-<script>
-	export default {
-		name: "AdminMenuList",
-		components: {},
-		data: function () {
-			return {
-				// buttons: this.buttonsProps || {}, // need to do this because of SSR (otherwise submenus aren't rendered) - this would be ok If I didn't need reactivity. Need to do this a computed property
-			};
-		},
-		props: {
-			ulclass: String,
-			ulid: String,
-			levelitems: Array,
-			buttonsProps: Object,
-		},
-		computed: {
-			buttons: function () {
-				// need to do this because of reactivity and SSR (otherwise submenus aren't rendered and reactivity in admin when adjusting menu options doesn't work)
-				return this.buttonsProps || {};
-			},
-		},
-	};
+<script setup>
+	const links = ref([
+		["mdi-shield-home-outline", "Hlavní strana Admin", "/admin"],
+		["mdi-cogs", "Informace o webu", "/admin/webinformation"],
+		["mdi-text-box-edit-outline", "Test editoru", "/admin/testeditor"],
+	]);
+	const props = defineProps({
+		levelitems: Array,
+	});
 </script>

@@ -1,0 +1,3 @@
+<template>
+	<CustomEditor></CustomEditor>
+</template>
