@@ -21,9 +21,11 @@
 		componentName.value !== "div" ? components[componentName.value] : "div"
 	);
 	const loadPage = () => {
-		if (route.path === "/user") componentName.value = "WebContentUser";
-		else if (route.path === "/login") componentName.value = "WebPagesLogin";
-		else componentName.value = "div";
+		let routes: { [key: string]: componentNames } = {
+			"/user": "WebContentUser",
+			"/login": "WebPagesLogin",
+		};
+		componentName.value = routes[route.path] ?? "div";
 	};
 	watch(
 		route,

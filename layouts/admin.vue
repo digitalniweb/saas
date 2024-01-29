@@ -106,8 +106,8 @@
 		},
 	]);
 	const links = ref([
-		["mdi-bell-outline", "Hlavní strana Admin", "/admin"],
-		["mdi-bell-outline", "Test", "/admin/test"],
+		["mdi-shield-home-outline", "Hlavní strana Admin", "/admin"],
+		["mdi-cogs", "Informace o webu", "/admin/webinformation"],
 	]);
 	useHead({
 		title: "Administration",
