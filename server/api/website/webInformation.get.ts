@@ -12,24 +12,30 @@ export default eventHandler(async (event) => {
 			InferAttributes<Website>
 		>({
 			name: "websites",
-			path: "/api/website/url/:" + url,
+			path: "/api/url/" + url,
 			scope: "all",
 		});
+
+		// !!! I need to save this info somewhere
 		let mainWebsiteInfo = mainWebsiteInfoData;
-		console.log("mainWebsiteInfo", mainWebsiteInfo);
+		console.log("allWebsiteInfo", mainWebsiteInfo);
 
 		if (!mainWebsiteInfo) return false;
+
+		// !!! languageId needs to be current, not 1
 		let { data: websiteInfoData } = await microserviceCall<
 			InferAttributes<WebInformation>
 		>({
 			name: "content",
 			id: mainWebsiteInfo.contentMsId,
 			path: "/api/current/webinformation",
-			scope: "all",
+			data: {
+				id: mainWebsiteInfo.id,
+				languageId: 1,
+			},
 		});
 		let websiteInfo = websiteInfoData;
-		console.log("mainWebsiteInfo", mainWebsiteInfo);
-		console.log("allWebsiteInfo", websiteInfo);
+		console.log("websiteInfo", websiteInfo || "no info");
 
 		return {
 			all: {},
