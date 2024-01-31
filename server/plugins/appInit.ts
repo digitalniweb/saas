@@ -21,10 +21,7 @@ export default defineNitroPlugin(async (nitroApp) => {
 		try {
 			let { data } = await microserviceCall<Website>({
 				name: "websites",
-				path: "/api/getwebsiteinfo",
-				data: {
-					url: process.env["HOST"],
-				},
+				path: "/api/url/" + process.env["HOST"],
 			});
 			websiteInfo = data;
 		} catch (error) {
@@ -46,7 +43,7 @@ export default defineNitroPlugin(async (nitroApp) => {
 			// create a new website and url in websites_ms
 			let { data } = await microserviceCall<Website>({
 				name: "websites",
-				path: "/api/createwebsite",
+				path: "/api/create",
 				method: "POST",
 				data: {
 					website: websiteData,

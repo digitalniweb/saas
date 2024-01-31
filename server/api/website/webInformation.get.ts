@@ -12,10 +12,7 @@ export default eventHandler(async (event) => {
 			InferAttributes<Website>
 		>({
 			name: "websites",
-			path: "/api/getcurrentwebsite",
-			data: {
-				url,
-			},
+			path: "/api/website/url/:" + url,
 			scope: "all",
 		});
 		let mainWebsiteInfo = mainWebsiteInfoData;

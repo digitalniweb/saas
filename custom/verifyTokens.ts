@@ -19,7 +19,7 @@ const verifyRefreshToken = async function (token: string) {
 		let userData = await microserviceCall<InferAttributes<User>>({
 			name: "users",
 			method: "GET",
-			path: "/api/users/getbyid/" + refreshTokenData.id,
+			path: "/api/users/id/" + refreshTokenData.id,
 			id: refreshTokenData.usersMsId,
 		});
 

@@ -9,6 +9,8 @@ export const useWebInformationStore = defineStore("webInformation", {
 	actions: {
 		async loadData() {
 			let requestUrl = useRequestURL();
+			console.log(requestUrl);
+
 			let webInfo = await useFetch(
 				`/api/website/webInformation?url=${requestUrl.hostname}`
 			);
