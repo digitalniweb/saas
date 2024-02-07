@@ -11,8 +11,8 @@ import {
 	userRefreshToken,
 } from "../../digitalniweb-types/users";
 import { commonError } from "../../digitalniweb-types/customHelpers/logger";
-import { getGlobalRoles } from "~/digitalniweb-custom/helpers/getGlobalData";
 import { InferAttributes } from "sequelize";
+import { getGlobalDataList } from "~/digitalniweb-custom/helpers/getGlobalData";
 
 interface Options {
 	type?: string;
@@ -45,7 +45,7 @@ async function userLoginData(
 			// else userLogged[prop] = user[prop];
 		});
 
-		let roles = await getGlobalRoles();
+		let roles = await getGlobalDataList("roles");
 		if (!roles) return { message: "Couldn't get roles from globalData" };
 
 		let role = roles.find((r) => r.id === userLogged.roleId);
