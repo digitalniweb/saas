@@ -8,7 +8,7 @@
 			</p>
 			<p class="mb-5" v-html="errorMessage"></p>
 			<div class="mb-5" v-if="errorStack" v-html="errorStack"></div>
-			<p>
+			<p v-if="showRedirectButton">
 				<v-btn
 					@click="handleError"
 					prepend-icon="mdi-home"
@@ -27,7 +27,7 @@
 	const route = useRoute();
 	if (route.params.slug == "error") {
 		throw createError({
-			statusCode: 404,
+			statusCode: '404',
 			name: "NotFoundError",
 			message: "Todo not found",
 			statusMessage: "Not Found",
@@ -37,16 +37,19 @@
 	const props = defineProps({ error: Object });
 
 	const errorMessage = ref("Oops! Something went wrong 😔");
-	const errorStack = ref("");
+	const errorStack = ref(false);
+	const showRedirectButton = ref(true);
 
 	if (process.env.NODE_ENV === "production") {
-		if (props.error.statusCode == 404) {
-			props.value = "Oops! Page not found 😔";
+		if (props.error.statusCode == "404") {
+			errorMessage.value = "Oops! Page not found 😔";
 		}
 	} else {
-		errorMessage.value = "Message: " + props.error.message;
-		errorStack.value = props.error.stack;
+		errorMessage.value = props.error.statusMessage || props.error.message;
+		errorStack.value = props.error.stack ?? false;
 	}
+	console.log(JSON.parse(props?.error?.data));
+	showRedirectButton.value = props?.error?.data?.showRedirectButton ?? true;
 
 	const errorStyle = useElementStyle({
 		"background-image": "url('/img/error.jpg')",
