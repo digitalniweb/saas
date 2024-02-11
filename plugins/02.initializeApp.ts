@@ -4,16 +4,17 @@ import { useLanguagesStore } from "~/store/languages";
 import { useMenusStore } from "~/store/menus";
 import { useUserStore } from "~/store/user";
 export default defineNuxtPlugin(async (nuxtApp) => {
-	throw createError({
-		statusCode: 404,
-		statusMessage: "Website doesn't exist.",
-		fatal: false,
-		data: {
-			showRedirectButton: false,
-		},
-	});
 	const website = useWebsiteStore();
-	await website.loadData();
+	if (!(await website.loadData())) {
+		throw createError({
+			statusCode: 404,
+			statusMessage: "Website doesn't exist.",
+			fatal: false,
+			data: {
+				showRedirectButton: false,
+			},
+		});
+	}
 
 	const userStore = useUserStore();
 	await userStore.verifyAccessToken();

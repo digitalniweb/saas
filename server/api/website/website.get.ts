@@ -2,7 +2,6 @@ import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureC
 import { getQuery } from "h3";
 import { log } from "~/digitalniweb-custom/helpers/logger";
 import { Website } from "~/digitalniweb-types/models/websites";
-import { WebInformation } from "~/digitalniweb-types/models/content";
 import { InferAttributes } from "sequelize";
 
 export default eventHandler(async (event) => {
@@ -16,9 +15,7 @@ export default eventHandler(async (event) => {
 			scope: "all",
 		});
 
-		// !!! I need to save this info somewhere
 		let mainWebsiteInfo = mainWebsiteInfoData;
-		console.log("allWebsiteInfo", mainWebsiteInfo);
 
 		if (!mainWebsiteInfo) return false;
 		return mainWebsiteInfo;

@@ -1,4 +1,3 @@
-import { log } from "~/digitalniweb-custom/helpers/logger";
 import { appLanguages, languages } from "~/digitalniweb-types";
 
 export const useLanguagesStore = defineStore("languages", {

@@ -1,18 +1,20 @@
+import { useWebsiteStore } from "~/store/website";
+// import { useLanguagesStore } from "./languages";
 export const useWebInformationStore = defineStore("webInformation", {
 	state: () => ({
-		all: {}, // for all mutations
+		data: {}, // for all mutations
 		en: {},
 	}),
 	getters: {},
 	actions: {
 		async loadData() {
-			let requestUrl = useRequestURL();
+			const website = useWebsiteStore();
+			// const languages = useLanguagesStore();
 			let webInfo = await useFetch(
-				`/api/website/webInformation?url=${requestUrl.hostname}`
+				`/api/website/webInformation?contentMsId=${website.data?.contentMsId}&id=${website.data?.id}`
 			);
 			if (!webInfo.data.value) return false;
-			this.en = webInfo.data.value?.en ?? {};
-			this.all = webInfo.data.value?.all ?? {};
+			this.data = webInfo.data.value;
 		},
 	},
 });
