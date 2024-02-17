@@ -14,7 +14,11 @@
 					</v-toolbar-title>
 				</v-toolbar>
 				<v-card-text>
-					<v-form ref="form" lazy-validation :disabled="disabled">
+					<v-form
+						ref="form"
+						lazy-validation
+						:disabled="props.disabled"
+					>
 						<slot></slot>
 					</v-form>
 				</v-card-text>
@@ -24,7 +28,10 @@
 </template>
 <script setup lang="ts">
 	import { formHeader } from "~/types/components/form";
-	const props = defineProps<{ formHeader?: formHeader }>();
+	const props = defineProps<{
+		formHeader?: formHeader;
+		disabled?: boolean;
+	}>();
 
 	// we have to create computed property if we want props as nested objects with default values
 	let formHeader = computed(
@@ -33,6 +40,4 @@
 			headline: props.formHeader?.headline || "Form",
 		})
 	);
-
-	const disabled = ref(false);
 </script>
