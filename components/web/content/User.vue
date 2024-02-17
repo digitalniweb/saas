@@ -6,7 +6,7 @@
 					color="primary"
 					prominent
 					flat
-					src="https://images.pexels.com/photos/196655/pexels-photo-196655.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
+					image="https://images.pexels.com/photos/196655/pexels-photo-196655.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
 				>
 					<v-overlay class="absolute" z-index="0"></v-overlay>
 					<v-toolbar-title class="relative white--text">
