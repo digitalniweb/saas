@@ -357,6 +357,7 @@
 			cs: "Bankovní IBAN",
 		},
 	};
+	import { useSnackBarsStore } from "~/store/snackBars";
 	import { useWebInformationStore } from "~/store/webInformation";
 	import { formHeader } from "~/types/components/form";
 	const formHeader = ref<formHeader>({
@@ -374,8 +375,20 @@
 	const saveWebInformation = async () => {
 		disabled.value = true;
 		let dataDifference = formdataWebInformation.dataDifference();
-		// await webInformationStore.saveData();
-		formdataWebInformation.saveDataDifference(dataDifference);
+		if (Object.getOwnPropertyNames(dataDifference).length === 0) {
+			disabled.value = false;
+			return;
+		}
+		try {
+			await webInformationStore.saveData(dataDifference);
+			formdataWebInformation.saveDataDifference(dataDifference);
+		} catch {
+			useSnackBarsStore().setSnackBar({
+				text: "Nepodařilo se uložit informace o webu.",
+				color: "red",
+				icon: "alert-circle",
+			});
+		}
 		disabled.value = false;
 	};
 </script>

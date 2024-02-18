@@ -77,6 +77,7 @@
 				</v-row>
 			</v-container>
 		</v-main>
+		<CustomSnackBars />
 	</v-app>
 </template>
 

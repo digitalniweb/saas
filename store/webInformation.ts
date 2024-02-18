@@ -34,6 +34,26 @@ export const useWebInformationStore = defineStore("webInformation", {
 			// if (!webInfo.data.value) return false;
 			// this.data = webInfo.data.value;
 		},
-		async saveData() {},
+		async saveData(data: Partial<InferAttributes<WebInformation>>) {
+			let response = await useFetch<boolean>(
+				"/api/website/webinformation.patch.ts",
+				{
+					method: "PATCH",
+					body: {
+						data,
+						websiteId: this.data.websiteId,
+						websitesMsId: this.data.websitesMsId,
+					},
+				}
+			);
+			console.log(response.data.value);
+			console.log(response.error.value);
+
+			if (
+				response.error.value?.statusCode ||
+				response.data.value == false
+			)
+				throw response.error.value;
+		},
 	},
 });
