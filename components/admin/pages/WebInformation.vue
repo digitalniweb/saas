@@ -9,7 +9,7 @@
 					name="name"
 					counter="127"
 					prepend-inner-icon="mdi-domain"
-					v-model="webInformationStore.data.name"
+					v-model="formdata.name"
 					dense
 				/>
 				<v-text-field
@@ -19,7 +19,7 @@
 					name="mainImage"
 					counter="255"
 					prepend-inner-icon="mdi-image"
-					v-model="webInformationStore.data.mainImage"
+					v-model="formdata.mainImage"
 					dense
 				/>
 
@@ -30,7 +30,7 @@
 					name="logo"
 					counter="255"
 					prepend-inner-icon="mdi-image"
-					v-model="webInformationStore.data.logo"
+					v-model="formdata.logo"
 					dense
 				/>
 
@@ -41,7 +41,7 @@
 					name="favicon"
 					counter="255"
 					prepend-inner-icon="mdi-image"
-					v-model="webInformationStore.data.favicon"
+					v-model="formdata.favicon"
 					dense
 				/>
 
@@ -52,7 +52,7 @@
 					name="googleTagManager"
 					counter="31"
 					prepend-inner-icon="mdi-tag"
-					v-model="webInformationStore.data.googleTagManager"
+					v-model="formdata.googleTagManager"
 					dense
 				/>
 
@@ -60,7 +60,7 @@
 					id="googleTagManagerActive"
 					:label="translations.googleTagManagerActive.cs"
 					name="googleTagManagerActive"
-					v-model="webInformationStore.data.googleTagManagerActive"
+					v-model="formdata.googleTagManagerActive"
 				/>
 
 				<v-text-field
@@ -70,7 +70,7 @@
 					name="owner"
 					counter="127"
 					prepend-inner-icon="mdi-account"
-					v-model="webInformationStore.data.owner"
+					v-model="formdata.owner"
 					dense
 				/>
 				<v-text-field
@@ -80,7 +80,7 @@
 					name="tin"
 					counter="15"
 					prepend-inner-icon="mdi-card-account-details"
-					v-model="webInformationStore.data.tin"
+					v-model="formdata.tin"
 					dense
 				/>
 
@@ -91,7 +91,7 @@
 					name="vatId"
 					counter="15"
 					prepend-inner-icon="mdi-card-account-details"
-					v-model="webInformationStore.data.vatId"
+					v-model="formdata.vatId"
 					dense
 				/>
 
@@ -102,7 +102,7 @@
 					name="country"
 					counter="31"
 					prepend-inner-icon="mdi-earth"
-					v-model="webInformationStore.data.country"
+					v-model="formdata.country"
 					dense
 				/>
 				<v-text-field
@@ -112,7 +112,7 @@
 					name="city"
 					counter="31"
 					prepend-inner-icon="mdi-city"
-					v-model="webInformationStore.data.city"
+					v-model="formdata.city"
 					dense
 				/>
 
@@ -123,7 +123,7 @@
 					name="zip"
 					counter="15"
 					prepend-inner-icon="mdi-home-search"
-					v-model="webInformationStore.data.zip"
+					v-model="formdata.zip"
 					dense
 				/>
 
@@ -134,7 +134,7 @@
 					name="streetAddress"
 					counter="63"
 					prepend-inner-icon="mdi-home-city"
-					v-model="webInformationStore.data.streetAddress"
+					v-model="formdata.streetAddress"
 					dense
 				/>
 
@@ -145,7 +145,7 @@
 					name="houseNumber"
 					counter="7"
 					prepend-inner-icon="mdi-home-floor-1"
-					v-model="webInformationStore.data.houseNumber"
+					v-model="formdata.houseNumber"
 					dense
 				/>
 
@@ -156,7 +156,7 @@
 					name="landRegistryNumber"
 					counter="31"
 					prepend-inner-icon="mdi-home-floor-2"
-					v-model="webInformationStore.data.landRegistryNumber"
+					v-model="formdata.landRegistryNumber"
 					dense
 				/>
 
@@ -167,7 +167,7 @@
 					name="addressPattern"
 					counter="63"
 					prepend-inner-icon="mdi-home-edit"
-					v-model="webInformationStore.data.addressPattern"
+					v-model="formdata.addressPattern"
 					dense
 				/>
 
@@ -178,7 +178,7 @@
 					name="fullAddress"
 					counter="255"
 					prepend-inner-icon="mdi-home-map-marker"
-					v-model="webInformationStore.data.fullAddress"
+					v-model="formdata.fullAddress"
 					dense
 				/>
 
@@ -189,7 +189,7 @@
 					name="telephone"
 					counter="15"
 					prepend-inner-icon="mdi-phone"
-					v-model="webInformationStore.data.telephone"
+					v-model="formdata.telephone"
 					dense
 				/>
 
@@ -200,7 +200,7 @@
 					name="email"
 					counter="63"
 					prepend-inner-icon="mdi-email"
-					v-model="webInformationStore.data.email"
+					v-model="formdata.email"
 					dense
 				/>
 
@@ -211,7 +211,7 @@
 					name="bankName"
 					counter="31"
 					prepend-inner-icon="mdi-bank"
-					v-model="webInformationStore.data.bankName"
+					v-model="formdata.bankName"
 					dense
 				/>
 
@@ -222,7 +222,7 @@
 					name="bankAccountNumber"
 					counter="31"
 					prepend-inner-icon="mdi-numeric"
-					v-model="webInformationStore.data.bankAccountNumber"
+					v-model="formdata.bankAccountNumber"
 					dense
 				/>
 
@@ -233,7 +233,7 @@
 					name="bankCode"
 					counter="31"
 					prepend-inner-icon="mdi-numeric"
-					v-model="webInformationStore.data.bankCode"
+					v-model="formdata.bankCode"
 					dense
 				/>
 
@@ -244,7 +244,7 @@
 					name="bankIBAN"
 					counter="31"
 					prepend-inner-icon="mdi-alphabetical-variant"
-					v-model="webInformationStore.data.bankIBAN"
+					v-model="formdata.bankIBAN"
 					dense
 				/>
 				<v-btn
@@ -255,7 +255,7 @@
 					:disabled="disabled"
 					:loading="disabled"
 				>
-					<v-icon class="mr-2">mdi-account-edit</v-icon>
+					<v-icon class="mr-2">mdi-check</v-icon>
 					Uložit
 				</v-btn>
 			</v-col>
@@ -358,15 +358,24 @@
 		},
 	};
 	import { useWebInformationStore } from "~/store/webInformation";
-	import { WebInformation } from "~/digitalniweb-types/models/content";
 	import { formHeader } from "~/types/components/form";
-	const formdata = ref<Partial<WebInformation>>({});
 	const formHeader = ref<formHeader>({
 		image: "https://images.pexels.com/photos/196655/pexels-photo-196655.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
 		headline: "Informace o webu",
 	});
 
 	const disabled = ref(false);
-	const saveWebInformation = () => {};
 	const webInformationStore = useWebInformationStore();
+
+	let formdataWebInformation = useFormData(webInformationStore.data);
+
+	const formdata = ref(formdataWebInformation.dataClone);
+
+	const saveWebInformation = async () => {
+		disabled.value = true;
+		let dataDifference = formdataWebInformation.dataDifference();
+		// await webInformationStore.saveData();
+		formdataWebInformation.saveDataDifference(dataDifference);
+		disabled.value = false;
+	};
 </script>
