@@ -36,7 +36,7 @@ export const useWebInformationStore = defineStore("webInformation", {
 		},
 		async saveData(data: Partial<InferAttributes<WebInformation>>) {
 			let response = await useFetch<boolean>(
-				"/api/website/webinformation.patch.ts",
+				"/api/website/webinformation",
 				{
 					method: "PATCH",
 					body: {
