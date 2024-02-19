@@ -9,30 +9,13 @@ export const useWebInformationStore = defineStore("webInformation", {
 	getters: {},
 	actions: {
 		async loadData() {
-			this.data = {
-				name: "name",
-				city: "city",
-				country: "country",
-				email: "email",
-				fullAddress: "fullAddress",
-				googleTagManagerActive: false,
-				houseNumber: "3",
-				owner: "owner",
-				streetAddress: "streetAddress",
-				telephone: "telephone",
-				websiteId: 1,
-				websitesMsId: 1,
-				zip: "zip",
-				id: 1,
-			};
-			return;
-			// const website = useWebsiteStore();
-			// // const languages = useLanguagesStore();
-			// let webInfo = await useFetch<InferAttributes<WebInformation>>(
-			// 	`/api/website/webInformation?contentMsId=${website.data?.contentMsId}&id=${website.data?.id}`
-			// );
-			// if (!webInfo.data.value) return false;
-			// this.data = webInfo.data.value;
+			const website = useWebsiteStore();
+			// const languages = useLanguagesStore();
+			let webInfo = await useFetch<InferAttributes<WebInformation>>(
+				`/api/website/webInformation?contentMsId=${website.data?.contentMsId}&id=${website.data?.id}`
+			);
+			if (!webInfo.data.value) return false;
+			this.data = webInfo.data.value;
 		},
 		async saveData(data: Partial<InferAttributes<WebInformation>>) {
 			let response = await useFetch<boolean>(
@@ -46,8 +29,6 @@ export const useWebInformationStore = defineStore("webInformation", {
 					},
 				}
 			);
-			console.log(response.data.value);
-			console.log(response.error.value);
 
 			if (
 				response.error.value?.statusCode ||

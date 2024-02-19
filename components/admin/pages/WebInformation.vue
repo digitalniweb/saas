@@ -377,11 +377,19 @@
 		let dataDifference = formdataWebInformation.dataDifference();
 		if (Object.getOwnPropertyNames(dataDifference).length === 0) {
 			disabled.value = false;
+			useSnackBarsStore().setSnackBar({
+				text: "Nebyly zaregistrovány žádné změny.",
+				color: "orange",
+			});
 			return;
 		}
 		try {
 			await webInformationStore.saveData(dataDifference);
 			formdataWebInformation.saveDataDifference(dataDifference);
+			useSnackBarsStore().setSnackBar({
+				text: "Informace o webu byly uloženy.",
+				color: "green",
+			});
 		} catch {
 			useSnackBarsStore().setSnackBar({
 				text: "Nepodařilo se uložit informace o webu.",
