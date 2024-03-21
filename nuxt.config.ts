@@ -15,6 +15,7 @@ export default defineNuxtConfig({
 			compilerOptions: {
 				verbatimModuleSyntax: false,
 				moduleResolution: "bundler",
+				isolatedModules: false,
 			},
 		},
 	},

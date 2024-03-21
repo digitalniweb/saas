@@ -1,6 +1,7 @@
 .v-toolbar {
 	overflow: visible !important;
 	.v-toolbar__content {
+		overflow: visible;
 		ul#navitems {
 			a,
 			button {
