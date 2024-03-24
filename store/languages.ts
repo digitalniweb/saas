@@ -1,4 +1,5 @@
 import { appLanguages, languages } from "~/digitalniweb-types";
+import { useWebsiteStore } from "~/store/website";
 
 export const useLanguagesStore = defineStore("languages", {
 	state: () => ({
@@ -10,26 +11,37 @@ export const useLanguagesStore = defineStore("languages", {
 	getters: {},
 	actions: {
 		async loadData() {
-			let globalDataLanguages = await useFetch<appLanguages>(
+			let appLanguagesFetch = await useFetch<appLanguages>(
 				"/api/app/languages"
 			);
 
-			if (globalDataLanguages.error.value) {
+			if (appLanguagesFetch.error.value) {
 				// !!! need to use useFetch('/api/log',{customLogObject}) to call log from backend, this is wrong, otherwise ioredis Publisher complains with 'process.version' error
 				// log({
 				// 	type: "functions",
-				// 	message: "useLanguagesStore globalDataLanguages error",
-				// 	error: globalDataLanguages.error.value,
+				// 	message: "useLanguagesStore appLanguagesFetch error",
+				// 	error: appLanguagesFetch.error.value,
 				// });
 			}
 
-			let appLanguages = globalDataLanguages.data.value;
+			let appLanguages = appLanguagesFetch.data.value;
+			if (!appLanguages) return;
 
 			this.appLanguages = appLanguages;
 
+			const website = useWebsiteStore();
+
 			const config = useRuntimeConfig();
-			this.main = config.public.defaultLanguage as languages;
-			this.current = config.public.defaultLanguage as languages;
+			let key: languages;
+			for (key in appLanguages) {
+				if (Object.prototype.hasOwnProperty.call(appLanguages, key)) {
+					const el = appLanguages[key];
+					if (el.id === website.$state.data?.mainLanguageId)
+						this.main = key;
+				}
+			}
+			// this.main = config.public.defaultLanguage as languages;
+			this.current = this.main;
 
 			/* let websiteLanguages = await useFetch("/api/website/languages", {
 				query: { id: 1 },
