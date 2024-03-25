@@ -20,9 +20,8 @@ export default eventHandler(async (event) => {
 				id,
 			},
 		});
-		let websiteInfo = websiteInfoData;
 
-		return websiteInfo;
+		return websiteInfoData;
 	} catch (error: any) {
 		log({
 			type: "routing",

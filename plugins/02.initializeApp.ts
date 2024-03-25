@@ -31,6 +31,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 	await articleMenu.loadData();
 
 	const modules = useModulesStore();
+	await modules.loadData();
 
 	// deconstruct current url
 	// current language

@@ -1,15 +1,21 @@
-import { InferAttributes } from "sequelize";
-import { WebsiteModule } from "~/digitalniweb-types/models/websites";
 import { Module } from "~/digitalniweb-types/models/globalData";
-export const useModulesStore = defineStore("webInformation", {
+import { useWebInformationStore } from "./webInformation";
+export const useModulesStore = defineStore("modules", {
 	state: () => ({
-		// data: {} as InferAttributes<WebsiteModule>,
-		appModules: [] as number[],
-		websiteModules: [] as number[],
-		all: [] as Module[],
+		app: [] as number[],
+		website: [] as number[],
+		globalData: [] as Module[],
 	}),
 	getters: {},
 	actions: {
-		async loadData() {},
+		async loadData() {
+			const webInformation = useWebInformationStore();
+			let websiteModules = await useFetch<number[]>(
+				`/api/website/modules?websitesMsId=${webInformation.data?.websitesMsId}&id=${webInformation.data?.websiteId}`
+			);
+
+			if (!websiteModules.data.value) return false;
+			this.website = websiteModules.data.value;
+		},
 	},
 });
