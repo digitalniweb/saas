@@ -9,7 +9,7 @@
 		"generate": "nuxt generate",
 		"preview": "nuxt preview",
 		"postinstall": "nuxt prepare",
-		"buildSequelize": "npx tsc --project tsconfig.sequelize.json && npx tsc --project tsconfig.sequelize-config.json && echo {\"type\":\"commonjs\"} > ./sequelize/package.json",
+		"buildSequelize": "npx tsc --project tsconfig.sequelize.json && echo {\"type\":\"commonjs\"} > ./sequelize/package.json",
 		"migrations": "npm run buildSequelize && npx sequelize-cli db:migrate",
 		"migrationsUndoAll": "npm run buildSequelize && npx sequelize-cli db:migrate:undo:all",
 		"seeders": "npm run buildSequelize && npx sequelize-cli db:seed:all"
@@ -17,7 +17,7 @@
 	"devDependencies": {
 		"@nuxt/types": "^2.17.3",
 		"@types/jsonwebtoken": "^9.0.6",
-		"@types/node": "^20.11.30",
+		"@types/node": "^20.12.4",
 		"@types/sequelize": "^4.28.20",
 		"@types/tinymce": "^4.6.9",
 		"@types/validator": "^13.11.9",

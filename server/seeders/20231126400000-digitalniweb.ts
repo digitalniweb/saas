@@ -1,7 +1,7 @@
 import { QueryInterface } from "sequelize";
 
 import { apps } from "../../digitalniweb-types/index.js";
-import { microserviceCall } from "../../digitalniweb-custom/helpers/remoteProcedureCall.js";
+// import { microserviceCall } from "../../digitalniweb-custom/helpers/remoteProcedureCall.js";
 const app: Array<apps> = ["webs-host"];
 
 export default {
@@ -11,13 +11,13 @@ export default {
 			try {
 				return;
 				// typescript complains for some reason when I do microserviceCall (environment types don't work)
-				await microserviceCall({
-					name: "globalData",
-					path: "/api/serviceregistry/app/",
-					params: {
-						name: process.env.APP_NAME,
-					},
-				});
+				// await microserviceCall({
+				// 	name: "globalData",
+				// 	path: "/api/serviceregistry/app/",
+				// 	params: {
+				// 		name: process.env.APP_NAME,
+				// 	},
+				// });
 
 				return;
 			} catch (error) {

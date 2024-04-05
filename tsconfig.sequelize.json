@@ -14,5 +14,9 @@
 		"esModuleInterop": true,
 		"skipLibCheck": true
 	},
-	"include": ["./server/migrations", "./server/seeders"]
+	"include": [
+		"./server/migrations",
+		"./server/seeders",
+		"./server/config/config.ts"
+	]
 }
