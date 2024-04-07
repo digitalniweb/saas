@@ -2,19 +2,22 @@ import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureC
 import { getQuery } from "h3";
 import { log } from "~/digitalniweb-custom/helpers/logger";
 
-export default eventHandler(async (event) => {
-	let { websitesMsId, id }: { websitesMsId?: number; id?: number } =
-		getQuery(event);
+export default eventHandler(async (event): Promise<number[] | null | false> => {
+	let {
+		websitesMsId,
+		websiteId,
+	}: { websitesMsId?: number; websiteId?: number } = getQuery(event);
 	try {
-		if (!websitesMsId || !id) return;
+		if (!websitesMsId || !websiteId) return false;
 
 		let { data: ids } = await microserviceCall<number[]>({
 			name: "websites",
 			id: websitesMsId,
 			path: "/api/current/modulesIds",
 			data: {
-				id,
+				websiteId,
 			},
+			cache: false,
 		});
 
 		return ids;
