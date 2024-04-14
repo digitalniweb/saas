@@ -4,7 +4,7 @@ let tinymce: tinymceImport | undefined;
 // import innerLink from "./plugins/innerLink.js"; // this file can be anywhere, get it from vue2 project
 let editorConfig: Partial<EditorOptions> = {};
 
-import { useLanguagesStore } from "@/store/languages";
+import { useCurrentPageStore } from "@/store/currentPage";
 
 if (process.client) {
 	tinymce = (await import("tinymce")).default;
@@ -92,11 +92,11 @@ if (process.client) {
 }
 
 export const useEditor = () => {
-	const languageStore = useLanguagesStore();
+	const currentPageStore = useCurrentPageStore();
 
-	let language_url = "/tinymce/langs/" + languageStore.current + ".js";
+	let language_url = "/tinymce/langs/" + currentPageStore.language + ".js";
 	editorConfig.language_url = language_url;
-	editorConfig.language = languageStore.current ?? "";
+	editorConfig.language = currentPageStore.language.current?.code ?? "en";
 	return {
 		Editor: process.client ? Editor : null,
 		editorConfig,

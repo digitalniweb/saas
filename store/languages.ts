@@ -1,12 +1,13 @@
 import { appLanguages, languages } from "~/digitalniweb-types";
 import { useWebsiteStore } from "~/store/website";
+import { useWebInformationStore } from "./webInformation";
 
 export const useLanguagesStore = defineStore("languages", {
 	state: () => ({
 		appLanguages: {} as appLanguages | null, // all possible app's mutations
 		languages: [] as languages[], // current website's languages
 		main: null as languages | null, // current main language id
-		current: null as languages | null, // currently picked language
+		// current language is in 'currentPage' store
 	}),
 	getters: {},
 	actions: {
@@ -31,23 +32,26 @@ export const useLanguagesStore = defineStore("languages", {
 
 			const website = useWebsiteStore();
 
-			const config = useRuntimeConfig();
+			const webInformation = useWebInformationStore();
+			let websiteLanguageIds = await useFetch<number[]>(
+				`/api/website/languages?websitesMsId=${webInformation.data?.websitesMsId}&websiteId=${webInformation.data?.websiteId}`
+			);
+
+			if (!websiteLanguageIds.data.value) return false;
+
 			let key: languages;
 			for (key in appLanguages) {
 				if (Object.prototype.hasOwnProperty.call(appLanguages, key)) {
 					const el = appLanguages[key];
 					if (el.id === website.$state.data?.mainLanguageId)
 						this.main = key;
+					if (
+						websiteLanguageIds.data.value.includes(el.id) &&
+						!this.languages.includes(el.code)
+					)
+						this.languages.push(el.code);
 				}
 			}
-			// this.main = config.public.defaultLanguage as languages;
-			this.current = this.main;
-
-			/* let websiteLanguages = await useFetch("/api/website/languages", {
-				query: { id: 1 },
-			});
-			this.languages =
-				(websiteLanguages.data.value as unknown as languages[]) ?? []; */
 		},
 	},
 });
