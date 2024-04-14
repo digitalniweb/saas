@@ -96,7 +96,7 @@ export const useEditor = () => {
 
 	let language_url = "/tinymce/langs/" + currentPageStore.language + ".js";
 	editorConfig.language_url = language_url;
-	editorConfig.language = currentPageStore.language.current?.code ?? "en";
+	editorConfig.language = currentPageStore.language?.code ?? "en";
 	return {
 		Editor: process.client ? Editor : null,
 		editorConfig,

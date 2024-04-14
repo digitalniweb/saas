@@ -1,8 +1,13 @@
-import { Language, Module } from "~/digitalniweb-types/models/globalData";
+import {
+	Language,
+	Module,
+	ModulePage,
+	ModulePageLanguage,
+} from "~/digitalniweb-types/models/globalData";
 import { useLanguagesStore } from "~/store/languages";
 import { useModulesStore } from "~/store/modules";
 import { languages } from "~/digitalniweb-types";
-import { InferAttributes } from "sequelize";
+import { InferAttributes, InferCreationAttributes, Optional } from "sequelize";
 const queryParamsKeys = ["page", "limit", "offset", "search"] as const;
 type queryParamsTypes = {
 	page: number;
@@ -23,15 +28,18 @@ export const useCurrentPageStore = defineStore("currentPage", {
 			query: {} as queryParams,
 		},
 		admin: false as boolean,
-		language: {
-			currentId: null as Number | null,
-			current: null as InferAttributes<Language> | null, // currently picked language,
-		},
+		language: null as InferAttributes<Language> | null, // currently picked language,,
 		id: null as null | number,
 		module: {
 			current: null as Module | null,
-			modulePageIndex: null as number | null,
-			modulePageLanguageIndex: null as number | null,
+			currentModulePage: null as Optional<
+				InferCreationAttributes<ModulePage>,
+				"id" | "ModuleId"
+			> | null,
+			currentModulePageLanguage: null as Optional<
+				InferCreationAttributes<ModulePageLanguage>,
+				"id" | "ModulePageId" | "LanguageId"
+			> | null,
 		},
 	}),
 	getters: {},
@@ -81,13 +89,18 @@ export const useCurrentPageStore = defineStore("currentPage", {
 				}
 
 				if (languages.$state.main)
-					this.language.current =
+					this.language =
 						languages.$state.appLanguages?.[
 							languages.$state.main
 						] ?? null;
 
 				const { $vuetify } = useNuxtApp();
 				$vuetify.locale.current.value = newLang ?? "en";
+			} else {
+				this.language =
+					languages.$state.appLanguages?.[
+						languages.$state.main ?? "en"
+					] ?? null;
 			}
 
 			// let key: languages;
@@ -106,8 +119,8 @@ export const useCurrentPageStore = defineStore("currentPage", {
 
 			// current module
 			let currentModule = null;
-			let currentModulePageIndex = null;
-			let currentModulePageLanguageIndex = null;
+			let currentModulePage = null;
+			let currentModulePageLanguage = null;
 			let articleModule = null; // default module
 			try {
 				// !!! something is wrong in this try block
@@ -124,7 +137,7 @@ export const useCurrentPageStore = defineStore("currentPage", {
 							for (let mp = 0; mp < modulePages?.length; mp++) {
 								if (currentRoute === modulePages[mp].url) {
 									currentModule = modules.globalData[m];
-									currentModulePageIndex = mp;
+									currentModulePage = modulePages[mp];
 								}
 								const modulePageLanguages =
 									modulePages[mp].ModulePageLanguages;
@@ -134,23 +147,31 @@ export const useCurrentPageStore = defineStore("currentPage", {
 										mpl < modulePageLanguages?.length;
 										mpl++
 									) {
+										console.log(this.language);
+										console.log(
+											modulePageLanguages[mpl].url
+										);
+
 										if (
 											modulePageLanguages[mpl]
 												.LanguageId ==
-												this.language.currentId &&
+												this.language?.id &&
 											currentRoute ===
 												modulePageLanguages[mpl].url
-										)
-											currentModulePageLanguageIndex =
-												mpl;
+										) {
+											currentModulePageLanguage =
+												modulePageLanguages[mpl];
+											currentModulePage = modulePages[mp];
+											break modulesLoop;
+										}
 									}
 								if (currentModule) break modulesLoop;
 							}
 					}
 				this.module.current = currentModule;
-				this.module.modulePageIndex = currentModulePageIndex;
-				this.module.modulePageLanguageIndex =
-					currentModulePageLanguageIndex;
+				this.module.currentModulePage = currentModulePage ?? null;
+				this.module.currentModulePageLanguage =
+					currentModulePageLanguage ?? null;
 				if (currentModule === null) this.module.current = articleModule;
 			} catch (error) {
 				console.log(error);

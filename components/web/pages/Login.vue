@@ -161,7 +161,7 @@
 			if (new Date() > new Date(blockedLoginTill)) {
 				// Warning + time
 				let formatter = new Intl.DateTimeFormat(
-					currentPageStore.language.current?.code || "en",
+					currentPageStore.language?.code || "en",
 					{
 						weekday: "long",
 						year: "numeric",
