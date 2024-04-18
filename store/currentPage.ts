@@ -28,7 +28,7 @@ export const useCurrentPageStore = defineStore("currentPage", {
 			query: {} as queryParams,
 		},
 		admin: false as boolean,
-		language: null as InferAttributes<Language> | null, // currently picked language,,
+		language: null as InferAttributes<Language> | null, // currently picked language
 		id: null as null | number,
 		module: {
 			current: null as Module | null,
@@ -44,7 +44,7 @@ export const useCurrentPageStore = defineStore("currentPage", {
 	}),
 	getters: {},
 	actions: {
-		async init() {
+		async getData() {
 			const languages = useLanguagesStore();
 			const modules = useModulesStore();
 			let url = useRequestURL();
@@ -103,14 +103,6 @@ export const useCurrentPageStore = defineStore("currentPage", {
 					] ?? null;
 			}
 
-			// let key: languages;
-			// for (key in languages.$state.appLanguages) {
-			// 	if (Object.prototype.hasOwnProperty.call(languages.$state.appLanguages, key)) {
-			// 		let lang = languages.$state.appLanguages?.[key];
-
-			// 	}
-			// }
-
 			if (this.admin) {
 				return;
 			}
@@ -122,60 +114,50 @@ export const useCurrentPageStore = defineStore("currentPage", {
 			let currentModulePage = null;
 			let currentModulePageLanguage = null;
 			let articleModule = null; // default module
-			try {
-				// !!! something is wrong in this try block
-				if (modules.globalData.length)
-					modulesLoop: for (
-						let m = 0;
-						m < modules?.globalData?.length;
-						m++
-					) {
-						if (modules.globalData[m].name === "articles")
-							articleModule = modules.globalData[m];
-						let modulePages = modules.globalData[m]?.ModulePages;
-						if (modulePages?.length)
-							for (let mp = 0; mp < modulePages?.length; mp++) {
-								if (currentRoute === modulePages[mp].url) {
-									currentModule = modules.globalData[m];
-									currentModulePage = modulePages[mp];
-								}
-								const modulePageLanguages =
-									modulePages[mp].ModulePageLanguages;
-								if (modulePageLanguages?.length)
-									for (
-										let mpl = 0;
-										mpl < modulePageLanguages?.length;
-										mpl++
-									) {
-										console.log(this.language);
-										console.log(
-											modulePageLanguages[mpl].url
-										);
 
-										if (
-											modulePageLanguages[mpl]
-												.LanguageId ==
-												this.language?.id &&
-											currentRoute ===
-												modulePageLanguages[mpl].url
-										) {
-											currentModulePageLanguage =
-												modulePageLanguages[mpl];
-											currentModulePage = modulePages[mp];
-											break modulesLoop;
-										}
-									}
-								if (currentModule) break modulesLoop;
+			if (modules.globalData.length)
+				modulesLoop: for (
+					let m = 0;
+					m < modules?.globalData?.length;
+					m++
+				) {
+					if (modules.globalData[m].name === "articles")
+						articleModule = modules.globalData[m];
+					let modulePages = modules.globalData[m]?.ModulePages;
+					if (modulePages?.length)
+						for (let mp = 0; mp < modulePages?.length; mp++) {
+							if (currentRoute === modulePages[mp].url) {
+								currentModule = modules.globalData[m];
+								currentModulePage = modulePages[mp];
 							}
-					}
-				this.module.current = currentModule;
-				this.module.currentModulePage = currentModulePage ?? null;
-				this.module.currentModulePageLanguage =
-					currentModulePageLanguage ?? null;
-				if (currentModule === null) this.module.current = articleModule;
-			} catch (error) {
-				console.log(error);
-			}
+							const modulePageLanguages =
+								modulePages[mp].ModulePageLanguages;
+							if (modulePageLanguages?.length)
+								for (
+									let mpl = 0;
+									mpl < modulePageLanguages?.length;
+									mpl++
+								) {
+									if (
+										modulePageLanguages[mpl].LanguageId ==
+											this.language?.id &&
+										currentRoute ===
+											modulePageLanguages[mpl].url
+									) {
+										currentModulePageLanguage =
+											modulePageLanguages[mpl];
+										currentModulePage = modulePages[mp];
+										break modulesLoop;
+									}
+								}
+							if (currentModule) break modulesLoop;
+						}
+				}
+			this.module.current = currentModule;
+			this.module.currentModulePage = currentModulePage ?? null;
+			this.module.currentModulePageLanguage =
+				currentModulePageLanguage ?? null;
+			if (currentModule === null) this.module.current = articleModule;
 		},
 	},
 });

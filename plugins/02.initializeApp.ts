@@ -34,5 +34,5 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 	await modules.loadData();
 
 	const currentPage = useCurrentPageStore();
-	await currentPage.init();
+	await currentPage.getData();
 });

@@ -2,34 +2,41 @@
 	<component :is="currentComponent" />
 </template>
 <script setup lang="ts">
-	// Here needs to be list of all global components which we want to dynamically use. Then we need to import these components from '#components' and add this to 'components' variable
-	type componentNames = "WebContentUser" | "WebPagesLogin";
-
-	import { WebContentUser, WebPagesLogin } from "#components";
 	import { computed, ref, watch } from "#imports";
 	import { useRoute } from "nuxt/app";
-	import type { GlobalComponents } from "vue-demi";
+	import { useCurrentPageStore } from "../store/currentPage";
+	// import type { GlobalComponents } from "vue-demi";
+	import { modules } from "../digitalniweb-types/functionality/modules";
 
-	type components = Pick<GlobalComponents, componentNames>;
-	const components = {
-		WebContentUser,
-		WebPagesLogin,
+	import { WebPagesArticle, WebContentUser } from "#components";
+	// ↓ add `| typeof 'GlobalComponent'` from the import above ↑
+	type componentsTypes = {
+		[K in modules]?: typeof WebPagesArticle | typeof WebContentUser;
 	};
-	const route = useRoute();
-	const componentName = ref<componentNames | "div">("div");
+
+	const components = {
+		articles: WebPagesArticle,
+		users: WebContentUser,
+	} as componentsTypes;
+
+	const componentName = ref<modules | "div">("div");
+
 	let currentComponent = computed((): any =>
-		componentName.value !== "div" ? components[componentName.value] : "div"
+		componentName.value !== "div" && componentName.value in components
+			? components[componentName.value as keyof typeof components]
+			: "div"
 	);
+
+	const currentPage = useCurrentPageStore();
+	const route = useRoute();
+
 	const loadPage = () => {
-		let routes: { [key: string]: componentNames } = {
-			"/user": "WebContentUser",
-			"/login": "WebPagesLogin",
-		};
-		componentName.value = routes[route.path] ?? "div";
+		componentName.value = currentPage.$state.module.current?.name ?? "div";
 	};
 	watch(
 		route,
-		() => {
+		async () => {
+			await currentPage.getData();
 			loadPage();
 		},
 		{ deep: true, immediate: true }
@@ -37,26 +44,4 @@
 	definePageMeta({
 		layout: "default",
 	});
-	/*
-	// this doesn't unfortunatelly work
-	const route = useRoute();
-	const componentName = ref("WebBlocksMenu");
-	let currentComponent = computed(() =>
-		resolveComponent(componentName.value)
-	);
-	const loadPage = () => {
-		let i = Math.round(Math.random() * 100) % 2;
-		console.log(i);
-
-		componentName.value = i == 0 ? "ContentUser" : "WebBlocksMenu";
-	};
-	watch(
-		route,
-		() => {
-			console.log("test");
-
-			loadPage();
-		},
-		{ deep: true, immediate: true }
-	); */
 </script>
