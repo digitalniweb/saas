@@ -22,18 +22,17 @@
 	</div>
 </template>
 <script setup>
-	/*
 	// This is example how we can invoke this error page from any route (i.e. from page with slug: 'error')
-	const route = useRoute();
-	if (route.params.slug == "error") {
-		throw createError({
-			statusCode: '404',
-			name: "NotFoundError",
-			message: "Todo not found",
-			statusMessage: "Not Found",
-		});
-	}
-	 */
+	// const route = useRoute();
+	// if (route.params.slug == "error") {
+	// 	throw createError({
+	// 		statusCode: '404',
+	// 		name: "NotFoundError",
+	// 		message: "Todo not found",
+	// 		statusMessage: "Not Found",
+	// 	});
+	// }
+
 	const props = defineProps({ error: Object });
 
 	const errorMessage = ref("Oops! Something went wrong 😔");
@@ -48,7 +47,7 @@
 		errorMessage.value = props.error.statusMessage || props.error.message;
 		errorStack.value = props.error.stack ?? false;
 	}
-	console.log(JSON.parse(props?.error?.data));
+
 	showRedirectButton.value = props?.error?.data?.showRedirectButton ?? true;
 
 	const errorStyle = useElementStyle({

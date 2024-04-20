@@ -5,15 +5,22 @@ export default eventHandler(async (event): Promise<Article | null | false> => {
 	let query = getQuery(event);
 	let websiteId = parseInt(getHeader(event, "x-website-id") ?? "");
 	let websitesMsId = parseInt(getHeader(event, "x-websites-ms-id") ?? "");
-	if (isNaN(websitesMsId) || isNaN(websiteId)) return false;
+	let contentMsId = parseInt(getHeader(event, "x-content-ms-id") ?? "");
 
-	let { data: article } = await microserviceCall<Article>({
-		name: "websites",
-		id: websitesMsId,
-		path: "/api/current/modules/article?id=" + websiteId,
-		data: query,
-		cache: false,
-	});
+	if (isNaN(websitesMsId) || isNaN(websiteId) || isNaN(contentMsId))
+		return false;
 
-	return article;
+	try {
+		let { data: article } = await microserviceCall<Article>({
+			name: "content",
+			id: websitesMsId,
+			path: "/api/current/modules/article?id=" + websiteId,
+			data: query,
+			cache: false,
+		});
+
+		return article;
+	} catch (error: unknown) {
+		return false;
+	}
 });

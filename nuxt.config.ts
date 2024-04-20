@@ -8,6 +8,10 @@ export default defineNuxtConfig({
 			"defineStore", // import { defineStore } from 'pinia'
 		],
 	}, */
+	components: {
+		global: true,
+		dirs: ["~/components"],
+	},
 	typescript: {
 		typeCheck: true,
 		strict: true,

@@ -40,6 +40,7 @@ export const useCurrentPageStore = defineStore("currentPage", {
 				InferCreationAttributes<ModulePageLanguage>,
 				"id" | "ModulePageId" | "LanguageId"
 			> | null,
+			currentComponent: null as string | null,
 		},
 	}),
 	getters: {},
@@ -113,7 +114,9 @@ export const useCurrentPageStore = defineStore("currentPage", {
 			let currentModule = null;
 			let currentModulePage = null;
 			let currentModulePageLanguage = null;
+			let currentModuleComponent = null;
 			let articleModule = null; // default module
+			let articleComponent = null; // default component
 
 			if (modules.globalData.length)
 				modulesLoop: for (
@@ -121,14 +124,21 @@ export const useCurrentPageStore = defineStore("currentPage", {
 					m < modules?.globalData?.length;
 					m++
 				) {
-					if (modules.globalData[m].name === "articles")
+					if (modules.globalData[m].name === "articles") {
 						articleModule = modules.globalData[m];
+						articleComponent =
+							modules.globalData[m].component ?? null;
+					}
 					let modulePages = modules.globalData[m]?.ModulePages;
 					if (modulePages?.length)
 						for (let mp = 0; mp < modulePages?.length; mp++) {
 							if (currentRoute === modulePages[mp].url) {
 								currentModule = modules.globalData[m];
 								currentModulePage = modulePages[mp];
+								currentModuleComponent =
+									modulePages[mp]?.component ??
+									modules.globalData[m]?.component ??
+									null;
 							}
 							const modulePageLanguages =
 								modulePages[mp].ModulePageLanguages;
@@ -157,7 +167,11 @@ export const useCurrentPageStore = defineStore("currentPage", {
 			this.module.currentModulePage = currentModulePage ?? null;
 			this.module.currentModulePageLanguage =
 				currentModulePageLanguage ?? null;
-			if (currentModule === null) this.module.current = articleModule;
+			this.module.currentComponent = currentModuleComponent ?? null;
+			if (currentModule === null) {
+				this.module.current = articleModule;
+				this.module.currentComponent = articleComponent;
+			}
 		},
 	},
 });
