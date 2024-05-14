@@ -1,3 +1,5 @@
+# Digitalni web - SaaS
+
 ## Installation
 
 If you see errors (`npm ERR! code ERESOLVE` etc.) while installing it might be because of this dependency:
@@ -49,3 +51,26 @@ npx nuxi upgrade
 ## Icons
 
 List of [mdi icons](https://pictogrammers.com/library/mdi/) to use
+
+## Communication between Apps and Services
+
+```mermaid
+    graph TB
+    Apps <-->|"microserviceCall()"| Microservices
+    subgraph Apps
+        direction LR
+        subgraph HostApp
+            direction TB
+            webHost([web]) <-->|"useApiCall()"| HostServer
+        end
+        subgraph TenantsApp
+            direction TB
+            webTenants([web]) <-->|"useApiCall()"| TenantsServer
+        end
+        HostApp <--> |"appCall()"| TenantsApp
+    end
+    subgraph Microservices
+    end
+    classDef dashed stroke-dasharray: 10;
+    class Microservices,HostApp,TenantsApp dashed;
+```

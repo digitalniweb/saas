@@ -26,10 +26,10 @@ export const useCurrentPageStore = defineStore("currentPage", {
 			pathname: "",
 			queryString: "",
 			query: {} as queryParams,
+			id: null as null | number,
 		},
 		admin: false as boolean,
 		language: null as InferAttributes<Language> | null, // currently picked language
-		id: null as null | number,
 		module: {
 			current: null as Module | null,
 			currentModulePage: null as Optional<

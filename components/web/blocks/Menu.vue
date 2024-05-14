@@ -1,5 +1,5 @@
 <template>
-	<v-app-bar>
+	<v-app-bar ref="appBar">
 		<WebMenuList :levelitems="menu" :ulid="'navitems'" />
 	</v-app-bar>
 </template>
@@ -7,4 +7,5 @@
 	import { useMenusStore } from "@/store/menus";
 	import { storeToRefs } from "pinia";
 	const { articles: menu } = storeToRefs(useMenusStore());
+	const appBar = ref();
 </script>
