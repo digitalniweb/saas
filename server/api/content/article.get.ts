@@ -1,20 +1,17 @@
 import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureCall";
 import { Article } from "~/digitalniweb-types/models/content";
 
-import { resourceIds } from "~/digitalniweb-types/apps/communication";
+import { getArticleQuery } from "~/digitalniweb-types/apps/communication/modules/articles";
 
 export default eventHandler(async (event): Promise<Article | null | false> => {
-	let query = getQuery(event) as typeof getQuery & {
-		resourceIds: resourceIds;
-		url: string;
-	};
+	let query = getQuery(event) as getArticleQuery;
 	if (!query.resourceIds) return false;
 
 	try {
 		let { data: article } = await microserviceCall<Article>({
 			name: "content",
 			id: query.resourceIds.contentMsId,
-			path: "/api/current/modules/article?url=" + query.url,
+			path: "/api/current/modules/article",
 			data: query,
 			cache: false,
 		});
