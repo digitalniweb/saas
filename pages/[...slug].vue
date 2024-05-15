@@ -9,18 +9,23 @@
 	const currentPage = useCurrentPageStore();
 	const route = useRoute();
 
-	const componentName = ref("WebPagesArticle");
-	const dynamicComponent = resolveComponent(componentName.value);
+	const componentName = ref("");
+	const dynamicComponent = computed(() =>
+		resolveComponent(componentName.value)
+	);
 
 	const loadPage = () => {
-		componentName.value =
-			currentPage.$state.module.currentComponent ?? "div";
+		componentName.value = currentPage.$state.module.currentComponent ?? "";
 	};
+	async function loadCurrentPage() {
+		await currentPage.getData();
+		loadPage();
+	}
+	await loadCurrentPage();
 	watch(
 		route,
 		async () => {
-			await currentPage.getData();
-			loadPage();
+			await loadCurrentPage();
 		},
 		{ deep: true, immediate: true }
 	);
