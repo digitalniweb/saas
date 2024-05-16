@@ -1,11 +1,12 @@
 <template>{{ article }}</template>
 <script setup lang="ts">
+	import { moduleResponse } from "../../../digitalniweb-types/apps/communication/modules";
 	import { Article } from "../../../digitalniweb-types/models/content";
 	import { useCurrentPageStore } from "../../../store/currentPage";
 
 	const currentPage = useCurrentPageStore();
 
-	const { data: article } = await useApiCall<Article | null>(
+	const { data: article } = await useApiCall<moduleResponse<Article> | null>(
 		"/api/content/article",
 		{
 			query: {
@@ -14,6 +15,10 @@
 			},
 		}
 	);
+
+	useServerSeoMeta({
+		title: article?.value?.moduleInfo.title,
+	});
 
 	if (!article.value) {
 		throw createError({
