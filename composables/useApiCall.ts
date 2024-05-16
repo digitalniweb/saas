@@ -4,7 +4,7 @@ import { useWebsiteStore } from "~/store/website";
 import { useCurrentPageStore } from "~/store/currentPage";
 import isObjectEmpty from "~/digitalniweb-custom/functions/isObjectEmpty";
 
-import { resourceIds } from "~/digitalniweb-types/apps/communication";
+import { resourceIdsType } from "~/digitalniweb-types/apps/communication";
 
 export default async function useApiCall<T>(
 	request: Parameters<typeof useFetch<T>>[0],
@@ -20,7 +20,7 @@ export default async function useApiCall<T>(
 	if (userStore.user)
 		headers.Authorization = `Bearer ${userStore.getToken("access")}`;
 
-	let resourceIds = {} as resourceIds;
+	let resourceIds = {} as resourceIdsType;
 	if (webInformationStore.data.websiteId)
 		resourceIds.websiteId = webInformationStore.data.websiteId;
 

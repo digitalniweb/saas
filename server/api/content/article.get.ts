@@ -2,6 +2,7 @@ import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureC
 import { Article } from "~/digitalniweb-types/models/content";
 
 import { getArticleQuery } from "~/digitalniweb-types/apps/communication/modules/articles";
+import { resourceIdsType } from "~/digitalniweb-types/apps/communication";
 
 export default eventHandler(async (event): Promise<Article | null | false> => {
 	let query = getQuery(event) as getArticleQuery;
@@ -10,7 +11,7 @@ export default eventHandler(async (event): Promise<Article | null | false> => {
 	try {
 		let { data: article } = await microserviceCall<Article>({
 			name: "content",
-			id: query.resourceIds.contentMsId,
+			id: (query.resourceIds as resourceIdsType).contentMsId,
 			path: "/api/current/modules/article",
 			data: query,
 			cache: false,
