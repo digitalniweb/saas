@@ -14,7 +14,6 @@ export default eventHandler(async (event): Promise<Article | null | false> => {
 			id: (query.resourceIds as resourceIdsType).contentMsId,
 			path: "/api/current/modules/article",
 			data: query,
-			cache: false,
 		});
 
 		return article;

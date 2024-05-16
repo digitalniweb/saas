@@ -14,7 +14,6 @@ export default eventHandler(async (event): Promise<Module[] | null | false> => {
 			name: "globalData",
 			path: "/api/modules/listbyids",
 			params: { ids },
-			cache: false,
 		});
 
 		return modules;

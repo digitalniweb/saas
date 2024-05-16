@@ -17,7 +17,6 @@ export default eventHandler(async (event): Promise<number[] | null | false> => {
 			data: {
 				websiteId,
 			},
-			cache: false,
 		});
 
 		return ids;
