@@ -1,4 +1,7 @@
-<template>{{ article }}</template>
+<template>
+	{{ article?.moduleInfo }}
+	<CustomWidgetContents :widgetContents="article?.widgetContents" />
+</template>
 <script setup lang="ts">
 	import { moduleResponse } from "../../../digitalniweb-types/apps/communication/modules";
 	import { Article } from "../../../digitalniweb-types/models/content";

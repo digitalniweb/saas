@@ -9,8 +9,10 @@ export const useModulesStore = defineStore("modules", {
 	getters: {},
 	actions: {
 		async loadData() {
-			await this.loadWebsiteModules();
-			await this.loadAppModules();
+			await Promise.all([
+				this.loadWebsiteModules(),
+				this.loadAppModules(),
+			]);
 			await this.loadGlobalModules();
 		},
 		async loadAppModules() {

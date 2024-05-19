@@ -4,6 +4,7 @@ import { useLanguagesStore } from "~/store/languages";
 import { useMenusStore } from "~/store/menus";
 import { useUserStore } from "~/store/user";
 import { useModulesStore } from "~/store/modules";
+import { useWidgetsStore } from "~/store/widgets";
 import { useCurrentPageStore } from "~/store/currentPage";
 export default defineNuxtPlugin(async (nuxtApp) => {
 	const website = useWebsiteStore();
@@ -32,6 +33,9 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
 	const modules = useModulesStore();
 	await modules.loadData();
+
+	const widgets = useWidgetsStore();
+	await widgets.loadData();
 
 	const currentPage = useCurrentPageStore();
 	await currentPage.getData();
