@@ -30,6 +30,8 @@ export default async function useApiCall<T>(
 	if (website.data?.contentMsId)
 		resourceIds.contentMsId = website.data?.contentMsId;
 
+	if (website.data?.appId) resourceIds.appId = website.data?.appId;
+
 	if (currentPage.module.current?.id)
 		resourceIds.moduleId = currentPage.module.current?.id;
 

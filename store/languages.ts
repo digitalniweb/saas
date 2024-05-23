@@ -17,7 +17,7 @@ export const useLanguagesStore = defineStore("languages", {
 			);
 
 			if (appLanguagesFetch.error.value) {
-				// !!! need to use useFetch('/api/log',{customLogObject}) to call log from backend, this is wrong, otherwise ioredis Publisher complains with 'process.version' error
+				// ! need to use useFetch('/api/log',{customLogObject}) to call log from backend, this is wrong, otherwise ioredis Publisher complains with 'process.version' error
 				// log({
 				// 	type: "functions",
 				// 	message: "useLanguagesStore appLanguagesFetch error",

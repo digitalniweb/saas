@@ -8,7 +8,8 @@ export const useMenusStore = defineStore("menus", {
 	getters: {},
 	actions: {
 		async loadData() {
-			let articlesmenu = await useFetch("/api/website/menu");
+			// change the type here as well
+			let articlesmenu = await useApiCall<object[]>("/api/website/menu");
 			this.articles = articlesmenu?.data?.value ?? [];
 		},
 	},

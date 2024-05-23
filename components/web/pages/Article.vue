@@ -20,7 +20,7 @@
 	);
 
 	useServerSeoMeta({
-		title: article?.value?.moduleInfo.title,
+		title: article?.value?.moduleInfo?.title,
 	});
 
 	if (!article.value) {

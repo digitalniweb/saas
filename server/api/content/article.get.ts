@@ -7,11 +7,12 @@ import { resourceIdsType } from "~/digitalniweb-types/apps/communication";
 export default eventHandler(async (event): Promise<Article | null | false> => {
 	let query = getQuery(event) as getArticleQuery;
 	if (!query.resourceIds) return false;
-
+	let resourceIds: resourceIdsType = JSON.parse(query.resourceIds as string);
+	query.resourceIds = resourceIds;
 	try {
 		let { data: article } = await microserviceCall<Article>({
 			name: "content",
-			id: (query.resourceIds as resourceIdsType).contentMsId,
+			id: resourceIds.contentMsId,
 			path: "/api/current/modules/article",
 			data: query,
 		});

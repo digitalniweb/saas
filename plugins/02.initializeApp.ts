@@ -28,15 +28,15 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 	const languages = useLanguagesStore();
 	await languages.loadData();
 
-	const articleMenu = useMenusStore();
-	await articleMenu.loadData();
-
 	const modules = useModulesStore();
-	await modules.loadData();
 
 	const widgets = useWidgetsStore();
-	await widgets.loadData();
+
+	await Promise.all([modules.loadData(), widgets.loadData()]);
 
 	const currentPage = useCurrentPageStore();
 	await currentPage.getData();
+
+	const articleMenu = useMenusStore();
+	await articleMenu.loadData();
 });
