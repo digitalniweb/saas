@@ -32,4 +32,8 @@
 	definePageMeta({
 		layout: "default",
 	});
+
+	useSeoMeta({
+		title: () => currentPage.$state?.title, // when reactive we need to use "computed getter syntax (() => value)""
+	});
 </script>

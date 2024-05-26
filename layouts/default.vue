@@ -12,12 +12,4 @@
 	import { useWebInformationStore } from "@/store/webInformation";
 	import { storeToRefs } from "pinia";
 	const { all, en } = storeToRefs(useWebInformationStore());
-	useServerSeoMeta({
-		title: "",
-		ogTitle: "",
-		description: "",
-		ogDescription: "",
-		ogImage: "",
-		twitterCard: "",
-	});
 </script>

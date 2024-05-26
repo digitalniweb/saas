@@ -19,9 +19,10 @@
 		}
 	);
 
-	useServerSeoMeta({
-		title: article?.value?.moduleInfo?.title,
-	});
+	currentPage.$state.title =
+		article?.value?.moduleInfo?.title ||
+		article?.value?.moduleInfo.name ||
+		"";
 
 	if (!article.value) {
 		throw createError({
