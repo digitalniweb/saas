@@ -1,7 +1,7 @@
 <template>
 	<ul :class="ulclass" :id="ulid">
 		<li v-for="(item, id) in levelitems" :key="id">
-			<v-btn :to="item.url" nuxt>
+			<v-btn :to="item.url" variant="plain">
 				<v-icon v-if="item.icon" class="mr-2">
 					mdi-{{ item.icon }}
 				</v-icon>

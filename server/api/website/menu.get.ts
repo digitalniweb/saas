@@ -24,45 +24,6 @@ export default eventHandler(async (event) => {
 	} catch (error) {
 		console.log(error);
 
-		return [
-			{
-				url: "/",
-				name: "home",
-			},
-			{
-				url: "/submenus",
-				name: "submenus",
-				children: [
-					{
-						name: "user",
-						url: "/user",
-						children: [
-							{
-								name: "test",
-								url: "/test",
-							},
-						],
-					},
-					{
-						name: "submenu nested",
-						url: "/nested",
-						children: [
-							{
-								name: "nested",
-								url: "/nested-2",
-							},
-						],
-					},
-				],
-			},
-			{
-				url: "/login",
-				name: "login",
-			},
-			{
-				url: "/admin",
-				name: "admin",
-			},
-		];
+		return [];
 	}
 });

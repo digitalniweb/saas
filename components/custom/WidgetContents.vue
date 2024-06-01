@@ -1,7 +1,16 @@
 <template>
-	<template v-for="widget in widgetContents">
-		<component :is="widgetMap(widget.widgetId)" :content="widget.content" />
-	</template>
+	<v-container class="fill-height">
+		<v-row>
+			<v-col>
+				<template v-for="widget in widgetContents">
+					<component
+						:is="widgetMap(widget.widgetId)"
+						:content="widget.content"
+					/>
+				</template>
+			</v-col>
+		</v-row>
+	</v-container>
 </template>
 
 <script setup lang="ts">

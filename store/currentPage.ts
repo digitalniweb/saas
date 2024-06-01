@@ -42,7 +42,10 @@ export const useCurrentPageStore = defineStore("currentPage", {
 			> | null,
 			currentComponent: null as string | null,
 		},
-		title: "" as string,
+		page: {
+			title: "" as string,
+			description: "" as string,
+		},
 	}),
 	getters: {},
 	actions: {

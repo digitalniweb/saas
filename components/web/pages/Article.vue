@@ -1,5 +1,4 @@
 <template>
-	{{ article?.moduleInfo }}
 	<CustomWidgetContents :widgetContents="article?.widgetContents" />
 </template>
 <script setup lang="ts">
@@ -19,10 +18,12 @@
 		}
 	);
 
-	currentPage.$state.title =
+	currentPage.$state.page.title =
 		article?.value?.moduleInfo?.title ||
-		article?.value?.moduleInfo.name ||
+		article?.value?.moduleInfo?.name ||
 		"";
+	currentPage.$state.page.description =
+		article?.value?.moduleInfo?.description || "";
 
 	if (!article.value) {
 		throw createError({

@@ -34,6 +34,7 @@
 	});
 
 	useSeoMeta({
-		title: () => currentPage.$state?.title, // when reactive we need to use "computed getter syntax (() => value)""
+		title: () => currentPage.$state.page?.title, // when using reactive value we need to use "computed getter syntax (() => value)""
+		description: () => currentPage.$state.page?.description,
 	});
 </script>
