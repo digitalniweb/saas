@@ -44,14 +44,14 @@ export default defineNuxtConfig({
 			link: [
 				{
 					rel: "icon",
-					type: "image/png",
-					href: "/favicon.png",
+					type: "image/webp",
+					href: "/img/favicon.webp",
 					media: "(prefers-color-scheme: light)",
 				},
 				{
 					rel: "icon",
-					type: "image/png",
-					href: "/favicon-dark.png",
+					type: "image/webp",
+					href: "/img/favicon-dark.webp",
 					media: "(prefers-color-scheme: dark)",
 				},
 			],
