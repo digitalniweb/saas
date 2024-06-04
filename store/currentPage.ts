@@ -138,7 +138,7 @@ export const useCurrentPageStore = defineStore("currentPage", {
 			if (modules.globalData.length)
 				modulesLoop: for (
 					let m = 0;
-					m < modules?.globalData?.length;
+					m < modules?.globalData.length;
 					m++
 				) {
 					if (modules.globalData[m].name === "articles") {
@@ -148,7 +148,7 @@ export const useCurrentPageStore = defineStore("currentPage", {
 					}
 					let modulePages = modules.globalData[m]?.ModulePages;
 					if (modulePages?.length)
-						for (let mp = 0; mp < modulePages?.length; mp++) {
+						for (let mp = 0; mp < modulePages.length; mp++) {
 							if (currentRoute === modulePages[mp].url) {
 								currentModule = modules.globalData[m];
 								currentModulePage = modulePages[mp];
@@ -162,7 +162,7 @@ export const useCurrentPageStore = defineStore("currentPage", {
 							if (modulePageLanguages?.length)
 								for (
 									let mpl = 0;
-									mpl < modulePageLanguages?.length;
+									mpl < modulePageLanguages.length;
 									mpl++
 								) {
 									if (
@@ -171,15 +171,22 @@ export const useCurrentPageStore = defineStore("currentPage", {
 										currentRoute ===
 											modulePageLanguages[mpl].url
 									) {
+										currentModule = modules.globalData[m];
+										currentModulePage = modulePages[mp];
 										currentModulePageLanguage =
 											modulePageLanguages[mpl];
 										currentModulePage = modulePages[mp];
+										currentModuleComponent =
+											modulePages[mp]?.component ??
+											modules.globalData[m]?.component ??
+											null;
 										break modulesLoop;
 									}
 								}
 							if (currentModule) break modulesLoop;
 						}
 				}
+
 			this.module.current = currentModule;
 			this.module.currentModulePage = currentModulePage ?? null;
 			this.module.currentModulePageLanguage =

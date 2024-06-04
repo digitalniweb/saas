@@ -138,6 +138,14 @@
 	const userStore = useUserStore();
 	const currentPageStore = useCurrentPageStore();
 
+	currentPageStore.$state.page.title =
+		currentPageStore.$state?.module.currentModulePageLanguage?.title ||
+		currentPageStore.$state?.module.currentModulePageLanguage?.name ||
+		"";
+	currentPageStore.$state.page.description =
+		currentPageStore.$state?.module.currentModulePageLanguage
+			?.description || "";
+
 	onBeforeMount(async () => {
 		if (userStore.user?.role?.RoleType?.name === "admin")
 			await navigateTo("/admin");
