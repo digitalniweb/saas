@@ -17,11 +17,14 @@
 	const loadPage = () => {
 		componentName.value = currentPage.$state.module.currentComponent ?? "";
 	};
+
+	loadPage();
+
 	async function loadCurrentPage() {
 		await currentPage.getData();
 		loadPage();
 	}
-	await loadCurrentPage();
+
 	watch(
 		route,
 		async () => {
@@ -29,6 +32,7 @@
 		},
 		{ deep: true, immediate: true }
 	);
+
 	definePageMeta({
 		layout: "default",
 	});

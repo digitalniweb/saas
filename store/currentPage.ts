@@ -74,6 +74,19 @@ export const useCurrentPageStore = defineStore("currentPage", {
 					}
 				}
 			}
+			const skipURLsStarting = [
+				"__nuxt",
+				"css",
+				"images",
+				"img",
+				"files",
+			];
+			const skipURL = skipURLsStarting.some((url) => {
+				let regex = new RegExp("^/" + url);
+				return regex.test(this.route.pathname);
+			});
+			if (skipURL) return;
+
 			let routeArray = this.route.pathname.split("/");
 			routeArray.shift(); // first value is always "", remove it
 			let currentRoute = routeArray.shift();
