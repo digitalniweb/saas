@@ -1,5 +1,5 @@
 <template>
-	<component :is="dynamicComponent" />
+	<component :is="componentName" />
 </template>
 <script setup lang="ts">
 	import { ref, watch } from "#imports";
@@ -10,12 +10,9 @@
 	const route = useRoute();
 
 	const componentName = ref("");
-	const dynamicComponent = computed(() =>
-		resolveComponent(componentName.value)
-	);
 
 	const loadPage = () => {
-		componentName.value = currentPage.$state.module.currentComponent ?? "";
+		componentName.value = currentPage.module.currentComponent ?? "";
 	};
 
 	loadPage();
@@ -38,7 +35,7 @@
 	});
 
 	useSeoMeta({
-		title: () => currentPage.$state.page?.title, // when using reactive value we need to use "computed getter syntax (() => value)""
-		description: () => currentPage.$state.page?.description,
+		title: () => currentPage.page?.title, // when using reactive value we need to use "computed getter syntax (() => value)""
+		description: () => currentPage.page?.description,
 	});
 </script>

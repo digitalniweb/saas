@@ -136,15 +136,14 @@
 	const router = useRouter();
 
 	const userStore = useUserStore();
-	const currentPageStore = useCurrentPageStore();
+	const currentPage = useCurrentPageStore();
 
-	currentPageStore.$state.page.title =
-		currentPageStore.$state?.module.currentModulePageLanguage?.title ||
-		currentPageStore.$state?.module.currentModulePageLanguage?.name ||
+	currentPage.page.title =
+		currentPage?.module.currentModulePageLanguage?.title ||
+		currentPage?.module.currentModulePageLanguage?.name ||
 		"";
-	currentPageStore.$state.page.description =
-		currentPageStore.$state?.module.currentModulePageLanguage
-			?.description || "";
+	currentPage.page.description =
+		currentPage?.module.currentModulePageLanguage?.description || "";
 
 	onBeforeMount(async () => {
 		if (userStore.user?.role?.RoleType?.name === "admin")
@@ -169,7 +168,7 @@
 			if (new Date() > new Date(blockedLoginTill)) {
 				// Warning + time
 				let formatter = new Intl.DateTimeFormat(
-					currentPageStore.language?.code || "en",
+					currentPage.language?.code || "en",
 					{
 						weekday: "long",
 						year: "numeric",
@@ -223,7 +222,7 @@
 
 	const redirectAfterLogin = async function () {
 		// !!! commented stuff is from vue 2 needs to be ported to vue 3
-		if (userStore?.$state.user?.role?.RoleType?.name === "admin") {
+		if (userStore?.user?.role?.RoleType?.name === "admin") {
 			// await this.$store.dispatch("getAdminmenu", { force: true });
 			if (
 				router.currentRoute.value.query.redirect &&
@@ -235,8 +234,8 @@
 					router.currentRoute.value.query.redirect as string
 				);
 			return router.push("/admin/");
-		} else if (userStore?.$state.user?.role?.RoleType?.name === "user") {
-			if (userStore?.$state.user?.Tenant) {
+		} else if (userStore?.user?.role?.RoleType?.name === "user") {
+			if (userStore?.user?.Tenant) {
 				// if (
 				// 	router.currentRoute.value.query.redirect &&
 				// 	(router.currentRoute.value.query.redirect ===
