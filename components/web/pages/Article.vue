@@ -8,9 +8,8 @@
 
 	const currentPage = useCurrentPageStore();
 
-	// ! this gets called one extra time when dynamic component in [...slug].vue changes from/to "Articles module" to/from other module. That's why we can skip this one "apiCall" if module name (currentComponent) differs
-	const { data: article } = await (currentPage.module.currentComponent ===
-	"WebPagesArticle"
+	const { data: article } = await (currentPage.module?.current?.name ===
+	"articles"
 		? useApiCall<moduleResponse<Article> | null>("/api/content/article", {
 				query: {
 					...currentPage.route.query,
@@ -26,10 +25,7 @@
 	currentPage.page.description =
 		article?.value?.moduleInfo?.description || "";
 
-	if (
-		!article?.value &&
-		currentPage.module.currentComponent === "WebPagesArticle"
-	) {
+	if (!article?.value && currentPage.module?.current?.name === "articles") {
 		throw createError({
 			statusCode: 404,
 			statusMessage: "Not found.",

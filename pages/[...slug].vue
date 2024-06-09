@@ -1,31 +1,17 @@
 <template>
-	<component :is="componentName" />
+	<component :is="currentPage?.$state?.module?.currentComponent" />
 </template>
 <script setup lang="ts">
-	import { ref, watch } from "#imports";
 	import { useRoute } from "nuxt/app";
 	import { useCurrentPageStore } from "../store/currentPage";
 
 	const currentPage = useCurrentPageStore();
 	const route = useRoute();
 
-	const componentName = ref("");
-
-	const loadPage = () => {
-		componentName.value = currentPage.module.currentComponent ?? "";
-	};
-
-	loadPage();
-
-	async function loadCurrentPage() {
-		await currentPage.getData();
-		loadPage();
-	}
-
 	watch(
 		route,
 		async () => {
-			await loadCurrentPage();
+			await currentPage.getData();
 		},
 		{ deep: true, immediate: true }
 	);

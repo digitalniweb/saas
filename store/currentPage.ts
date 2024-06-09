@@ -188,10 +188,9 @@ export const useCurrentPageStore = defineStore("currentPage", {
 				}
 
 			this.module.current = currentModule;
-			this.module.currentModulePage = currentModulePage ?? null;
-			this.module.currentModulePageLanguage =
-				currentModulePageLanguage ?? null;
-			this.module.currentComponent = currentModuleComponent ?? null;
+			this.module.currentComponent = currentModuleComponent;
+			this.module.currentModulePage = currentModulePage;
+			this.module.currentModulePageLanguage = currentModulePageLanguage;
 			if (currentModule === null) {
 				this.module.current = articleModule;
 				this.module.currentComponent = articleComponent;
