@@ -1,22 +1,26 @@
-<template></template>
+<template>
+	<component :is="currentPage?.$state?.module?.currentComponent" />
+</template>
 <script setup lang="ts">
-	import { ref, watch } from "#imports";
 	import { useRoute } from "nuxt/app";
+	import { useCurrentPageStore } from "../../store/currentPage";
 
+	const currentPage = useCurrentPageStore();
 	const route = useRoute();
-	const componentName = ref<"div">("div");
 
-	const loadPage = () => {
-		componentName.value = "div";
-	};
 	watch(
 		route,
 		() => {
-			loadPage();
+			// await currentPage.getData();
 		},
 		{ deep: true, immediate: true }
 	);
 	definePageMeta({
 		layout: "admin",
+	});
+
+	useSeoMeta({
+		title: () => currentPage.page?.title, // when using reactive value we need to use "computed getter syntax (() => value)""
+		description: "",
 	});
 </script>

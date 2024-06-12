@@ -1,6 +1,6 @@
 <template>
 	<ul :class="ulclass" :id="ulid">
-		<li v-for="(item, id) in levelitems" :key="id">
+		<li v-for="item in levelitems" :key="item.id">
 			<v-btn :to="item.url" variant="plain">
 				<v-icon v-if="item.icon" class="mr-2">
 					mdi-{{ item.icon }}
