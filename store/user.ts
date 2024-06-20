@@ -21,23 +21,23 @@ export const useUserStore = defineStore("user", {
 	}),
 	actions: {
 		getToken(type: tokenType) {
-			return localStorage.getItem(
+			return localStorage?.getItem(
 				type == "access" ? "access_token" : "refresh_token"
 			);
 		},
 		setToken(token: string, type: tokenType) {
-			localStorage.setItem(
+			localStorage?.setItem(
 				type == "access" ? "access_token" : "refresh_token",
 				token
 			);
 		},
 		deleteToken(type: tokenType) {
-			localStorage.removeItem(
+			localStorage?.removeItem(
 				type == "access" ? "access_token" : "refresh_token"
 			);
 		},
 		async verifyAccessToken() {
-			if (process.server) return;
+			if (import.meta.server) return;
 			let accessToken = this.getToken("access");
 			let refreshToken = this.getToken("refresh");
 			if (!accessToken || !refreshToken) return;

@@ -21,59 +21,82 @@
 		</nuxt-link>
 		<WebMenuList :levelitems="menu" :ulid="'navitems'" />
 		<template v-slot:append>
-			<v-tooltip
-				:text="modulesLocale('users', 'Register', 'name')"
-				location="bottom"
-			>
-				<template v-slot:activator="{ props }">
-					<v-btn
-						:aria-label="modulesLocale('users', 'Register', 'name')"
-						icon="mdi-account-plus"
-						v-bind="props"
-						:to="modulesLocale('users', 'Register', 'url')"
-					></v-btn>
-				</template>
-			</v-tooltip>
-			<v-tooltip
-				location="bottom"
-				:text="modulesLocale('users', 'Login', 'name')"
-			>
-				<template v-slot:activator="{ props }">
-					<v-btn
-						:aria-label="modulesLocale('users', 'Login', 'name')"
-						icon="mdi-account-arrow-left"
-						v-bind="props"
-						:to="modulesLocale('users', 'Login', 'url')"
-					></v-btn>
-				</template>
-			</v-tooltip>
-			<v-tooltip
-				:text="modulesLocale('users', 'Logout', 'name')"
-				location="bottom"
-			>
-				<template v-slot:activator="{ props }">
-					<v-btn
-						:aria-label="modulesLocale('users', 'Logout', 'name')"
-						icon="mdi-account-arrow-right"
-						v-bind="props"
-						:to="modulesLocale('users', 'Logout', 'url')"
-					></v-btn>
-				</template>
-			</v-tooltip>
+			<div v-if="!logged">
+				<v-tooltip
+					:text="modulesLocale('users', 'Register', 'name')"
+					location="bottom"
+				>
+					<template v-slot:activator="{ props }">
+						<v-btn
+							:aria-label="
+								modulesLocale('users', 'Register', 'name')
+							"
+							icon="mdi-account-plus"
+							v-bind="props"
+							:to="modulesLocale('users', 'Register', 'url')"
+						></v-btn>
+					</template>
+				</v-tooltip>
+				<v-tooltip
+					location="bottom"
+					:text="modulesLocale('users', 'Login', 'name')"
+				>
+					<template v-slot:activator="{ props }">
+						<v-btn
+							:aria-label="
+								modulesLocale('users', 'Login', 'name')
+							"
+							icon="mdi-account-arrow-left"
+							v-bind="props"
+							:to="modulesLocale('users', 'Login', 'url')"
+						></v-btn>
+					</template>
+				</v-tooltip>
+			</div>
+			<div v-else>
+				<v-tooltip
+					:text="modulesLocale('users', 'Logout', 'name')"
+					location="bottom"
+				>
+					<template v-slot:activator="{ props }">
+						<v-btn
+							:aria-label="
+								modulesLocale('users', 'Logout', 'name')
+							"
+							icon="mdi-account-arrow-right"
+							v-bind="props"
+							:to="modulesLocale('users', 'Logout', 'url')"
+						></v-btn>
+					</template>
+				</v-tooltip>
 
-			<v-tooltip
-				:text="modulesLocale('users', 'Profile', 'name')"
-				location="bottom"
-			>
-				<template v-slot:activator="{ props }">
-					<v-btn
-						:aria-label="modulesLocale('users', 'Profile', 'name')"
-						icon="mdi-account"
-						v-bind="props"
-						:to="modulesLocale('users', 'Profile', 'url')"
-					></v-btn>
-				</template>
-			</v-tooltip>
+				<v-tooltip
+					:text="modulesLocale('users', 'Profile', 'name')"
+					location="bottom"
+				>
+					<template v-slot:activator="{ props }">
+						<v-btn
+							:aria-label="
+								modulesLocale('users', 'Profile', 'name')
+							"
+							icon="mdi-account"
+							v-bind="props"
+							:to="modulesLocale('users', 'Profile', 'url')"
+						></v-btn>
+					</template>
+				</v-tooltip>
+				<!-- add to globalData modules with languages -->
+				<v-tooltip text="admin" location="bottom">
+					<template v-slot:activator="{ props }">
+						<v-btn
+							aria-label="admin"
+							icon="mdi-account-cog"
+							v-bind="props"
+							to="/admin"
+						></v-btn>
+					</template>
+				</v-tooltip>
+			</div>
 			<v-tooltip
 				text="Error test dev"
 				location="bottom"
@@ -93,6 +116,7 @@
 <script setup lang="ts">
 	import { useLocales } from "../../../composables/useLocales";
 	import { useMenusStore } from "@/store/menus";
+	import { useUserStore } from "../../../store/user";
 	import { storeToRefs } from "pinia";
 	const config = useRuntimeConfig();
 
@@ -100,4 +124,9 @@
 
 	const { articles: menu } = storeToRefs(useMenusStore());
 	const appBar = ref();
+
+	const userStore = useUserStore();
+	const logged = computed(
+		() => userStore?.user?.role?.RoleType?.name === "admin"
+	);
 </script>

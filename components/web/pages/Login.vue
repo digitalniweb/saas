@@ -190,8 +190,8 @@
 		let validate = await form?.value?.validate();
 		if (!validate?.valid) return;
 		let loginData: loginInformation = {
-			email: formdata.value.email, // adminWrong@test.cz
-			password: formdata.value.password, // 123456789!aA
+			email: formdata.value.email,
+			password: formdata.value.password,
 		};
 		try {
 			let userInfo = await userStore.login(loginData);

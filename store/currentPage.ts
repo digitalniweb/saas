@@ -76,23 +76,6 @@ export const useCurrentPageStore = defineStore("currentPage", {
 				}
 			}
 
-			// * I can get this with:
-			// const nuxtApp = useNuxtApp();
-			// console.log("skipUrl", nuxtApp.$skipUrl);
-
-			// const skipURLsStarting = [
-			// 	"__nuxt",
-			// 	"css",
-			// 	"images",
-			// 	"img",
-			// 	"files",
-			// ];
-			// const skipURL = skipURLsStarting.some((url) => {
-			// 	let regex = new RegExp("^/" + url);
-			// 	return regex.test(this.route.pathname);
-			// });
-			// if (skipURL) return;
-
 			const menuStore = useMenusStore();
 
 			let routeArray = this.route.pathname.split("/");
