@@ -19,6 +19,9 @@ export const useUserStore = defineStore("user", {
 	state: (): State => ({
 		user: null,
 	}),
+	getters: {
+		logged: (state) => state.user?.role?.RoleType?.name === "admin",
+	},
 	actions: {
 		getToken(type: tokenType) {
 			return localStorage?.getItem(

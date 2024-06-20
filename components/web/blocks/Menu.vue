@@ -21,7 +21,7 @@
 		</nuxt-link>
 		<WebMenuList :levelitems="menu" :ulid="'navitems'" />
 		<template v-slot:append>
-			<div v-if="!logged">
+			<div v-if="!userStore.logged">
 				<v-tooltip
 					:text="modulesLocale('users', 'Register', 'name')"
 					location="bottom"
@@ -126,7 +126,4 @@
 	const appBar = ref();
 
 	const userStore = useUserStore();
-	const logged = computed(
-		() => userStore?.user?.role?.RoleType?.name === "admin"
-	);
 </script>
