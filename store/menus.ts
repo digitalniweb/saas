@@ -9,8 +9,14 @@ export const useMenusStore = defineStore("menus", {
 	actions: {
 		async loadData() {
 			// change the type here as well
-			let articlesmenu = await useApiCall<object[]>("/api/website/menu");
-			this.articles = articlesmenu?.data?.value ?? [];
+			let articlesMenu = await useApiCall<object[]>("/api/website/menu");
+			this.articles = articlesMenu?.data?.value ?? [];
+		},
+		async loadAdminData() {
+			let adminMenu = await useApiCall<object[]>(
+				"/api/website/adminmenu"
+			);
+			this.admin = adminMenu?.data?.value ?? [];
 		},
 	},
 });

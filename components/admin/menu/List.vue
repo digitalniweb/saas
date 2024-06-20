@@ -14,6 +14,12 @@
 		["mdi-shield-home-outline", "Hlavní strana Admin", "/admin"],
 		["mdi-cogs", "Informace o webu", "/admin/webinformation"],
 		["mdi-text-box-edit-outline", "Test editoru", "/admin/testeditor"],
+		[
+			"mdi-text-box-edit-outline",
+			"Content Articles",
+			"/admin/content/articles",
+		],
+		["mdi-text-box-edit-outline", "Obsah clanky", "/admin/obsah/clanky"],
 	]);
 	const props = defineProps({
 		levelitems: Array,

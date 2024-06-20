@@ -6,6 +6,7 @@ import {
 } from "~/digitalniweb-types/models/globalData";
 import { useLanguagesStore } from "~/store/languages";
 import { useModulesStore } from "~/store/modules";
+import { useMenusStore } from "~/store/menus";
 import { languages } from "~/digitalniweb-types";
 import { InferAttributes, InferCreationAttributes, Optional } from "sequelize";
 const queryParamsKeys = ["page", "limit", "offset", "search"] as const;
@@ -74,24 +75,29 @@ export const useCurrentPageStore = defineStore("currentPage", {
 					}
 				}
 			}
-			const skipURLsStarting = [
-				"__nuxt",
-				"css",
-				"images",
-				"img",
-				"files",
-			];
-			const skipURL = skipURLsStarting.some((url) => {
-				let regex = new RegExp("^/" + url);
-				return regex.test(this.route.pathname);
-			});
-			if (skipURL) return;
+
+			// * I can get this with:
+			// const nuxtApp = useNuxtApp();
+			// console.log("skipUrl", nuxtApp.$skipUrl);
+
+			// const skipURLsStarting = [
+			// 	"__nuxt",
+			// 	"css",
+			// 	"images",
+			// 	"img",
+			// 	"files",
+			// ];
+			// const skipURL = skipURLsStarting.some((url) => {
+			// 	let regex = new RegExp("^/" + url);
+			// 	return regex.test(this.route.pathname);
+			// });
+			// if (skipURL) return;
+
+			const menuStore = useMenusStore();
 
 			let routeArray = this.route.pathname.split("/");
 			routeArray.shift(); // first value is always "", remove it
 			let currentRoute = routeArray.shift();
-			this.admin = currentRoute === "admin";
-			if (this.admin) currentRoute = routeArray.shift();
 			if (languages.$state.languages.length !== 1) {
 				let currentLang = currentRoute as languages;
 				let newLang: languages | null;
@@ -101,9 +107,10 @@ export const useCurrentPageStore = defineStore("currentPage", {
 					if (
 						languages.$state?.appLanguages?.[currentLang] !==
 						undefined
-					)
+					) {
 						newLang = currentLang;
-					else newLang = languages.$state.main;
+						currentRoute = routeArray.shift();
+					} else newLang = languages.$state.main;
 				}
 
 				if (languages.$state.main)
@@ -121,11 +128,20 @@ export const useCurrentPageStore = defineStore("currentPage", {
 					] ?? null;
 			}
 
+			this.admin = currentRoute === "admin";
+			if (this.admin) currentRoute = routeArray.shift();
+
 			if (this.admin) {
+				if (menuStore.admin.length === 0) {
+					await menuStore.loadAdminData();
+				}
 				return;
 			}
 
 			// pages (not admin)
+			if (menuStore.articles.length === 0) {
+				await menuStore.loadData();
+			}
 
 			// current module
 			let currentModule = null;

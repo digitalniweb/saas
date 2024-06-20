@@ -74,6 +74,19 @@
 					></v-btn>
 				</template>
 			</v-tooltip>
+			<v-tooltip
+				text="Error test dev"
+				location="bottom"
+				v-if="config.public.environment === 'development'"
+			>
+				<template v-slot:activator="{ props }">
+					<v-btn
+						icon="mdi-alert-box"
+						to="/nonExistingPage"
+						v-bind="props"
+					></v-btn
+				></template>
+			</v-tooltip>
 		</template>
 	</v-app-bar>
 </template>
@@ -81,6 +94,7 @@
 	import { useLocales } from "../../../composables/useLocales";
 	import { useMenusStore } from "@/store/menus";
 	import { storeToRefs } from "pinia";
+	const config = useRuntimeConfig();
 
 	const { webinformationLocale, modulesLocale } = useLocales();
 

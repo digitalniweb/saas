@@ -1,13 +1,5 @@
 export default defineNuxtConfig({
 	modules: ["@pinia/nuxt"],
-	/* pinia: {
-		// this works but typescript says 'autoImports' doesn't exist. Try to uncomment the @ts-ignore in any time if it is correct and if so then remove the @ts-ignore
-		// @ts-ignore
-		autoImports: [
-			// automatically imports `defineStore`
-			"defineStore", // import { defineStore } from 'pinia'
-		],
-	}, */
 	components: {
 		global: true,
 		dirs: ["~/components"],
@@ -29,12 +21,13 @@ export default defineNuxtConfig({
 		"~/assets/scss/import.scss",
 	],
 	build: {
-		transpile: ["vuetify", "nuxtErrorHandler"],
+		transpile: ["vuetify"],
 	},
 	pages: true,
 	runtimeConfig: {
 		apiSecret: process.env.NUXT_API_SECRET,
 		public: {
+			environment: process.env.NODE_ENV || "development",
 			apiBase: process.env.NUXT_PUBLIC_API_BASE || "/api",
 			defaultLanguage: process.env.DEFAULT_LANGUAGE || "en",
 		},

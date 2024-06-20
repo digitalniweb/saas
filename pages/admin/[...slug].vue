@@ -10,8 +10,8 @@
 
 	watch(
 		route,
-		() => {
-			// await currentPage.getData();
+		async () => {
+			await currentPage.getData();
 		},
 		{ deep: true, immediate: true }
 	);

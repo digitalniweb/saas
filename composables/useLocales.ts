@@ -57,7 +57,7 @@ export const useLocales = () => {
 			(mpl) => mpl.LanguageId === currentPage.language?.id
 		);
 		let returnValue = currModulePageLanguage?.[column];
-		if (column === "url" && !returnValue.startsWith("/"))
+		if (column === "url" && !returnValue?.startsWith("/"))
 			returnValue = "/" + returnValue;
 		return returnValue;
 	};

@@ -1,12 +1,13 @@
 import { useWebInformationStore } from "~/store/webInformation";
 import { useWebsiteStore } from "~/store/website";
 import { useLanguagesStore } from "~/store/languages";
-import { useMenusStore } from "~/store/menus";
 import { useUserStore } from "~/store/user";
 import { useModulesStore } from "~/store/modules";
 import { useWidgetsStore } from "~/store/widgets";
 import { useCurrentPageStore } from "~/store/currentPage";
 export default defineNuxtPlugin(async (nuxtApp) => {
+	if (nuxtApp.$skipUrl) return;
+
 	const website = useWebsiteStore();
 	if (!(await website.loadData())) {
 		throw createError({
@@ -36,7 +37,4 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
 	const currentPage = useCurrentPageStore();
 	await currentPage.getData();
-
-	const articleMenu = useMenusStore();
-	await articleMenu.loadData();
 });
