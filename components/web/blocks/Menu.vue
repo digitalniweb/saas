@@ -21,95 +21,98 @@
 		</nuxt-link>
 		<WebMenuList :levelitems="menu" :ulid="'navitems'" />
 		<template v-slot:append>
-			<div v-if="!userStore.logged">
-				<v-tooltip
-					:text="modulesLocale('users', 'Register', 'name')"
-					location="bottom"
-				>
-					<template v-slot:activator="{ props }">
-						<v-btn
-							:aria-label="
-								modulesLocale('users', 'Register', 'name')
-							"
-							icon="mdi-account-plus"
-							v-bind="props"
-							:to="modulesLocale('users', 'Register', 'url')"
-						></v-btn>
-					</template>
-				</v-tooltip>
-				<v-tooltip
-					location="bottom"
-					:text="modulesLocale('users', 'Login', 'name')"
-				>
-					<template v-slot:activator="{ props }">
-						<v-btn
-							:aria-label="
-								modulesLocale('users', 'Login', 'name')
-							"
-							icon="mdi-account-arrow-left"
-							v-bind="props"
-							:to="modulesLocale('users', 'Login', 'url')"
-						></v-btn>
-					</template>
-				</v-tooltip>
-			</div>
-			<div v-else>
-				<v-tooltip
-					:text="modulesLocale('users', 'Logout', 'name')"
-					location="bottom"
-				>
-					<template v-slot:activator="{ props }">
-						<v-btn
-							:aria-label="
-								modulesLocale('users', 'Logout', 'name')
-							"
-							icon="mdi-account-arrow-right"
-							v-bind="props"
-							:to="modulesLocale('users', 'Logout', 'url')"
-						></v-btn>
-					</template>
-				</v-tooltip>
+			<ClientOnly>
+				<!-- ClientOnly because we don't check if user is logged on server - then there is a missmatch -->
+				<div v-if="!userStore.logged">
+					<v-tooltip
+						:text="modulesLocale('users', 'Register', 'name')"
+						location="bottom"
+					>
+						<template v-slot:activator="{ props }">
+							<v-btn
+								:aria-label="
+									modulesLocale('users', 'Register', 'name')
+								"
+								icon="mdi-account-plus"
+								v-bind="props"
+								:to="modulesLocale('users', 'Register', 'url')"
+							></v-btn>
+						</template>
+					</v-tooltip>
+					<v-tooltip
+						location="bottom"
+						:text="modulesLocale('users', 'Login', 'name')"
+					>
+						<template v-slot:activator="{ props }">
+							<v-btn
+								:aria-label="
+									modulesLocale('users', 'Login', 'name')
+								"
+								icon="mdi-account-arrow-left"
+								v-bind="props"
+								:to="modulesLocale('users', 'Login', 'url')"
+							></v-btn>
+						</template>
+					</v-tooltip>
+				</div>
+				<div v-else>
+					<v-tooltip
+						:text="modulesLocale('users', 'Logout', 'name')"
+						location="bottom"
+					>
+						<template v-slot:activator="{ props }">
+							<v-btn
+								:aria-label="
+									modulesLocale('users', 'Logout', 'name')
+								"
+								icon="mdi-account-arrow-right"
+								v-bind="props"
+								:to="modulesLocale('users', 'Logout', 'url')"
+							></v-btn>
+						</template>
+					</v-tooltip>
 
+					<v-tooltip
+						:text="modulesLocale('users', 'Profile', 'name')"
+						location="bottom"
+					>
+						<template v-slot:activator="{ props }">
+							<v-btn
+								:aria-label="
+									modulesLocale('users', 'Profile', 'name')
+								"
+								icon="mdi-account"
+								v-bind="props"
+								:to="modulesLocale('users', 'Profile', 'url')"
+							></v-btn>
+						</template>
+					</v-tooltip>
+					<!-- add to globalData modules with languages -->
+					<v-tooltip text="admin" location="bottom">
+						<template v-slot:activator="{ props }">
+							<v-btn
+								aria-label="admin"
+								icon="mdi-account-cog"
+								v-bind="props"
+								to="/admin"
+							></v-btn>
+						</template>
+					</v-tooltip>
+				</div>
 				<v-tooltip
-					:text="modulesLocale('users', 'Profile', 'name')"
+					text="Error test dev"
 					location="bottom"
+					v-if="config.public.environment === 'development'"
 				>
 					<template v-slot:activator="{ props }">
 						<v-btn
-							:aria-label="
-								modulesLocale('users', 'Profile', 'name')
-							"
-							icon="mdi-account"
+							icon="mdi-alert-box"
+							to="/nonExistingPage"
 							v-bind="props"
-							:to="modulesLocale('users', 'Profile', 'url')"
-						></v-btn>
-					</template>
+						></v-btn
+					></template>
 				</v-tooltip>
-				<!-- add to globalData modules with languages -->
-				<v-tooltip text="admin" location="bottom">
-					<template v-slot:activator="{ props }">
-						<v-btn
-							aria-label="admin"
-							icon="mdi-account-cog"
-							v-bind="props"
-							to="/admin"
-						></v-btn>
-					</template>
-				</v-tooltip>
-			</div>
-			<v-tooltip
-				text="Error test dev"
-				location="bottom"
-				v-if="config.public.environment === 'development'"
-			>
-				<template v-slot:activator="{ props }">
-					<v-btn
-						icon="mdi-alert-box"
-						to="/nonExistingPage"
-						v-bind="props"
-					></v-btn
-				></template>
-			</v-tooltip>
+			</ClientOnly>
 		</template>
 	</v-app-bar>
 </template>

@@ -20,7 +20,7 @@
 	});
 
 	useSeoMeta({
-		title: () => currentPage.page?.title, // when using reactive value we need to use "computed getter syntax (() => value)""
+		title: () => currentPage.page?.title || "Admin", // when using reactive value we need to use "computed getter syntax (() => value)""
 		description: "",
 	});
 </script>

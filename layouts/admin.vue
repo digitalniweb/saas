@@ -1,9 +1,9 @@
 <template>
 	<v-app id="admin">
 		<v-navigation-drawer v-model="drawer">
-			<v-list width="100%" class="text-left">
+			<v-list class="text-left">
 				<v-list-item
-					prepend-avatar="/img/logo.png"
+					prepend-avatar="/img/logo.webp"
 					title="nickname"
 					subtitle="Admin"
 				>
@@ -98,7 +98,4 @@
 			title: "Odhlásit se",
 		},
 	]);
-	useHead({
-		title: "Administration",
-	});
 </script>
