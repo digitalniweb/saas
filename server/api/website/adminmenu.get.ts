@@ -1,5 +1,5 @@
 import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureCall";
-import AppAdminMenu from "~/server/models/apps/appAdminMenu";
+import AppModule from "~/server/models/apps/appModule.js";
 import {
 	resourceIdsType,
 	useApiCallQuery,
@@ -7,14 +7,14 @@ import {
 
 export default eventHandler(async (event) => {
 	try {
-		let adminMenus = AppAdminMenu.findAll();
+		let appModules = AppModule.findAll();
 		let query = getQuery(event) as useApiCallQuery;
 		let resourceIds: resourceIdsType = JSON.parse(
 			query.resourceIds as string
 		);
 		query.resourceIds = resourceIds;
 
-		let data = await microserviceCall({
+		let adminMenusGlobalData = await microserviceCall({
 			name: "globalData",
 			path: "/api/adminmenu/list",
 			id: resourceIds.contentMsId,
@@ -22,7 +22,7 @@ export default eventHandler(async (event) => {
 			cache: false,
 		});
 
-		return data.data || [];
+		return adminMenusGlobalData.data || [];
 	} catch (error) {
 		console.log(error);
 
