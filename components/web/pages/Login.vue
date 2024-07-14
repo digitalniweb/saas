@@ -163,7 +163,8 @@
 	const form = ref<InstanceType<typeof VForm>>();
 	const resetForm = ref<InstanceType<typeof VForm>>();
 	const loginUser = async () => {
-		let blockedLoginTill = localStorage.getItem("blockedLoginTill");
+		let blockedLoginTill =
+			localStorage.getItem("blockedLoginTill") ?? undefined;
 		if (blockedLoginTill) {
 			if (new Date() > new Date(blockedLoginTill)) {
 				// Warning + time

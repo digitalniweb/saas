@@ -24,17 +24,20 @@ export const useUserStore = defineStore("user", {
 	},
 	actions: {
 		getToken(type: tokenType) {
+			if (!import.meta.client) return undefined;
 			return localStorage?.getItem(
 				type == "access" ? "access_token" : "refresh_token"
 			);
 		},
 		setToken(token: string, type: tokenType) {
+			if (!import.meta.client) return undefined;
 			localStorage?.setItem(
 				type == "access" ? "access_token" : "refresh_token",
 				token
 			);
 		},
 		deleteToken(type: tokenType) {
+			if (!import.meta.client) return undefined;
 			localStorage?.removeItem(
 				type == "access" ? "access_token" : "refresh_token"
 			);

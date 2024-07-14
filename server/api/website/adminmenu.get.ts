@@ -7,7 +7,11 @@ import {
 
 export default eventHandler(async (event) => {
 	try {
-		let appModules = await AppModule.findAll();
+		// let appModules = await AppModule.findAll();
+		// get userInfo
+		// let websiteModules;
+		// let userModules;
+
 		let query = getQuery(event) as useApiCallQuery;
 		let resourceIds: resourceIdsType = JSON.parse(
 			query.resourceIds as string
