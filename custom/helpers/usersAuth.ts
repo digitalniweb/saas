@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { H3Event } from "h3";
 import {
 	userJWTParams,
 	userLoginResponseParams,
@@ -20,7 +21,7 @@ interface Options {
 	refreshTokenSalt?: string;
 }
 
-const accessTokenExpireTime: string = "2m";
+const accessTokenExpireTime: string = "10s";
 
 async function userLoginData(
 	user: InferAttributes<User>,
@@ -103,4 +104,29 @@ function generateToken(data: object, options: Options = {}): string {
 	}
 }
 
-export { accessTokenExpireTime, userLoginData };
+function verifyUser(event: H3Event) {
+	// back-end (server) jwt verification
+	if (event.context.verifiedUser) return true;
+	let authHeaders = getHeader(event, "Authorization");
+	if (!authHeaders) throw "No authorization information provided";
+	let accessToken = authHeaders.replace("Bearer ", "");
+	if (!accessToken) {
+		throw "You must be logged in";
+	}
+	try {
+		let user = jwt.verify(accessToken, process.env.APP_ACCESS_TOKEN_SECRET);
+		event.context.verifiedUser = user;
+	} catch (err: any) {
+		if (err.name == "TokenExpiredError") {
+			throw "Token expired";
+		} else if (err.name == "JsonWebTokenError") {
+			// someone modified the token: logout
+			throw "Invalid token";
+		}
+	}
+	// return verified user
+	// i can add it to event.context.verifiedUser = {...} and return true or false or throw errors
+	return true;
+}
+
+export { accessTokenExpireTime, userLoginData, verifyUser };

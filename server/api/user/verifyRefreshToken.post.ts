@@ -19,7 +19,7 @@ export default eventHandler(async (event) => {
 		event.node.res.statusCode = error?.status ?? 500;
 		return {
 			code: error?.status ?? 500,
-			message: "Something went wrong while verifying token!",
+			message: "Something went wrong while verifying refresh token!",
 		} as commonError;
 	}
 });

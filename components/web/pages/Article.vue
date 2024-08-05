@@ -7,10 +7,11 @@
 	import { useCurrentPageStore } from "../../../store/currentPage";
 
 	const currentPage = useCurrentPageStore();
+	const { fetchRef } = useApiCall();
 
 	const { data: article } = await (currentPage.module?.current?.name ===
 	"articles"
-		? useApiCall<moduleResponse<Article> | null>("/api/content/article", {
+		? fetchRef<moduleResponse<Article> | null>("/api/content/article", {
 				query: {
 					...currentPage.route.query,
 					url: currentPage.route.pathname,

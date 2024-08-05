@@ -115,9 +115,9 @@ export const useCurrentPageStore = defineStore("currentPage", {
 			if (this.admin) currentRoute = routeArray.shift();
 
 			if (this.admin) {
-				if (menuStore.admin.length === 0) {
-					await menuStore.loadAdminData();
-				}
+				// if (menuStore.admin.length === 0) {
+				// 	await menuStore.loadAdminData();
+				// }
 				return;
 			}
 

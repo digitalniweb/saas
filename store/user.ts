@@ -2,12 +2,10 @@ import { loginInformation } from "~/digitalniweb-types";
 import {
 	tokenType,
 	tokensJWT,
-	userJWT,
 	userLoginResponse,
 	userStore,
 } from "~/digitalniweb-types/users";
 import { commonError } from "~/digitalniweb-types/customHelpers/logger";
-import { userStoreParams } from "~/digitalniweb-custom/variables/user";
 import { filterStoreparams } from "~/custom/users";
 import { JwtPayload } from "jsonwebtoken";
 
@@ -43,6 +41,7 @@ export const useUserStore = defineStore("user", {
 			);
 		},
 		async verifyAccessToken() {
+			// front-end (client) jwt verification
 			if (import.meta.server) return;
 			let accessToken = this.getToken("access");
 			let refreshToken = this.getToken("refresh");
@@ -52,8 +51,21 @@ export const useUserStore = defineStore("user", {
 				commonError
 			>("/api/user/verifyAccessToken", {
 				method: "POST",
-				body: { accessToken, refreshToken } as tokensJWT,
+				body: { accessToken } as tokensJWT,
 			});
+
+			if (
+				typeof data.data.value === "string" &&
+				data.data.value === "TokenExpiredError"
+			) {
+				data = await useFetch<
+					userLoginResponse | JwtPayload,
+					commonError
+				>("/api/user/verifyRefreshToken", {
+					method: "POST",
+					body: { refreshToken } as tokensJWT,
+				});
+			}
 			if (!data.data.value || data.error.value) {
 				this.deleteToken("access");
 				this.deleteToken("refresh");

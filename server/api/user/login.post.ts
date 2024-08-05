@@ -33,9 +33,10 @@ export default eventHandler(async (event) => {
 		if (data?.status >= 400) event.node.res.statusCode = data.status;
 
 		let responseData = data.data; // if data.status >= 400 -> commonError
+
 		if (!responseData || typeof data.headers === "undefined") return;
 		if ("code" in responseData && responseData.code) return responseData;
-		return userLoginData(
+		return await userLoginData(
 			responseData,
 			Number(data?.headers?.["x-ms-id"]),
 			true

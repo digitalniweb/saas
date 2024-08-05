@@ -1,4 +1,4 @@
-// import { defineStore } from "pinia";
+import { useUserStore } from "./user";
 
 export const useMenusStore = defineStore("menus", {
 	state: () => ({
@@ -9,14 +9,31 @@ export const useMenusStore = defineStore("menus", {
 	actions: {
 		async loadData() {
 			// change the type here as well
-			let articlesMenu = await useApiCall<object[]>("/api/website/menu");
-			this.articles = articlesMenu?.data?.value ?? [];
+			const { fetchRef } = useApiCall();
+			let articlesMenu = await fetchRef<object[]>("/api/website/menu");
+			this.articles = articlesMenu.data.value ?? [];
 		},
 		async loadAdminData() {
-			let adminMenu = await useApiCall<object[]>(
-				"/api/website/adminmenu"
-			);
-			this.admin = adminMenu?.data?.value ?? [];
+			if (import.meta.server) return;
+			const user = useUserStore();
+			const { fetchData } = useApiCall();
+			let adminMenu = await fetchData<object[]>("/api/website/adminmenu");
+
+			this.admin = adminMenu ?? [];
+
+			/*
+			// this doesn't work. Data won't load immediatelly, need to use .refresh() of the useFetch() returned object to get the data
+			if (import.meta.server) return;
+			const user = useUserStore();
+			const { fetchData, fetchRef } = useApiCall();
+			// await nextTick(); // this fixes problem with pending useFetch() in useApiCall()
+			let adminMenu = await fetchRef<object[]>("/api/website/adminmenu", {
+				query: { modules: user?.user?.UserModulesIds },
+			});
+			console.log(adminMenu.data.value);
+
+			this.admin = adminMenu.data.value ?? [];
+			*/
 		},
 	},
 });
