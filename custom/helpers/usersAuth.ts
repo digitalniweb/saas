@@ -21,7 +21,7 @@ interface Options {
 	refreshTokenSalt?: string;
 }
 
-const accessTokenExpireTime: string = "10s";
+const accessTokenExpireTime: string = "5m";
 
 async function userLoginData(
 	user: InferAttributes<User>,

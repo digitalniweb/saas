@@ -1,5 +1,5 @@
 <template>
-	<component :is="currentPage?.$state?.module?.currentComponent" />
+	<component :is="currentPage?.$state?.admin?.currentComponent" />
 </template>
 <script setup lang="ts">
 	import { useRoute } from "nuxt/app";
@@ -18,7 +18,7 @@
 	watch(
 		route,
 		async () => {
-			await currentPage.getData();
+			await currentPage.getAdminData();
 		},
 		{ deep: true, immediate: true }
 	);

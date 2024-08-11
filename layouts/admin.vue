@@ -2,7 +2,7 @@
 	<client-only>
 		<v-app id="admin">
 			<v-navigation-drawer v-model="drawer">
-				<v-list class="text-left">
+				<v-list class="text-left" v-model:opened="open">
 					<v-list-item
 						prepend-avatar="/img/logo.webp"
 						title="nickname"
@@ -78,15 +78,14 @@
 					</v-row>
 				</v-container>
 			</v-main>
-			<CustomSnackBars /> </v-app
-	></client-only>
+			<CustomSnackBars />
+		</v-app>
+	</client-only>
 </template>
 
 <script setup>
 	const drawer = ref(null);
-	import { useMenusStore } from "@/store/menus";
-	let menuStore = useMenusStore();
-	menuStore.loadAdminData();
+	const open = ref([]);
 
 	const notificationItems = ref([]);
 

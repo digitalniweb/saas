@@ -1,27 +1,52 @@
 <template>
-	<v-list-item
-		v-for="[icon, text, href] in links"
-		:key="icon"
-		:to="href"
-		:prepend-icon="icon"
-	>
-		<v-list-item-title>{{ text }}</v-list-item-title>
-	</v-list-item>
+	<template v-for="item in levelitems" :key="item.id">
+		<v-list-item
+			v-if="!item.children"
+			:to="'/admin/' + getLanguageItemProperty(item, 'url')"
+			:prepend-icon="item.icon"
+			:title="getLanguageItemProperty(item, 'name') as string"
+		>
+		</v-list-item>
+		<v-list-group v-else :value="item.id">
+			<template v-slot:activator="{ props }">
+				<v-list-item
+					v-bind="props"
+					:prepend-icon="item.icon"
+					:title="getLanguageItemProperty(item, 'name') as string"
+				></v-list-item>
+			</template>
+			<AdminMenuList
+				v-if="item.children"
+				:levelitems="item.children"
+				:languageId="languageId"
+			/>
+		</v-list-group>
+	</template>
 </template>
 
-<script setup>
-	const links = ref([
-		["mdi-shield-home-outline", "Hlavní strana Admin", "/admin"],
-		["mdi-cogs", "Informace o webu", "/admin/webinformation"],
-		["mdi-text-box-edit-outline", "Test editoru", "/admin/testeditor"],
-		[
-			"mdi-text-box-edit-outline",
-			"Content Articles",
-			"/admin/content/articles",
-		],
-		["mdi-text-box-edit-outline", "Obsah clanky", "/admin/obsah/clanky"],
-	]);
-	const props = defineProps({
-		levelitems: Array,
-	});
+<script setup lang="ts">
+	import { InferAttributes } from "sequelize";
+	import {
+		buildTreeType,
+		TreeNode,
+	} from "../../../digitalniweb-custom/helpers/buildTree";
+	import {
+		AdminMenu,
+		AdminMenuLanguage,
+	} from "../../../digitalniweb-types/models/globalData";
+
+	const props = defineProps<{
+		levelitems: buildTreeType<InferAttributes<AdminMenu>>;
+		languageId: number;
+	}>();
+
+	const getLanguageItemProperty = (
+		item: TreeNode<InferAttributes<AdminMenu>>,
+		property: keyof AdminMenuLanguage
+	) => {
+		let currentLanguageItem = item.AdminMenuLanguages?.find(
+			(e) => e.LanguageId == props.languageId
+		);
+		return currentLanguageItem?.[property] ?? "";
+	};
 </script>

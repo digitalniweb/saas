@@ -19,7 +19,7 @@
 				size="80"
 			/>
 		</nuxt-link>
-		<WebMenuList :levelitems="menu" :ulid="'navitems'" />
+		<WebMenuList :levelitems="menu" ulid="navitems" />
 		<template v-slot:append>
 			<ClientOnly>
 				<!-- ClientOnly because we don't check if user is logged on server - then there is a missmatch -->

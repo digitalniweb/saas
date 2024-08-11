@@ -10,16 +10,20 @@
 					mdi-chevron-down
 				</v-icon>
 			</v-btn>
-			<WebMenuList :levelitems="item.children" />
+			<WebMenuList v-if="item.children" :levelitems="item.children" />
 		</li>
 	</ul>
 </template>
 
-<script setup>
-	const props = defineProps({
-		ulclass: String,
-		ulid: String,
-		levelitems: Array,
-		buttonsProps: Object,
-	});
+<script setup lang="ts">
+	import { InferAttributes } from "sequelize";
+	import { buildTreeType } from "../../../digitalniweb-custom/helpers/buildTree";
+	import { Article } from "../../../digitalniweb-types/models/content";
+
+	const props = defineProps<{
+		ulclass?: string;
+		ulid?: string;
+		levelitems: buildTreeType<InferAttributes<Article>>;
+		buttonsProps?: object;
+	}>();
 </script>

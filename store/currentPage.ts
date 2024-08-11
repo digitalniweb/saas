@@ -1,4 +1,6 @@
 import {
+	AdminMenu,
+	AdminMenuLanguage,
 	Language,
 	Module,
 	ModulePage,
@@ -9,6 +11,11 @@ import { useModulesStore } from "~/store/modules";
 import { useMenusStore } from "~/store/menus";
 import { languages } from "~/digitalniweb-types";
 import { InferAttributes, InferCreationAttributes, Optional } from "sequelize";
+import {
+	buildTree,
+	buildTreeType,
+	TreeNode,
+} from "~/digitalniweb-custom/helpers/buildTree";
 const queryParamsKeys = ["page", "limit", "offset", "search"] as const;
 type queryParamsTypes = {
 	page: number;
@@ -29,7 +36,14 @@ export const useCurrentPageStore = defineStore("currentPage", {
 			query: {} as queryParams,
 			id: null as null | number,
 		},
-		admin: false as boolean,
+		admin: {
+			isAdmin: false as boolean,
+			currentAdminMenu: null as TreeNode<
+				InferAttributes<AdminMenu>
+			> | null,
+			currentComponent: null as string | null,
+			currentAdminMenuLanguage: null as AdminMenuLanguage | null,
+		},
 		language: null as InferAttributes<Language> | null, // currently picked language
 		module: {
 			current: null as Module | null,
@@ -50,7 +64,79 @@ export const useCurrentPageStore = defineStore("currentPage", {
 	}),
 	getters: {},
 	actions: {
+		setAdminModule(
+			menuLevel: buildTreeType<InferAttributes<AdminMenu>>,
+			wantedUrl: string,
+			level = 0
+		): boolean {
+			if (wantedUrl === "") {
+				this.admin.currentAdminMenu = null;
+				this.admin.currentComponent = "AdminPages";
+				this.admin.currentAdminMenuLanguage = null;
+				return true;
+			}
+			let wantedUrlArray = wantedUrl.split("/");
+			let currentUrl = wantedUrlArray.slice(0, level + 1).join("/");
+
+			for (let index = 0; index < menuLevel.length; index++) {
+				let currentMenuLevel = menuLevel[index];
+				let AdminMenuLanguage =
+					currentMenuLevel.AdminMenuLanguages?.find(
+						(e) => e.LanguageId === this.language?.id
+					);
+				if (!AdminMenuLanguage) continue;
+				if (AdminMenuLanguage.url === wantedUrl) {
+					this.admin.currentAdminMenu = currentMenuLevel;
+					this.admin.currentComponent =
+						currentMenuLevel.component ?? null;
+					this.admin.currentAdminMenuLanguage = AdminMenuLanguage;
+					return true;
+				}
+				if (
+					AdminMenuLanguage.url === currentUrl &&
+					currentMenuLevel.children
+				) {
+					return this.setAdminModule(
+						currentMenuLevel.children!,
+						wantedUrl,
+						++level
+					);
+				}
+			}
+			return false;
+		},
+		async getAdminData() {
+			// set pages data to null
+			this.module.current = null;
+			this.module.currentComponent = null;
+			this.module.currentModulePage = null;
+			this.module.currentModulePageLanguage = null;
+
+			this.admin.isAdmin = true;
+			this.page.description = "";
+			this.page.title = "";
+
+			let url = useRequestURL();
+			this.route.pathname = url.pathname.slice("/admin/".length);
+			const menuStore = useMenusStore();
+			if (menuStore.admin.length === 0) {
+				await menuStore.loadAdminData();
+			}
+
+			let setAdminMenu = this.setAdminModule(
+				menuStore.admin,
+				this.route.pathname
+			);
+			if (!setAdminMenu) {
+				console.log(404);
+			}
+		},
 		async getData() {
+			// set admin data to null
+			this.admin.isAdmin = false;
+			this.admin.currentAdminMenu = null;
+			this.admin.currentAdminMenuLanguage = null;
+
 			const languages = useLanguagesStore();
 			const modules = useModulesStore();
 			let url = useRequestURL();
@@ -111,15 +197,12 @@ export const useCurrentPageStore = defineStore("currentPage", {
 					] ?? null;
 			}
 
-			this.admin = currentRoute === "admin";
-			if (this.admin) currentRoute = routeArray.shift();
-
-			if (this.admin) {
-				// if (menuStore.admin.length === 0) {
-				// 	await menuStore.loadAdminData();
-				// }
-				return;
-			}
+			// this block should never happen and I should remove it
+			// this.admin.isAdmin = currentRoute === "admin";
+			// if (this.admin.isAdmin) currentRoute = routeArray.shift();
+			// if (this.admin.isAdmin) {
+			// 	return;
+			// }
 
 			// pages (not admin)
 			if (menuStore.articles.length === 0) {
