@@ -75,7 +75,7 @@ export const useApiCall = () => {
 						}
 					);
 					userStore.setToken(user.access_token, "access");
-					userStore.user = filterStoreparams(user);
+					userStore.user = await filterStoreparams(user);
 
 					headers.Authorization = `Bearer ${userStore.getToken(
 						"access"

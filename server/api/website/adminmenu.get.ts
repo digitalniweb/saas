@@ -14,7 +14,10 @@ export default eventHandler(async (event) => {
 		);
 		query.resourceIds = resourceIds;
 
-		query.modules = event.context?.verifiedUser?.UserModulesIds;
+		query.roleName = event.context?.verifiedUser?.role.name;
+
+		if (["admin", "owner"].includes(event.context?.verifiedUser?.role.name))
+			query.modules = event.context?.verifiedUser?.UserModulesIds as [];
 
 		let adminMenusGlobalData = await microserviceCall({
 			name: "globalData",

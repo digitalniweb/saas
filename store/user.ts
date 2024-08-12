@@ -73,7 +73,7 @@ export const useUserStore = defineStore("user", {
 			}
 			if (!this.user) this.user = {} as userStore;
 			if (!data?.data?.value) return null;
-			this.user = filterStoreparams(data.data.value);
+			this.user = await filterStoreparams(data.data.value);
 		},
 		logout() {
 			this.user = null;
@@ -107,7 +107,7 @@ export const useUserStore = defineStore("user", {
 
 			if (!this.user) this.user = {} as userStore;
 			if (!loginResponse?.data?.value) return null;
-			this.user = filterStoreparams(loginResponse.data.value);
+			this.user = await filterStoreparams(loginResponse.data.value);
 
 			return true;
 		},

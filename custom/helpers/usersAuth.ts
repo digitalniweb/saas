@@ -114,7 +114,10 @@ function verifyUser(event: H3Event) {
 		throw "You must be logged in";
 	}
 	try {
-		let user = jwt.verify(accessToken, process.env.APP_ACCESS_TOKEN_SECRET);
+		let user = jwt.verify(
+			accessToken,
+			process.env.APP_ACCESS_TOKEN_SECRET
+		) as userJWT;
 		event.context.verifiedUser = user;
 	} catch (err: any) {
 		if (err.name == "TokenExpiredError") {
