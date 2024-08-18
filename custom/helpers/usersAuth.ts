@@ -13,7 +13,6 @@ import {
 } from "../../digitalniweb-types/users";
 import { commonError } from "../../digitalniweb-types/customHelpers/logger";
 import { InferAttributes } from "sequelize";
-import { getGlobalDataList } from "~/digitalniweb-custom/helpers/getGlobalData";
 
 interface Options {
 	type?: string;
@@ -45,15 +44,6 @@ async function userLoginData(
 			// // etc.
 			// else userLogged[prop] = user[prop];
 		});
-
-		let roles = await getGlobalDataList("roles");
-		if (!roles) return { message: "Couldn't get roles from globalData" };
-
-		let role = roles.find((r) => r.id === userLogged.roleId);
-		if (typeof role === "undefined")
-			return { message: "Role is undefined" };
-
-		userLogged.role = role;
 		userLogged.usersMsId = usersMsId;
 
 		let jwtData = {} as userJWT;

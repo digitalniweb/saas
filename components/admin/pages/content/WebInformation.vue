@@ -21,7 +21,17 @@
 					prepend-inner-icon="mdi-image"
 					v-model="formdata.mainImage"
 					dense
-				/>
+					><template v-slot:append>
+						<v-btn
+							color="primary"
+							fab
+							small
+							@click="chooseImage('mainImage')"
+						>
+							<v-icon>mdi-folder-image</v-icon>
+						</v-btn>
+					</template>
+				</v-text-field>
 
 				<v-text-field
 					variant="underlined"
@@ -364,6 +374,8 @@
 		image: "https://images.pexels.com/photos/196655/pexels-photo-196655.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
 		headline: "Informace o webu",
 	});
+	import { useFileManagerStore } from "@/store/fileManager";
+	const fileManagerStore = useFileManagerStore();
 
 	const disabled = ref(false);
 	const webInformationStore = useWebInformationStore();
@@ -371,6 +383,11 @@
 	let formdataWebInformation = useFormData(webInformationStore.data);
 
 	const formdata = ref(formdataWebInformation.dataClone);
+
+	const chooseImage = async (property: string) => {
+		console.log(property);
+		fileManagerStore.open();
+	};
 
 	const saveWebInformation = async () => {
 		disabled.value = true;

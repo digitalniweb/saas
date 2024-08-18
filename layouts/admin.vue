@@ -79,6 +79,7 @@
 				</v-container>
 			</v-main>
 			<CustomSnackBars />
+			<CustomFileManager />
 		</v-app>
 	</client-only>
 </template>

@@ -43,6 +43,6 @@
 		"sequelize-cli": "^6.6.2",
 		"tinymce": "^7.2.1",
 		"validator": "^13.12.0",
-		"vuetify": "^3.6.11"
+		"vuetify": "^3.7.0"
 	}
 }

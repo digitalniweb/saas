@@ -21,6 +21,7 @@ const verifyRefreshToken = async function (token: string) {
 			method: "GET",
 			path: "/api/users/id/" + refreshTokenData.id,
 			id: refreshTokenData.usersMsId,
+			cache: false,
 		});
 
 		jwt.verify(
