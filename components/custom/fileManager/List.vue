@@ -1,18 +1,16 @@
 <template>
 	<v-card flat tile min-height="380" class="d-flex flex-column">
-		<Confirm ref="confirm"></Confirm>
+		<confirm ref="confirm"></confirm>
 		<v-card-text
 			v-if="!path"
 			class="grow d-flex justify-center align-center grey--text"
+			>Vyberte složku nebo soubor</v-card-text
 		>
-			Vyberte složku nebo soubor
-		</v-card-text>
 		<v-card-text
 			v-else-if="isFile"
 			class="grow d-flex justify-center align-center"
+			>Soubor: {{ path }}</v-card-text
 		>
-			Soubor: {{ path }}
-		</v-card-text>
 		<v-card-text v-else-if="dirs.length || files.length" class="grow">
 			<v-list subheader v-if="dirs.length">
 				<v-list-subheader>Folders</v-list-subheader>
@@ -21,7 +19,7 @@
 					:key="item.basename"
 					@click="changePath(item.path)"
 					class="pl-0"
-					append-avatar="mdi-folder-outline"
+					avatar-append="mdi-folder-outline"
 				>
 					<v-list-item-title
 						v-text="item.basename"
@@ -54,12 +52,12 @@
 						:value="item.path"
 						@dblclick="returnItem(item)"
 						class="px-0 mb-1"
-						:append-avatar="
+						:avatar-append="
 							icons[item.extension.toLowerCase()] ||
 							icons['other']
 						"
 					>
-						<template v-slot="{ active }">
+						<template v-slot:default="{ active }">
 							<div class="w-100 align-self-stretch d-flex py-2">
 								<v-list-item-action
 									v-if="multipleSelect"
@@ -69,12 +67,6 @@
 										:input-value="active"
 									></v-checkbox>
 								</v-list-item-action>
-								<v-avatar class="ma-0 align-self-center">
-									<v-icon>{{
-										icons[item.extension.toLowerCase()] ||
-										icons["other"]
-									}}</v-icon>
-								</v-avatar>
 
 								<img
 									:src="fileUrl(item.path)"
@@ -112,15 +104,13 @@
 		<v-card-text
 			v-else-if="filter"
 			class="grow d-flex justify-center align-center grey--text py-5"
+			>Nebyly nalezeny žádné složky ani soubory</v-card-text
 		>
-			Nebyly nalezeny žádné složky ani soubory
-		</v-card-text>
 		<v-card-text
 			v-else
 			class="grow d-flex justify-center align-center grey--text py-5"
+			>Složka je prázdná</v-card-text
 		>
-			Složka je prázdná
-		</v-card-text>
 		<v-divider v-if="path"></v-divider>
 		<v-toolbar v-if="false && path && isFile" dense flat class="shrink">
 			<v-btn icon>
@@ -239,6 +229,7 @@
 				url,
 				method: props.endpoints.list.method || "get",
 			};
+
 			let response = await props.axios.request(config);
 			items.value = response.data;
 		} else {
@@ -290,5 +281,5 @@
 		}
 	);
 
-	onMounted(load);
+	load();
 </script>

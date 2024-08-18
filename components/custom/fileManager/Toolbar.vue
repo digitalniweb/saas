@@ -1,1 +1,141 @@
-<template>Toolbar</template>
+<template>
+	<v-toolbar dense outlined flat>
+		<v-toolbar-items>
+			<template v-for="(segment, index) in pathSegments" :key="index">
+				<v-icon>mdi-chevron-right</v-icon>
+				<v-btn
+					text
+					:input-value="index === pathSegments.length - 1"
+					@click="changePath(segment.path)"
+					>{{ segment.name }}</v-btn
+				>
+			</template>
+		</v-toolbar-items>
+		<div class="flex-grow-1"></div>
+
+		<v-tooltip bottom v-if="pathSegments.length > 0">
+			<template v-slot:activator="{ on }">
+				<v-btn icon @click="goUp" v-on="on">
+					<v-icon>mdi-arrow-up-bold-outline</v-icon>
+				</v-btn>
+			</template>
+			<span v-if="pathSegments.length === 1">Up to "root"</span>
+			<span v-else
+				>Up to "{{ pathSegments[pathSegments.length - 2].name }}"</span
+			>
+		</v-tooltip>
+		<v-menu
+			v-model="newFolderPopper"
+			:close-on-content-click="false"
+			:nudge-width="200"
+			offset-y
+		>
+			<template v-slot:activator="{ props }">
+				<v-btn v-if="path" icon v-bind="props" title="Create Folder">
+					<v-icon>mdi-folder-plus-outline</v-icon>
+				</v-btn>
+			</template>
+			<v-card>
+				<v-card-text>
+					<v-text-field
+						label="Name"
+						v-model="newFolderName"
+						hide-details
+					></v-text-field>
+				</v-card-text>
+				<v-card-actions>
+					<div class="flex-grow-1"></div>
+					<v-btn @click="newFolderPopper = false" depressed
+						>Cancel</v-btn
+					>
+					<v-btn
+						color="success"
+						:disabled="!newFolderName"
+						depressed
+						@click="mkdir"
+						>Create Folder</v-btn
+					>
+				</v-card-actions>
+			</v-card>
+		</v-menu>
+		<v-btn
+			v-if="path"
+			icon
+			@click="$refs.inputUpload.click()"
+			title="Upload Files"
+		>
+			<v-icon>mdi-plus-circle</v-icon>
+			<input
+				v-show="false"
+				ref="inputUpload"
+				type="file"
+				multiple
+				@change="addFiles"
+			/>
+		</v-btn>
+	</v-toolbar>
+</template>
+
+<script setup>
+	import { ref, computed } from "vue";
+
+	const props = defineProps({
+		path: String,
+		endpoints: Object,
+		axios: Function,
+	});
+
+	const newFolderPopper = ref(false);
+	const newFolderName = ref("");
+
+	const pathSegments = computed(() => {
+		let path = "/";
+		const isFolder = props.path[props.path.length - 1] === "/";
+		let segments = props.path.split("/").filter((item) => item);
+
+		segments = segments.map((item, index) => {
+			path += item + (index < segments.length - 1 || isFolder ? "/" : "");
+			return {
+				name: item,
+				path,
+			};
+		});
+
+		return segments;
+	});
+
+	const changePath = (path) => {
+		emit("path-changed", path);
+	};
+
+	const goUp = () => {
+		const segments = pathSegments.value;
+		const path =
+			segments.length === 1 ? "/" : segments[segments.length - 2].path;
+		changePath(path);
+	};
+
+	const addFiles = async (event) => {
+		emit("add-files", event.target.files);
+		event.target.value = "";
+	};
+
+	const mkdir = async () => {
+		emit("loading", true);
+		const url = props.endpoints.mkdir.url.replace(
+			new RegExp("{path}", "g"),
+			props.path + newFolderName.value
+		);
+
+		const config = {
+			url,
+			method: props.endpoints.mkdir.method || "post",
+		};
+
+		await props.axios.request(config);
+		emit("folder-created", newFolderName.value);
+		newFolderPopper.value = false;
+		newFolderName.value = "";
+		emit("loading", false);
+	};
+</script>

@@ -1,12 +1,12 @@
 <template>
 	<v-card class="mx-auto" :loading="loading > 0">
-		<!-- <Toolbar
+		<Toolbar
 			:path="path"
 			:endpoints="endpoints"
 			v-on:path-changed="pathChanged"
 			v-on:add-files="addUploadingFiles"
 			v-on:folder-created="refreshPending = true"
-		></Toolbar> -->
+		></Toolbar>
 		<v-row no-gutters>
 			<v-col v-if="tree" sm="auto">
 				<Tree
@@ -35,7 +35,7 @@
 				></List>
 			</v-col>
 		</v-row>
-		<!-- <Upload
+		<Upload
 			v-if="uploadingFiles !== false"
 			:path="path"
 			:files="uploadingFiles"
@@ -48,7 +48,7 @@
 			v-on:clear-files="uploadingFiles = []"
 			v-on:cancel="uploadingFiles = false"
 			v-on:uploaded="uploaded"
-		></Upload> -->
+		></Upload>
 	</v-card>
 </template>
 <script>
@@ -122,7 +122,7 @@
 
 	// State
 	const loading = ref(0);
-	const path = ref("");
+	const path = ref("/");
 	const uploadingFiles = ref(false); // Or an array of files
 	const refreshPending = ref(false);
 

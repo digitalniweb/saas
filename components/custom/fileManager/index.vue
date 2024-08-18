@@ -32,7 +32,6 @@
 								fileManager.options.maxUploadFileSize
 							"
 							:multipleSelect="fileManager.options.multipleSelect"
-							storages="local"
 							:tree="true"
 						/>
 					</v-list-item>
