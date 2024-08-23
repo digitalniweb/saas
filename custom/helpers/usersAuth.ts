@@ -94,14 +94,25 @@ function generateToken(data: object, options: Options = {}): string {
 	}
 }
 
+/**
+ * Verifies user via Bearer header with JWT.
+ *
+ * On fail: Status code is changed and returns "string".
+ *
+ * On success: Return "user" which is also saved to "event.context.verifiedUser".
+ */
 function verifyUser(event: H3Event) {
 	// back-end (server) jwt verification
-	if (event.context.verifiedUser) return true;
+	if (event.context.verifiedUser) return event.context.verifiedUser;
 	let authHeaders = getHeader(event, "Authorization");
-	if (!authHeaders) throw "No authorization information provided";
+	if (!authHeaders) {
+		setResponseStatus(event, 401, "No authorization information provided");
+		return "No authorization information provided";
+	}
 	let accessToken = authHeaders.replace("Bearer ", "");
 	if (!accessToken) {
-		throw "You must be logged in";
+		setResponseStatus(event, 403, "You must be logged in");
+		return "You must be logged in";
 	}
 	try {
 		let user = jwt.verify(
@@ -111,15 +122,15 @@ function verifyUser(event: H3Event) {
 		event.context.verifiedUser = user;
 	} catch (err: any) {
 		if (err.name == "TokenExpiredError") {
-			throw "Token expired";
+			setResponseStatus(event, 401, "Token expired");
+			return "Token expired";
 		} else if (err.name == "JsonWebTokenError") {
 			// someone modified the token: logout
-			throw "Invalid token";
+			setResponseStatus(event, 401, "Invalid token");
+			return "Invalid token";
 		}
 	}
-	// return verified user
-	// i can add it to event.context.verifiedUser = {...} and return true or false or throw errors
-	return true;
+	return event.context.verifiedUser;
 }
 
 export { accessTokenExpireTime, userLoginData, verifyUser };

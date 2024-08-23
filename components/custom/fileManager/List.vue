@@ -42,9 +42,9 @@
 			<v-list subheader v-if="files.length">
 				<v-list-subheader>Soubory</v-list-subheader>
 				<v-list-group
-					v-model="activeFiles"
+					v-model="selectedFiles"
 					:multiple="multipleSelect"
-					@change="activeFilesChanged"
+					@change="selectedFilesChanged"
 				>
 					<v-list-item
 						v-for="item in files"
@@ -139,33 +139,25 @@
 <script setup>
 	import { storeToRefs } from "pinia";
 	import { useFileManagerStore } from "@/store/fileManager";
-	const fileManager = useFileManagerStore();
-	const { selectedFiles } = storeToRefs(fileManager);
+	const fileManagerStore = useFileManagerStore();
+	const { selectedFiles, path, items, loading } =
+		storeToRefs(fileManagerStore);
 
-	import { ref, computed, watch, onMounted } from "vue";
+	import { ref, computed, watch } from "vue";
 	import { formatBytes } from "~/digitalniweb-custom/functions/formatBytes";
 	import Confirm from "./Confirm.vue";
 
 	const props = defineProps({
 		icons: Object,
 		storage: String,
-		path: String,
 		endpoints: Object,
 		multipleSelect: Boolean,
-		axios: Function,
 		refreshPending: Boolean,
 	});
 
-	const emit = defineEmits([
-		"path-changed",
-		"refreshed",
-		"loading",
-		"file-deleted",
-	]);
+	const emit = defineEmits(["path-changed", "refreshed", "file-deleted"]);
 
-	const items = ref([]);
 	const filter = ref("");
-	const activeFiles = ref([]);
 
 	const dirs = computed(() => {
 		return items.value.filter(
@@ -182,14 +174,14 @@
 	});
 
 	const isDir = computed(() => {
-		return props.path[props.path.length - 1] === "/";
+		return path[path.length - 1] === "/";
 	});
 
 	const isFile = computed(() => {
 		return !isDir.value;
 	});
 
-	const activeFilesChanged = (itemValueList) => {
+	const selectedFilesChanged = (itemValueList) => {
 		let fullPathFiles = [];
 		if (!!itemValueList) {
 			if (typeof itemValueList == "string")
@@ -200,7 +192,7 @@
 	};
 
 	const fileUrl = (browserPath) => {
-		return process.env.FILEBROWSER_STATIC_ROOT_PATH + browserPath;
+		return process.env.FILEBROWSER_PUBLIC_ROOT_PATH + browserPath;
 	};
 
 	const returnItem = (item) => {
@@ -213,29 +205,8 @@
 		return ["png", "jpg", "jpeg", "webp"].includes(extension);
 	};
 
-	const changePath = (path) => {
-		emit("path-changed", path);
-	};
-
-	const load = async () => {
-		emit("loading", true);
-		if (isDir.value) {
-			activeFiles.value = [];
-			let url = props.endpoints.list.url
-				.replace(new RegExp("{storage}", "g"), props.storage)
-				.replace(new RegExp("{path}", "g"), props.path);
-
-			let config = {
-				url,
-				method: props.endpoints.list.method || "get",
-			};
-
-			let response = await props.axios.request(config);
-			items.value = response.data;
-		} else {
-			// TODO: load file
-		}
-		emit("loading", false);
+	const changePath = (newPath) => {
+		path = newPath;
 	};
 
 	const deleteItem = async (item) => {
@@ -247,7 +218,7 @@
 		);
 
 		if (confirmed) {
-			emit("loading", true);
+			loading = true;
 			let url = props.endpoints.delete.url
 				.replace(new RegExp("{storage}", "g"), props.storage)
 				.replace(new RegExp("{path}", "g"), item.path);
@@ -259,15 +230,15 @@
 
 			await props.axios.request(config);
 			emit("file-deleted");
-			emit("loading", false);
+			loading = false;
 		}
 	};
 
 	watch(
-		() => props.path,
+		() => path,
 		async () => {
 			items.value = [];
-			await load();
+			await fileManagerStore.loadList();
 		}
 	);
 
@@ -275,11 +246,11 @@
 		() => props.refreshPending,
 		async () => {
 			if (props.refreshPending) {
-				await load();
+				await fileManagerStore.loadList();
 				emit("refreshed");
 			}
 		}
 	);
 
-	load();
+	fileManagerStore.loadList();
 </script>

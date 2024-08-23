@@ -63,6 +63,8 @@ export const useApiCall = () => {
 
 			return response;
 		} catch (error: any) {
+			console.log(error.status, error.statusMessage, error.code);
+
 			if (error.statusMessage === "Token expired") {
 				try {
 					let refreshToken = userStore.getToken("refresh");

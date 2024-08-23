@@ -3,6 +3,7 @@ import {
 	resourceIdsType,
 	useApiCallQuery,
 } from "~/digitalniweb-types/apps/communication";
+import { log } from "~/digitalniweb-custom/helpers/logger";
 
 export default eventHandler(async (event) => {
 	try {
@@ -21,9 +22,13 @@ export default eventHandler(async (event) => {
 		});
 
 		return data.data || [];
-	} catch (error) {
-		console.log(error);
-
+	} catch (error: any) {
+		log({
+			type: "routing",
+			status: "error",
+			message: `Couldn't get website's menu.`,
+			error,
+		});
 		return [];
 	}
 });

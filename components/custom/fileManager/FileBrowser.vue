@@ -102,6 +102,9 @@
 	import List from "./List.vue";
 	import Upload from "./Upload.vue";
 
+	import { useSnackBarsStore } from "~/store/snackBars";
+	let snackBarStore = useSnackBarsStore();
+
 	// Props
 	const props = defineProps({
 		tree: { type: Boolean, default: true },
@@ -140,7 +143,7 @@
 				if (file.size <= props.maxUploadFileSize) return true;
 				// Handle file size too large
 				// You can replace this with your own snackbar or alert method
-				emit("showSnackbar", {
+				snackBarStore.setSnackBar({
 					text: `Soubor ${file.name} je příliš velký`,
 					icon: "alert-circle-outline",
 					color: "orange",

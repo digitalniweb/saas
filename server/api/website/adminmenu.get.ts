@@ -4,21 +4,22 @@ import {
 	useApiCallQuery,
 } from "~/digitalniweb-types/apps/communication";
 import { verifyUser } from "~/custom/helpers/usersAuth";
+import { log } from "~/digitalniweb-custom/helpers/logger";
 
 export default eventHandler(async (event) => {
+	let verify = verifyUser(event);
+	if (typeof verify === "string") return verify;
+
+	let query = getQuery(event) as useApiCallQuery;
+	let resourceIds: resourceIdsType = JSON.parse(query.resourceIds as string);
+	query.resourceIds = resourceIds;
+
+	query.roleName = verify.role.name;
+
+	if (["admin", "owner"].includes(verify.role.name))
+		query.modules = verify.UserModulesIds as [];
+
 	try {
-		verifyUser(event);
-		let query = getQuery(event) as useApiCallQuery;
-		let resourceIds: resourceIdsType = JSON.parse(
-			query.resourceIds as string
-		);
-		query.resourceIds = resourceIds;
-
-		query.roleName = event.context?.verifiedUser?.role.name;
-
-		if (["admin", "owner"].includes(event.context?.verifiedUser?.role.name))
-			query.modules = event.context?.verifiedUser?.UserModulesIds as [];
-
 		let adminMenusGlobalData = await microserviceCall({
 			name: "globalData",
 			path: "/api/adminmenu/list",
@@ -28,10 +29,13 @@ export default eventHandler(async (event) => {
 		});
 
 		return adminMenusGlobalData.data || [];
-	} catch (error) {
-		if (error == "Token expired") {
-			setResponseStatus(event, 401, "Token expired");
-			return "Token expired";
-		}
+	} catch (error: any) {
+		log({
+			type: "routing",
+			status: "error",
+			message: `Couldn't get adminmenu list.`,
+			error,
+		});
+		return false;
 	}
 });

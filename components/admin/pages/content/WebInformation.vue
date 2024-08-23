@@ -368,6 +368,8 @@
 		},
 	};
 	import { useSnackBarsStore } from "~/store/snackBars";
+	let snackBarStore = useSnackBarsStore();
+
 	import { useWebInformationStore } from "~/store/webInformation";
 	import { formHeader } from "~/types/components/form";
 	const formHeader = ref<formHeader>({
@@ -394,7 +396,7 @@
 		let dataDifference = formdataWebInformation.dataDifference();
 		if (Object.getOwnPropertyNames(dataDifference).length === 0) {
 			disabled.value = false;
-			useSnackBarsStore().setSnackBar({
+			snackBarStore.setSnackBar({
 				text: "Nebyly zaregistrovány žádné změny.",
 				color: "orange",
 			});
@@ -403,12 +405,12 @@
 		try {
 			await webInformationStore.saveData(dataDifference);
 			formdataWebInformation.saveDataDifference(dataDifference);
-			useSnackBarsStore().setSnackBar({
+			snackBarStore.setSnackBar({
 				text: "Informace o webu byly uloženy.",
 				color: "green",
 			});
 		} catch {
-			useSnackBarsStore().setSnackBar({
+			snackBarStore.setSnackBar({
 				text: "Nepodařilo se uložit informace o webu.",
 				color: "red",
 				icon: "alert-circle",
