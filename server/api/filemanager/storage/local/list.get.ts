@@ -6,8 +6,8 @@ import { verifyUser } from "~/custom/helpers/usersAuth";
 
 const { readdir, stat, rename, unlink, lstat } = fsPromises;
 export default eventHandler(async (event) => {
-	let verify = verifyUser(event);
-	if (typeof verify === "string") return verify;
+	verifyUser(event);
+	let userVerified = event.context.verifiedUser; // use (user's) "uuid" and "websiteUuid" in path
 
 	let query = getQuery(event);
 	console.log(getHeaders(event));

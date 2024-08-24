@@ -7,17 +7,17 @@ import { verifyUser } from "~/custom/helpers/usersAuth";
 import { log } from "~/digitalniweb-custom/helpers/logger";
 
 export default eventHandler(async (event) => {
-	let verify = verifyUser(event);
-	if (typeof verify === "string") return verify;
+	verifyUser(event);
+	let userVerified = event.context.verifiedUser;
 
 	let query = getQuery(event) as useApiCallQuery;
 	let resourceIds: resourceIdsType = JSON.parse(query.resourceIds as string);
 	query.resourceIds = resourceIds;
 
-	query.roleName = verify.role.name;
+	query.roleName = userVerified.role.name;
 
-	if (["admin", "owner"].includes(verify.role.name))
-		query.modules = verify.UserModulesIds as [];
+	if (["admin", "owner"].includes(userVerified.role.name))
+		query.modules = userVerified.UserModulesIds as [];
 
 	try {
 		let adminMenusGlobalData = await microserviceCall({

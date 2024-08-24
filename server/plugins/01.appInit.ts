@@ -8,7 +8,7 @@ import { CreationAttributes } from "sequelize";
 import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureCall.js";
 import { customLogObject } from "~/digitalniweb-types/customHelpers/logger.js";
 import { log } from "~/digitalniweb-custom/helpers/logger.js";
-export default defineNitroPlugin(async (nitroApp) => {
+export default defineNitroPlugin(async () => {
 	try {
 		await Subscriber.psubscribe("serviceRegistry-responseInformation-*"); // handled in registerCurrentApp()
 		let serviceRegistryInfo = await requestServiceRegistryInfo();

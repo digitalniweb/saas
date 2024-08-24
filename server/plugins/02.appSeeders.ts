@@ -1,4 +1,3 @@
-import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureCall.js";
 import { log } from "~/digitalniweb-custom/helpers/logger.js";
 import AppModule from "../models/apps/appModule";
 import { getGlobalDataModelArray } from "~/digitalniweb-custom/helpers/getGlobalData";
