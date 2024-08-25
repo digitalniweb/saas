@@ -2,20 +2,25 @@
 	<v-card flat tile min-height="380" class="d-flex flex-column">
 		<confirm ref="confirm"></confirm>
 		<v-card-text
-			v-if="!path"
+			v-if="!fileManagerStore.path"
 			class="grow d-flex justify-center align-center grey--text"
 			>Vyberte složku nebo soubor</v-card-text
 		>
 		<v-card-text
 			v-else-if="isFile"
 			class="grow d-flex justify-center align-center"
-			>Soubor: {{ path }}</v-card-text
+			>Soubor: {{ fileManagerStore.path }}</v-card-text
 		>
-		<v-card-text v-else-if="dirs.length || files.length" class="grow">
-			<v-list subheader v-if="dirs.length">
+		<v-card-text
+			v-else-if="
+				fileManagerStore.dirs.length || fileManagerStore.files.length
+			"
+			class="grow"
+		>
+			<v-list subheader v-if="fileManagerStore.dirs.length">
 				<v-list-subheader>Folders</v-list-subheader>
 				<v-list-item
-					v-for="item in dirs"
+					v-for="item in fileManagerStore.dirs"
 					:key="item.basename"
 					@click="changePath(item.path)"
 					class="pl-0"
@@ -38,8 +43,13 @@
 					</v-list-item-action>
 				</v-list-item>
 			</v-list>
-			<v-divider v-if="dirs.length && files.length"></v-divider>
-			<v-list subheader v-if="files.length">
+			<v-divider
+				v-if="
+					fileManagerStore.dirs.length &&
+					fileManagerStore.files.length
+				"
+			></v-divider>
+			<v-list subheader v-if="fileManagerStore.files.length">
 				<v-list-subheader>Soubory</v-list-subheader>
 				<v-list-group
 					v-model="selectedFiles"
@@ -47,7 +57,7 @@
 					@change="selectedFilesChanged"
 				>
 					<v-list-item
-						v-for="item in files"
+						v-for="item in fileManagerStore.files"
 						:key="item.basename"
 						:value="item.path"
 						@dblclick="returnItem(item)"
@@ -111,13 +121,23 @@
 			class="grow d-flex justify-center align-center grey--text py-5"
 			>Složka je prázdná</v-card-text
 		>
-		<v-divider v-if="path"></v-divider>
-		<v-toolbar v-if="false && path && isFile" dense flat class="shrink">
+		<v-divider v-if="fileManagerStore.path"></v-divider>
+		<v-toolbar
+			v-if="false && fileManagerStore.path && isFile"
+			dense
+			flat
+			class="shrink"
+		>
 			<v-btn icon>
 				<v-icon>mdi-download</v-icon>
 			</v-btn>
 		</v-toolbar>
-		<v-toolbar v-if="path && isDir" dense flat class="shrink">
+		<v-toolbar
+			v-if="fileManagerStore.path && isDir"
+			dense
+			flat
+			class="shrink"
+		>
 			<v-text-field
 				solo
 				flat
@@ -140,8 +160,7 @@
 	import { storeToRefs } from "pinia";
 	import { useFileManagerStore } from "@/store/fileManager";
 	const fileManagerStore = useFileManagerStore();
-	const { selectedFiles, path, items, loading } =
-		storeToRefs(fileManagerStore);
+	const { selectedFiles, items, loading } = storeToRefs(fileManagerStore);
 
 	import { ref, computed, watch } from "vue";
 	import { formatBytes } from "~/digitalniweb-custom/functions/formatBytes";
@@ -159,22 +178,8 @@
 
 	const filter = ref("");
 
-	const dirs = computed(() => {
-		return items.value.filter(
-			(item) =>
-				item.type === "dir" && item.basename.includes(filter.value)
-		);
-	});
-
-	const files = computed(() => {
-		return items.value.filter(
-			(item) =>
-				item.type === "file" && item.basename.includes(filter.value)
-		);
-	});
-
 	const isDir = computed(() => {
-		return path[path.length - 1] === "/";
+		return fileManagerStore.path[fileManagerStore.path.length - 1] === "/";
 	});
 
 	const isFile = computed(() => {
@@ -235,7 +240,7 @@
 	};
 
 	watch(
-		() => path,
+		() => fileManagerStore.path,
 		async () => {
 			items.value = [];
 			await fileManagerStore.loadList();

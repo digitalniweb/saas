@@ -22,7 +22,7 @@
 							label="Přihlašovací údaje (email)"
 							prepend-icon="mdi-account"
 							v-model="formdata.email"
-							:rules="useEmailRules()"
+							:rules="emailRules()"
 							validate-on-blur
 							required
 							@keyup.enter="loginUser"
@@ -91,7 +91,7 @@
 								prepend-icon="mdi-account"
 								type="email"
 								v-model="formdata.emailReset"
-								:rules="useEmailRules()"
+								:rules="emailRules()"
 								:disabled="disabled"
 								validate-on-blur
 								required
@@ -262,4 +262,5 @@
 			return router.push("/");
 		}
 	};
+	const emailRules = () => useEmailRules();
 </script>

@@ -6,7 +6,7 @@ import { useModulesStore } from "~/store/modules";
 import { useWidgetsStore } from "~/store/widgets";
 import { useCurrentPageStore } from "~/store/currentPage";
 export default defineNuxtPlugin(async (nuxtApp) => {
-	if (nuxtApp.$skipUrl) return;
+	// if (nuxtApp.$skipUrl) return;
 
 	const website = useWebsiteStore();
 	if (!(await website.loadData())) {

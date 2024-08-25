@@ -251,7 +251,12 @@
 												? 'default'
 												: 'green'
 										"
-										@click="formdata.Tenant.company = false"
+										@click="
+											changeTenantProperty(
+												'company',
+												false
+											)
+										"
 									>
 										<v-icon left>mdi-account</v-icon>
 										Osoba
@@ -264,7 +269,12 @@
 												? 'default'
 												: 'green'
 										"
-										@click="formdata.Tenant.company = true"
+										@click="
+											changeTenantProperty(
+												'company',
+												true
+											)
+										"
 									>
 										<v-icon left>mdi-domain</v-icon>
 										Firma
@@ -353,7 +363,7 @@
 									prepend-inner-icon="mdi-email"
 									type="text"
 									v-model="formdata.email"
-									:rules="useEmailRules()"
+									:rules="emailRules()"
 									validate-on="blur"
 									dense
 									counter="100"
@@ -486,9 +496,11 @@
 </template>
 <script setup lang="ts">
 	import {
+		Tenant,
 		Tenant as TenantType,
 		User as UserType,
 	} from "~/digitalniweb-types/models/users";
+	import { InferAttributes } from "sequelize";
 	import isMobilePhoneVal from "validator/es/lib/isMobilePhone";
 	import isPostalCodeVal from "validator/es/lib/isPostalCode";
 
@@ -527,7 +539,7 @@
 		password: "",
 		passwordCheck: "",
 		agreement: false,
-	} as UserType & additionalFormdataOptions);
+	} as InferAttributes<UserType> & additionalFormdataOptions);
 
 	const countries = ref([{ id: 1, text: "Česká republika" }]);
 	const selectedCountry = ref(
@@ -566,4 +578,11 @@
 	};
 	const saveUser = () => {};
 	const registerUser = () => {};
+
+	const emailRules = () => useEmailRules();
+
+	const changeTenantProperty = (property: keyof Tenant, value: any) => {
+		if (formdata.value.Tenant && formdata.value.Tenant[property])
+			(formdata.value.Tenant[property] as any) = value;
+	};
 </script>

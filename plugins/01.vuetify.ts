@@ -5,7 +5,7 @@ import * as directives from "vuetify/directives";
 import { cs, en } from "vuetify/locale";
 
 export default defineNuxtPlugin((nuxtApp) => {
-	if (nuxtApp.$skipUrl) return;
+	// if (nuxtApp.$skipUrl) return;
 	const vuetify = createVuetify({
 		components,
 		directives,

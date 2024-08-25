@@ -8,10 +8,9 @@ export const useFileManagerStore = defineStore("fileManager", {
 		opened: false as boolean,
 		path: "/",
 		selectedFiles: [] as string[], // resolve
-		items: [] as string[], // files and directories in directory
-		files: [] as string[], // files in direction
-		dirs: [] as string[], // directories in directory
+		items: [] as string[],
 		isDir: true, // if path is directory, otherwise it is file
+		filter: "", // filter names
 		resolve: "",
 		reject: "",
 		loading: false,
@@ -28,7 +27,21 @@ export const useFileManagerStore = defineStore("fileManager", {
 			multipleSelect: false,
 		},
 	}),
-	getters: {},
+	getters: {
+		// files and directories in selected directory
+		files: (state) =>
+			state.items.filter(
+				(item: any) =>
+					item.type === "file" && item.basename.includes(state.filter)
+			),
+		// directories in selected directory
+		dirs: (state) => {
+			return state.items.filter(
+				(item: any) =>
+					item.type === "dir" && item.basename.includes(state.filter)
+			);
+		},
+	},
 	actions: {
 		/*
 		 just for info, delete later
