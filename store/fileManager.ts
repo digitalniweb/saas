@@ -11,8 +11,8 @@ export const useFileManagerStore = defineStore("fileManager", {
 		items: [] as string[],
 		isDir: true, // if path is directory, otherwise it is file
 		filter: "", // filter names
-		resolve: "",
-		reject: "",
+		resolve: (value: any) => {},
+		reject: (value: any) => {},
 		loading: false,
 		apiPrefix: "/api/filemanager/storage/local",
 
@@ -65,9 +65,18 @@ export const useFileManagerStore = defineStore("fileManager", {
 		open(options = {} as fileManagerOptions) {
 			this.options = { ...this.defaultOptions, ...options };
 			this.opened = true;
+			return new Promise((resolve, reject) => {
+				this.resolve = resolve;
+				this.reject = reject;
+			});
 		},
 		close() {
 			this.opened = false;
+			this.resolve(false);
+		},
+		confirmFileBrowser(data: any) {
+			this.opened = false;
+			this.resolve(data);
 		},
 		async loadList() {
 			this.loading = true;

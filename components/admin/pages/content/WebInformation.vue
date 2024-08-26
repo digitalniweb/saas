@@ -387,8 +387,8 @@
 	const formdata = ref(formdataWebInformation.dataClone);
 
 	const chooseImage = async (property: string) => {
-		console.log(property);
-		fileManagerStore.open();
+		let img = await fileManagerStore.open();
+		console.log("img", img);
 	};
 
 	const saveWebInformation = async () => {

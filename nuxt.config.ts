@@ -30,6 +30,8 @@ export default defineNuxtConfig({
 			environment: process.env.NODE_ENV || "development",
 			apiBase: process.env.NUXT_PUBLIC_API_BASE || "/api",
 			defaultLanguage: process.env.DEFAULT_LANGUAGE || "en",
+			FILEBROWSER_PUBLIC_ROOT_PATH:
+				process.env.FILEBROWSER_PUBLIC_ROOT_PATH || "",
 		},
 	},
 	app: {

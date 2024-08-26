@@ -6,14 +6,17 @@ import { verifyUser } from "~/custom/helpers/usersAuth";
 const { readdir, mkdir, stat, rename, unlink, lstat } = fsPromises;
 
 /**
- * TODO: Add various folders according to role's types; admin/user
+ * TODO:
+ *  * Add various folders according to role's types; admin/user
+ *  * Change folder structure via nginx with website and user info
  */
 export default eventHandler(async (event) => {
 	verifyUser(event);
 	let userVerified = event.context.verifiedUser; // use (user's) "uuid" and "websiteUuid" in path
 
 	let query = getQuery(event);
-	let storagePath = `./local-storage/${process.env.APP_NAME}/websites/${userVerified.websiteUuid}/users/${userVerified.uuid}`;
+	// let storagePath = `./local-storage/${process.env.APP_NAME}/websites/${userVerified.websiteUuid}/users/${userVerified.uuid}`;
+	let storagePath = process.env.FILEBROWSER_LOCAL_ROOT_PATH;
 	let currentDirname = storagePath + query.path;
 
 	if (existsSync(storagePath)) await mkdir(storagePath, { recursive: true });
