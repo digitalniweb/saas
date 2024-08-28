@@ -59,6 +59,8 @@
 		fileManager.opened = false;
 	};
 	const confirm = async () => {
-		fileManager.opened = false;
+		fileManager.confirm([
+			"dodelat, zmenit 'fileUrl' funkci v List, dat do store vse a vracet 'selectedFiles'",
+		]);
 	};
 </script>

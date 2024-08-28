@@ -124,7 +124,7 @@
 	</v-overlay>
 </template>
 <script setup>
-	import { watch, computed } from "vue";
+	import { watch } from "vue";
 	import { formatBytes } from "~/digitalniweb-custom/functions/formatBytes";
 
 	const imageMimeTypes = ["image/png", "image/jpeg"];

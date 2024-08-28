@@ -78,6 +78,7 @@
 					</v-row>
 				</v-container>
 			</v-main>
+			<CustomConfirm />
 			<CustomSnackBars />
 			<CustomFileManager />
 		</v-app>

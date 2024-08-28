@@ -6,7 +6,7 @@
 				<v-btn
 					text
 					:input-value="index === pathSegments.length - 1"
-					@click="changePath(segment.path)"
+					@click="fileManagerStore.path = segment.path"
 					>{{ segment.name }}</v-btn
 				>
 			</template>
@@ -77,12 +77,13 @@
 </template>
 
 <script setup>
+	import { useFileManagerStore } from "@/store/fileManager";
+	const fileManagerStore = useFileManagerStore();
 	import { ref, computed } from "vue";
 
 	const props = defineProps({
 		path: String,
 		endpoints: Object,
-		axios: Function,
 	});
 
 	const newFolderPopper = ref(false);
@@ -90,10 +91,11 @@
 
 	const pathSegments = computed(() => {
 		let path = "/";
-		const isFolder = props.path[props.path.length - 1] === "/";
-		let segments = props.path.split("/").filter((item) => item);
+		const isFolder =
+			fileManagerStore.path[fileManagerStore.path.length - 1] === "/";
+		let segments = fileManagerStore.path.split("/").filter((item) => item);
 
-		segments = segments.map((item, index) => {
+		let segmentsObj = segments.map((item, index) => {
 			path += item + (index < segments.length - 1 || isFolder ? "/" : "");
 			return {
 				name: item,
@@ -101,30 +103,26 @@
 			};
 		});
 
-		return segments;
+		return segmentsObj;
 	});
-
-	const changePath = (path) => {
-		emit("path-changed", path);
-	};
 
 	const goUp = () => {
 		const segments = pathSegments.value;
 		const path =
 			segments.length === 1 ? "/" : segments[segments.length - 2].path;
-		changePath(path);
+		fileManagerStore.path = path;
 	};
 
 	const addFiles = async (event) => {
-		emit("add-files", event.target.files);
+		fileManagerStore.addUploadingFiles(event.target.files);
 		event.target.value = "";
 	};
 
 	const mkdir = async () => {
-		emit("loading", true);
+		fileManagerStore.loading = true;
 		const url = props.endpoints.mkdir.url.replace(
 			new RegExp("{path}", "g"),
-			props.path + newFolderName.value
+			fileManagerStore.path + newFolderName.value
 		);
 
 		const config = {
@@ -133,9 +131,10 @@
 		};
 
 		await props.axios.request(config);
+		fileManagerStore.refreshPending = true;
 		emit("folder-created", newFolderName.value);
 		newFolderPopper.value = false;
 		newFolderName.value = "";
-		emit("loading", false);
+		fileManagerStore.loading = false;
 	};
 </script>

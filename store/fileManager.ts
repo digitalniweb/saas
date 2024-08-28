@@ -3,18 +3,30 @@ type fileManagerOptions = {
 	maxUploadFileSize: number;
 	multipleSelect: boolean;
 };
+import {
+	fileSystemDirectory,
+	fileSystemFile,
+	fileSystemItems,
+} from "~/digitalniweb-types/filesystem";
+import { useSnackBarsStore } from "~/store/snackBars";
+let snackBarStore = useSnackBarsStore();
+import { useConfirmStore } from "@/store/confirm";
+const confirmStore = useConfirmStore();
 export const useFileManagerStore = defineStore("fileManager", {
 	state: () => ({
 		opened: false as boolean,
+		refreshPending: false as boolean,
 		path: "/",
 		selectedFiles: [] as string[], // resolve
-		items: [] as string[],
+		items: {} as fileSystemItems,
 		isDir: true, // if path is directory, otherwise it is file
 		filter: "", // filter names
 		resolve: (value: any) => {},
 		reject: (value: any) => {},
 		loading: false,
 		apiPrefix: "/api/filemanager/storage/local",
+		uploadingFiles: [] as File[],
+		uploading: false,
 
 		options: {
 			maxUploadFilesCount: 1,
@@ -29,17 +41,10 @@ export const useFileManagerStore = defineStore("fileManager", {
 	}),
 	getters: {
 		// files and directories in selected directory
-		files: (state) =>
-			state.items.filter(
-				(item: any) =>
-					item.type === "file" && item.basename.includes(state.filter)
-			),
+		files: (state) => state.items.files ?? [],
 		// directories in selected directory
 		dirs: (state) => {
-			return state.items.filter(
-				(item: any) =>
-					item.type === "dir" && item.basename.includes(state.filter)
-			);
+			return state.items.dirs ?? [];
 		},
 	},
 	actions: {
@@ -74,9 +79,105 @@ export const useFileManagerStore = defineStore("fileManager", {
 			this.opened = false;
 			this.resolve(false);
 		},
-		confirmFileBrowser(data: any) {
+		confirm(data: any) {
 			this.opened = false;
 			this.resolve(data);
+		},
+		addUploadingFiles(files: File[]) {
+			files = Array.from(files);
+
+			if (this.options.maxUploadFileSize) {
+				files = files.filter((file) => {
+					if (file.size <= this.options.maxUploadFileSize)
+						return true;
+					snackBarStore.setSnackBar({
+						text: `Soubor ${file.name} je příliš velký`,
+						icon: "alert-circle-outline",
+						color: "orange",
+					});
+					return false;
+				});
+			}
+
+			if (
+				this.options.maxUploadFilesCount &&
+				this.uploadingFiles.length + files.length >
+					this.options.maxUploadFilesCount
+			) {
+				files = files.slice(
+					0,
+					this.options.maxUploadFilesCount -
+						this.uploadingFiles.length
+				);
+			}
+
+			this.uploadingFiles.push(...files);
+		},
+		async deleteItem(item: fileSystemFile | fileSystemDirectory) {
+			let confirmed = await confirmStore.open(
+				"Delete",
+				`Opravdu chcete smazat ${
+					(item as fileSystemFile).extension === undefined
+						? "tuto složku"
+						: "tento soubor"
+				}?<br><em>${item.basename}</em>`
+			);
+
+			if (confirmed) {
+				this.loading = true;
+				const { fetchData } = useApiCall();
+				await fetchData<string[]>(
+					`${this.apiPrefix}/delete.post?path=${item.path}`
+				);
+				// emit("file-deleted");
+				this.loading = false;
+			}
+		},
+		async upload() {
+			if (!this.files || !this.files.length) {
+				snackBarStore.setSnackBar({
+					text: "Nebyly vybrány žádné soubory.",
+					icon: "alert-circle-outline",
+					color: "orange",
+				});
+				return;
+			}
+			let formData = new FormData();
+
+			// files
+			for (let file of this.uploadingFiles) {
+				formData.append("files", file, file.name);
+			}
+
+			this.uploading = true;
+			try {
+				const { fetchData } = useApiCall();
+				await fetchData<string[]>(
+					`${this.apiPrefix}/upload.post?path=${this.path}`,
+					{
+						body: {
+							append: formData, // dont know if this is correct
+						},
+					}
+				);
+				snackBarStore.setSnackBar({
+					text:
+						this.files.length > 1
+							? "Soubory byly nahrány"
+							: "Soubor byl nahrán",
+					icon: "check",
+					color: "light-green",
+				});
+			} catch (error) {
+				if (process.env.NODE_ENV === "development") console.log(error);
+				snackBarStore.setSnackBar({
+					text: "Něco se pokazilo.",
+					icon: "alert-circle-outline",
+					color: "red",
+				});
+			}
+
+			this.uploading = false;
 		},
 		async loadList() {
 			this.loading = true;
@@ -84,7 +185,7 @@ export const useFileManagerStore = defineStore("fileManager", {
 				this.selectedFiles = [];
 				const { fetchData } = useApiCall();
 				try {
-					let items = await fetchData<string[]>(
+					let items = await fetchData<fileSystemItems>(
 						`${this.apiPrefix}/list?path=${this.path}`
 					);
 					if (items) this.items = items;

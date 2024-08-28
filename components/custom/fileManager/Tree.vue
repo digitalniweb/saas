@@ -75,12 +75,15 @@
 	</v-card>
 </template>
 <script setup>
+	import { useFileManagerStore } from "@/store/fileManager";
+	const fileManagerStore = useFileManagerStore();
+
 	import { ref, watch, onMounted } from "vue";
 	import { VTreeview } from "vuetify/labs/VTreeview";
 	let emit = defineEmits([
 		"loading",
 		"path",
-		" endpoints",
+		"endpoints",
 		"path-changed",
 		"refreshed",
 	]);
@@ -155,7 +158,7 @@
 		if (active.length) {
 			path = active[0];
 		}
-		if (props.path != path) {
+		if (fileManagerStore.path != path) {
 			emit("path-changed", path);
 		}
 	};
@@ -176,21 +179,20 @@
 		return null;
 	};
 
-	watch(() => props.storage, init);
 	watch(
-		() => props.path,
+		() => fileManagerStore.path,
 		() => {
-			activeTrees.value = [props.path];
-			if (!opened.value.includes(props.path)) {
-				opened.value.push(props.path);
+			activeTrees.value = [fileManagerStore.path];
+			if (!opened.value.includes(fileManagerStore.path)) {
+				opened.value.push(fileManagerStore.path);
 			}
 		}
 	);
 	watch(
-		() => props.refreshPending,
+		() => fileManagerStore.refreshPending,
 		async () => {
-			if (props.refreshPending) {
-				let item = findItem(props.path);
+			if (fileManagerStore.refreshPending) {
+				let item = findItem(fileManagerStore.path);
 				await readFolder(item);
 				emit("refreshed");
 			}

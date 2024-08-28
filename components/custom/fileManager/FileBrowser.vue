@@ -3,9 +3,7 @@
 		<Toolbar
 			:path="path"
 			:endpoints="endpoints"
-			v-on:path-changed="pathChanged"
 			v-on:add-files="addUploadingFiles"
-			v-on:folder-created="refreshPending = true"
 		></Toolbar>
 		<v-row no-gutters>
 			<v-col v-if="tree" sm="auto">
@@ -14,7 +12,6 @@
 					:icons="icons"
 					:endpoints="endpoints"
 					:refreshPending="refreshPending"
-					v-on:path-changed="pathChanged"
 					v-on:loading="loadingChanged"
 					v-on:refreshed="refreshPending = false"
 				></Tree>
@@ -28,7 +25,6 @@
 					:refreshPending="refreshPending"
 					:maxUploadFilesCount="maxUploadFilesCount"
 					:multipleSelect="multipleSelect"
-					v-on:path-changed="pathChanged"
 					v-on:loading="loadingChanged"
 					v-on:refreshed="refreshPending = false"
 					v-on:file-deleted="refreshPending = true"
@@ -116,12 +112,7 @@
 	});
 
 	// Emit event for model binding
-	const emit = defineEmits([
-		"change",
-		"path-changed",
-		"add-files",
-		"folderCreated",
-	]);
+	const emit = defineEmits(["change", "path-changed", "add-files"]);
 
 	// State
 	const loading = ref(0);
@@ -177,10 +168,5 @@
 	function uploaded() {
 		uploadingFiles.value = false;
 		refreshPending.value = true;
-	}
-
-	function pathChanged(newPath) {
-		path.value = newPath;
-		emit("change", newPath); // Emit the change event
 	}
 </script>

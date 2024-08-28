@@ -5,6 +5,7 @@
 			<slot />
 		</v-main>
 		<WebBlocksFooter />
+		<CustomConfirm />
 		<CustomSnackBars />
 	</v-app>
 </template>

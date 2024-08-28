@@ -22,7 +22,7 @@
 				<v-list-item
 					v-for="item in fileManagerStore.dirs"
 					:key="item.basename"
-					@click="changePath(item.path)"
+					@click="fileManagerStore.path = item.path"
 					class="pl-0"
 					avatar-append="mdi-folder-outline"
 				>
@@ -30,7 +30,10 @@
 						v-text="item.basename"
 					></v-list-item-title>
 					<v-list-item-action class="align-self-center">
-						<v-btn icon @click.stop="deleteItem(item)">
+						<v-btn
+							icon
+							@click.stop="fileManagerStore.deleteItem(item)"
+						>
 							<v-icon color="grey lighten-1"
 								>mdi-delete-outline</v-icon
 							>
@@ -94,7 +97,12 @@
 							}}</v-list-item-subtitle>
 
 							<v-list-item-action class="align-self-center mr-4">
-								<v-btn icon @click.stop="deleteItem(item)">
+								<v-btn
+									icon
+									@click.stop="
+										fileManagerStore.deleteItem(item)
+									"
+								>
 									<v-icon color="grey lighten-1"
 										>mdi-delete-outline</v-icon
 									>
@@ -160,7 +168,7 @@
 	const fileManagerStore = useFileManagerStore();
 	const runtimeConfig = useRuntimeConfig();
 
-	import { ref, computed, watch } from "vue";
+	import { watch } from "vue";
 	import { formatBytes } from "~/digitalniweb-custom/functions/formatBytes";
 	import Confirm from "./Confirm.vue";
 
@@ -190,40 +198,11 @@
 
 	const returnItem = (item) => {
 		const path = [fileUrl(item.path)];
-		if (item.type == "file") fileManagerStore.confirmFileBrowser(path);
+		if (item.type == "file") fileManagerStore.confirm(path);
 	};
 
 	const isImage = (extension) => {
 		return ["png", "jpg", "jpeg", "webp"].includes(extension);
-	};
-
-	const changePath = (newPath) => {
-		fileManagerStore.path = newPath;
-	};
-
-	const deleteItem = async (item) => {
-		let confirmed = await Confirm.methods.open(
-			"Delete",
-			`Opravdu chcete smazat ${
-				item.type === "dir" ? "tuto složku" : "tento soubor"
-			}?<br><em>${item.basename}</em>`
-		);
-
-		if (confirmed) {
-			fileManagerStore.loading = true;
-			let url = props.endpoints.delete.url
-				.replace(new RegExp("{storage}", "g"), props.storage)
-				.replace(new RegExp("{path}", "g"), item.path);
-
-			let config = {
-				url,
-				method: props.endpoints.delete.method || "post",
-			};
-
-			await props.axios.request(config);
-			emit("file-deleted");
-			fileManagerStore.loading = false;
-		}
 	};
 
 	watch(
