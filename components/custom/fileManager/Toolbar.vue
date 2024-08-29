@@ -13,17 +13,19 @@
 		</v-toolbar-items>
 		<div class="flex-grow-1"></div>
 
-		<v-tooltip bottom v-if="pathSegments.length > 0">
-			<template v-slot:activator="{ on }">
-				<v-btn icon @click="goUp" v-on="on">
-					<v-icon>mdi-arrow-up-bold-outline</v-icon>
-				</v-btn>
-			</template>
-			<span v-if="pathSegments.length === 1">Up to "root"</span>
-			<span v-else
-				>Up to "{{ pathSegments[pathSegments.length - 2].name }}"</span
-			>
-		</v-tooltip>
+		<v-btn
+			v-if="pathSegments.length > 1"
+			icon
+			@click="goUp"
+			v-tooltip:bottom="
+				pathSegments.length === 1
+					? '/'
+					: pathSegments[pathSegments.length - 2].path
+			"
+		>
+			<v-icon>mdi-arrow-up-bold-outline</v-icon>
+		</v-btn>
+
 		<v-menu
 			v-model="newFolderPopper"
 			:close-on-content-click="false"
@@ -93,10 +95,14 @@
 		let path = "/";
 		const isFolder =
 			fileManagerStore.path[fileManagerStore.path.length - 1] === "/";
-		let segments = fileManagerStore.path.split("/").filter((item) => item);
+		let segments = fileManagerStore.path.split("/");
+		segments.pop();
 
 		let segmentsObj = segments.map((item, index) => {
-			path += item + (index < segments.length - 1 || isFolder ? "/" : "");
+			if (item)
+				path +=
+					item + (index < segments.length - 1 || isFolder ? "/" : "");
+			else item = "/";
 			return {
 				name: item,
 				path,

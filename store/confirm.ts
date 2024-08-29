@@ -5,8 +5,8 @@ type confirmOptions = {
 export const useConfirmStore = defineStore("confirm", {
 	state: () => ({
 		dialog: false,
-		resolve: (value: any) => {},
-		reject: (value: any) => {},
+		resolve: null as null | ((value: unknown) => void),
+		reject: null as null | ((value: unknown) => void),
 		message: "",
 		title: "",
 		options: {
@@ -27,11 +27,11 @@ export const useConfirmStore = defineStore("confirm", {
 			});
 		},
 		agree() {
-			this.resolve(true);
+			if (this.resolve != null) this.resolve(true);
 			this.dialog = false;
 		},
 		cancel() {
-			this.resolve(false);
+			if (this.resolve != null) this.resolve(false);
 			this.dialog = false;
 		},
 	},
