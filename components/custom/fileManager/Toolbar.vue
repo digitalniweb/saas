@@ -1,6 +1,6 @@
 <template>
 	<v-toolbar dense outlined flat>
-		<v-toolbar-items>
+		<v-toolbar-items class="align-center">
 			<template v-for="(segment, index) in pathSegments" :key="index">
 				<v-icon>mdi-chevron-right</v-icon>
 				<v-btn

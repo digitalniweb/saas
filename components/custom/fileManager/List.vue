@@ -32,7 +32,7 @@
 					<v-list-item-action class="align-self-center">
 						<v-btn
 							icon
-							@click.stop="fileManagerStore.deleteItem(item)"
+							@click.stop="fileManagerStore.deleteDirectory(item)"
 						>
 							<v-icon color="grey lighten-1"
 								>mdi-delete-outline</v-icon
@@ -64,56 +64,56 @@
 				<v-list-subheader>Soubory</v-list-subheader>
 				<v-list-item
 					v-for="item in fileManagerStore.files"
-					:key="item.basename"
+					:key="item.name"
 					:value="item.path"
 					@dblclick="returnItem(item)"
-					class="px-0 mb-1"
-					:avatar-append="
-						icons[item.extension.toLowerCase()] || icons['other']
-					"
+					class="mb-1"
 				>
-					<template v-slot:default="{ isSelected }">
-						<div class="w-100 align-self-stretch d-flex py-2">
-							<v-list-item-action
-								v-if="fileManagerStore.options.multipleSelect"
-								class="align-self-center ml-5 mr-2 my-0"
+					<template v-slot:prepend="{ isSelected }">
+						<v-list-item-action
+							v-if="fileManagerStore.options.multipleSelect"
+							class="align-self-center ml-5 mr-2 my-0"
+						>
+							<v-checkbox
+								:model-value="isSelected"
+								hide-details=""
+							></v-checkbox>
+						</v-list-item-action>
+						<img
+							:src="fileUrl(item.path)"
+							v-if="isImage(item.extension)"
+							width="100"
+							class="align-self-center"
+						/>
+						<v-icon>{{
+							icons[item.extension.toLowerCase()] ||
+							icons["other"]
+						}}</v-icon>
+					</template>
+					<template v-slot:default>
+						<v-list-item-title>
+							{{ item.name }}
+						</v-list-item-title>
+						<v-list-item-subtitle>{{
+							formatBytes(item.size)
+						}}</v-list-item-subtitle>
+					</template>
+					<template v-slot:append>
+						<v-list-item-action class="align-self-center mr-4">
+							<v-btn
+								icon
+								@click.stop="fileManagerStore.deleteFile(item)"
 							>
-								<v-checkbox
-									:model-value="isSelected"
-								></v-checkbox>
-							</v-list-item-action>
-
-							<img
-								:src="fileUrl(item.path)"
-								v-if="isImage(item.extension)"
-								width="100"
-								class="align-self-center"
-							/>
-							<v-list-item-title
-								v-text="item.basename"
-							></v-list-item-title>
-							<v-list-item-subtitle>{{
-								formatBytes(item.size)
-							}}</v-list-item-subtitle>
-
-							<v-list-item-action class="align-self-center mr-4">
-								<v-btn
-									icon
-									@click.stop="
-										fileManagerStore.deleteItem(item)
-									"
+								<v-icon color="grey lighten-1"
+									>mdi-delete-outline</v-icon
 								>
-									<v-icon color="grey lighten-1"
-										>mdi-delete-outline</v-icon
-									>
-								</v-btn>
-								<v-btn icon v-if="false">
-									<v-icon color="grey lighten-1"
-										>mdi-information</v-icon
-									>
-								</v-btn>
-							</v-list-item-action>
-						</div>
+							</v-btn>
+							<v-btn icon v-if="false">
+								<v-icon color="grey lighten-1"
+									>mdi-information</v-icon
+								>
+							</v-btn>
+						</v-list-item-action>
 					</template>
 				</v-list-item>
 			</v-list>
@@ -197,8 +197,9 @@
 	};
 
 	const returnItem = (item) => {
+		if (fileManagerStore.options.multipleSelect) return;
 		const path = [fileUrl(item.path)];
-		if (item.type == "file") fileManagerStore.confirm(path);
+		fileManagerStore.confirm(path);
 	};
 
 	const isImage = (extension) => {

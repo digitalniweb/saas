@@ -41,31 +41,22 @@ export default eventHandler(async (event): Promise<fileSystemItems> => {
 			}
 			if (isFile && item.name[0] === ".") continue;
 
-			let result = {
-				type: isFile ? "file" : ("dir" as const),
-				path: query.path + item.name,
-				basename: "",
-				name: "",
-				size: 0,
-				extension: "",
-			};
-
-			result.basename = result.name = path.basename(result.path);
-
 			if (isFile) {
-				let fileStat = await stat(
-					path.dirname(`${storagePath}${result.path}`)
-				);
-				result.size = fileStat.size;
-				result.extension = path.extname(result.path).slice(1);
-				result.name = path.basename(
-					result.path,
-					"." + result.extension
-				);
-				files.push(result);
+				let file = {
+					path: query.path + item.name,
+				} as fileSystemFile;
+				file.name = path.basename(file.path);
+				let fileStat = await stat(`${storagePath}${file.path}`);
+				file.size = fileStat.size;
+				file.extension = path.extname(file.path).slice(1);
+				files.push(file);
 			} else {
-				result.path += "/";
-				dirs.push(result);
+				let dir = {
+					path: query.path + item.name,
+				} as fileSystemDirectory;
+				dir.basename = path.basename(dir.path);
+				dir.path += "/";
+				dirs.push(dir);
 			}
 		}
 

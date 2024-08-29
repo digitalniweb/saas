@@ -41,10 +41,17 @@ export const useFileManagerStore = defineStore("fileManager", {
 	}),
 	getters: {
 		// files and directories in selected directory
-		files: (state) => state.items.files ?? [],
+		files: (state) =>
+			state.items?.files?.filter((item) =>
+				item.name.includes(state.filter)
+			) ?? [],
 		// directories in selected directory
 		dirs: (state) => {
-			return state.items.dirs ?? [];
+			return (
+				state.items?.dirs?.filter((item) =>
+					item.basename.includes(state.filter)
+				) ?? []
+			);
 		},
 	},
 	actions: {
@@ -113,21 +120,33 @@ export const useFileManagerStore = defineStore("fileManager", {
 
 			this.uploadingFiles.push(...files);
 		},
-		async deleteItem(item: fileSystemFile | fileSystemDirectory) {
+		async deleteFile(item: fileSystemFile) {
 			let confirmed = await confirmStore.open(
 				"Delete",
-				`Opravdu chcete smazat ${
-					(item as fileSystemFile).extension === undefined
-						? "tuto složku"
-						: "tento soubor"
-				}?<br><em>${item.basename}</em>`
+				`Opravdu chcete smazat tento soubor?<br><em>${item.name}</em>`
 			);
 
 			if (confirmed) {
 				this.loading = true;
 				const { fetchData } = useApiCall();
 				await fetchData<string[]>(
-					`${this.apiPrefix}/delete.post?path=${item.path}`
+					`${this.apiPrefix}/delete.post?path=${item.path}&type=file`
+				);
+				// emit("file-deleted");
+				this.loading = false;
+			}
+		},
+		async deleteDirectory(item: fileSystemDirectory) {
+			let confirmed = await confirmStore.open(
+				"Delete",
+				`Opravdu chcete smazat tuto složku?<br><em>${item.basename}</em>`
+			);
+
+			if (confirmed) {
+				this.loading = true;
+				const { fetchData } = useApiCall();
+				await fetchData<string[]>(
+					`${this.apiPrefix}/delete.post?path=${item.path}&type=dir`
 				);
 				// emit("file-deleted");
 				this.loading = false;
