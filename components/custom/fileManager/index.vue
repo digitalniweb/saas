@@ -24,16 +24,7 @@
 							>Nahrajte a označte data, která chcete vložit do
 							editoru</v-list-item-subtitle
 						>
-						<FileBrowser
-							:maxUploadFilesCount="
-								fileManager.options.maxUploadFilesCount
-							"
-							:maxUploadFileSize="
-								fileManager.options.maxUploadFileSize
-							"
-							:multipleSelect="fileManager.options.multipleSelect"
-							:tree="true"
-						/>
+						<FileBrowser :tree="fileManager.tree" />
 					</v-list-item>
 					<v-list-item>
 						<v-list-item-title class="text-right py-3">

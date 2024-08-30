@@ -18,7 +18,7 @@ import {
  */
 export default eventHandler(async (event): Promise<fileSystemItems> => {
 	verifyUser(event);
-	let userVerified = event.context.verifiedUser; // use (user's) "uuid" and "websiteUuid" in path
+	// let userVerified = event.context.verifiedUser; // use (user's) "uuid" and "websiteUuid" in path
 
 	let query = getQuery(event);
 	// let storagePath = `./local-storage/${process.env.APP_NAME}/websites/${userVerified.websiteUuid}/users/${userVerified.uuid}`;
@@ -47,6 +47,8 @@ export default eventHandler(async (event): Promise<fileSystemItems> => {
 				} as fileSystemFile;
 				file.name = path.basename(file.path);
 				let fileStat = await stat(`${storagePath}${file.path}`);
+
+				file.mtime = fileStat.mtime;
 				file.size = fileStat.size;
 				file.extension = path.extname(file.path).slice(1);
 				files.push(file);

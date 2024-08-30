@@ -17,6 +17,7 @@ export const useFileManagerStore = defineStore("fileManager", {
 		opened: false as boolean,
 		refreshPending: false as boolean,
 		path: "/",
+		tree: false, // isn't implemented
 		selectedFiles: [] as string[], // resolve
 		items: {} as fileSystemItems,
 		isDir: true, // if path is directory, otherwise it is file
@@ -90,8 +91,8 @@ export const useFileManagerStore = defineStore("fileManager", {
 			this.opened = false;
 			this.resolve(data);
 		},
-		addUploadingFiles(files: File[]) {
-			files = Array.from(files);
+		addUploadingFiles(fileList: FileList) {
+			let files = Array.from(fileList);
 
 			if (this.options.maxUploadFileSize) {
 				files = files.filter((file) => {
@@ -126,15 +127,22 @@ export const useFileManagerStore = defineStore("fileManager", {
 				`Opravdu chcete smazat tento soubor?<br><em>${item.name}</em>`
 			);
 
-			if (confirmed) {
-				this.loading = true;
-				const { fetchData } = useApiCall();
-				await fetchData<string[]>(
-					`${this.apiPrefix}/delete.post?path=${item.path}&type=file`
-				);
-				// emit("file-deleted");
-				this.loading = false;
-			}
+			if (!confirmed) return;
+			this.loading = true;
+			const { fetchData } = useApiCall();
+			await fetchData<string[]>(
+				`${this.apiPrefix}/delete?path=${item.path}&type=file`,
+				{
+					method: "POST",
+				}
+			);
+			snackBarStore.setSnackBar({
+				text: "soubor byl smazán",
+				icon: "check",
+				color: "light-green",
+			});
+			// emit("file-deleted");
+			this.loading = false;
 		},
 		async deleteDirectory(item: fileSystemDirectory) {
 			let confirmed = await confirmStore.open(
@@ -142,15 +150,48 @@ export const useFileManagerStore = defineStore("fileManager", {
 				`Opravdu chcete smazat tuto složku?<br><em>${item.basename}</em>`
 			);
 
-			if (confirmed) {
-				this.loading = true;
+			if (!confirmed) return;
+			this.loading = true;
+			const { fetchData } = useApiCall();
+			await fetchData<string[]>(
+				`${this.apiPrefix}/delete?path=${item.path}&type=dir`,
+				{
+					method: "POST",
+				}
+			);
+			snackBarStore.setSnackBar({
+				text: "složka byla smazána",
+				icon: "check",
+				color: "light-green",
+			});
+			// emit("file-deleted");
+			this.loading = false;
+		},
+		async mkdir(folderPath: string) {
+			this.loading = true;
+			try {
 				const { fetchData } = useApiCall();
 				await fetchData<string[]>(
-					`${this.apiPrefix}/delete.post?path=${item.path}&type=dir`
+					`${this.apiPrefix}/mkdir?path=${folderPath}`,
+					{
+						method: "POST",
+					}
 				);
-				// emit("file-deleted");
-				this.loading = false;
+				snackBarStore.setSnackBar({
+					text: "složka byla vytvořena",
+					icon: "check",
+					color: "light-green",
+				});
+			} catch (error) {
+				if (process.env.NODE_ENV === "development") console.log(error);
+				snackBarStore.setSnackBar({
+					text: "Něco se pokazilo.",
+					icon: "alert-circle-outline",
+					color: "red",
+				});
 			}
+			this.refreshPending = true;
+			this.loading = false;
 		},
 		async upload() {
 			if (!this.files || !this.files.length) {
@@ -172,8 +213,9 @@ export const useFileManagerStore = defineStore("fileManager", {
 			try {
 				const { fetchData } = useApiCall();
 				await fetchData<string[]>(
-					`${this.apiPrefix}/upload.post?path=${this.path}`,
+					`${this.apiPrefix}/upload?path=${this.path}`,
 					{
+						method: "POST",
 						body: {
 							append: formData, // dont know if this is correct
 						},

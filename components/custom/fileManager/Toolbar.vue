@@ -1,10 +1,11 @@
 <template>
 	<v-toolbar dense outlined flat>
 		<v-toolbar-items class="align-center">
+			<v-icon class="ml-5">mdi-server</v-icon>
 			<template v-for="(segment, index) in pathSegments" :key="index">
-				<v-icon>mdi-chevron-right</v-icon>
+				<v-icon v-if="index != 0">mdi-chevron-right</v-icon>
 				<v-btn
-					text
+					variant="text"
 					:input-value="index === pathSegments.length - 1"
 					@click="fileManagerStore.path = segment.path"
 					>{{ segment.name }}</v-btn
@@ -33,7 +34,12 @@
 			offset-y
 		>
 			<template v-slot:activator="{ props }">
-				<v-btn v-if="path" icon v-bind="props" title="Create Folder">
+				<v-btn
+					v-if="fileManagerStore.path"
+					icon
+					v-bind="props"
+					v-tooltip:bottom="'Create Folder'"
+				>
 					<v-icon>mdi-folder-plus-outline</v-icon>
 				</v-btn>
 			</template>
@@ -61,10 +67,10 @@
 			</v-card>
 		</v-menu>
 		<v-btn
-			v-if="path"
+			v-if="fileManagerStore.path"
 			icon
-			@click="$refs.inputUpload.click()"
-			title="Upload Files"
+			@click="($refs.inputUpload as HTMLInputElement).click()"
+			v-tooltip:bottom="'Upload Files'"
 		>
 			<v-icon>mdi-plus-circle</v-icon>
 			<input
@@ -75,18 +81,21 @@
 				@change="addFiles"
 			/>
 		</v-btn>
+		<v-btn
+			icon
+			@click="fileManagerStore.loadList()"
+			v-tooltip:bottom="'refresh'"
+		>
+			<v-icon>mdi-refresh</v-icon>
+		</v-btn>
 	</v-toolbar>
 </template>
 
-<script setup>
-	import { useFileManagerStore } from "@/store/fileManager";
-	const fileManagerStore = useFileManagerStore();
+<script setup lang="ts">
 	import { ref, computed } from "vue";
 
-	const props = defineProps({
-		path: String,
-		endpoints: Object,
-	});
+	import { useFileManagerStore } from "@/store/fileManager";
+	const fileManagerStore = useFileManagerStore();
 
 	const newFolderPopper = ref(false);
 	const newFolderName = ref("");
@@ -119,26 +128,18 @@
 		fileManagerStore.path = path;
 	};
 
-	const addFiles = async (event) => {
-		fileManagerStore.addUploadingFiles(event.target.files);
-		event.target.value = "";
+	const addFiles = async (event: Event) => {
+		let el = event.target as HTMLInputElement;
+		if (el.files != null) fileManagerStore.addUploadingFiles(el.files);
+		el.value = "";
 	};
 
 	const mkdir = async () => {
 		fileManagerStore.loading = true;
-		const url = props.endpoints.mkdir.url.replace(
-			new RegExp("{path}", "g"),
+		await fileManagerStore.mkdir(
 			fileManagerStore.path + newFolderName.value
 		);
-
-		const config = {
-			url,
-			method: props.endpoints.mkdir.method || "post",
-		};
-
-		await props.axios.request(config);
-		fileManagerStore.refreshPending = true;
-		emit("folder-created", newFolderName.value);
+		// emit("folder-created", newFolderName.value);
 		newFolderPopper.value = false;
 		newFolderName.value = "";
 		fileManagerStore.loading = false;

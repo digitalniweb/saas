@@ -1,30 +1,28 @@
 <template>
-	<v-card class="mx-auto" :loading="loading > 0">
+	<v-card class="mx-auto" :loading="fileManagerStore.loading">
 		<Toolbar
 			:path="path"
 			:endpoints="endpoints"
 			v-on:add-files="addUploadingFiles"
 		></Toolbar>
 		<v-row no-gutters>
-			<v-col v-if="tree" sm="auto">
-				<Tree
+			<v-col v-if="fileManagerStore.tree" sm="auto">
+				<!-- <Tree
 					:path="path"
 					:icons="icons"
 					:endpoints="endpoints"
 					:refreshPending="refreshPending"
 					v-on:loading="loadingChanged"
 					v-on:refreshed="refreshPending = false"
-				></Tree>
+				></Tree> -->
 			</v-col>
-			<v-divider v-if="tree" vertical></v-divider>
+			<v-divider v-if="fileManagerStore.tree" vertical></v-divider>
 			<v-col>
 				<List
 					:path="path"
 					:icons="icons"
 					:endpoints="endpoints"
 					:refreshPending="refreshPending"
-					:maxUploadFilesCount="maxUploadFilesCount"
-					:multipleSelect="multipleSelect"
 					v-on:loading="loadingChanged"
 					v-on:refreshed="refreshPending = false"
 					v-on:file-deleted="refreshPending = true"
@@ -36,9 +34,6 @@
 			:path="path"
 			:files="uploadingFiles"
 			:icons="icons"
-			:endpoint="endpoints.upload"
-			:maxUploadFilesCount="maxUploadFilesCount"
-			:maxUploadFileSize="maxUploadFileSize"
 			v-on:add-files="addUploadingFiles"
 			v-on:remove-file="removeUploadingFile"
 			v-on:clear-files="uploadingFiles = []"
@@ -69,6 +64,7 @@
 	};
 
 	const fileIcons = {
+		folder: "mdi-folder-outline",
 		zip: "mdi-folder-zip-outline",
 		rar: "mdi-folder-zip-outline",
 		htm: "mdi-language-html5",
@@ -94,21 +90,19 @@
 </script>
 <script setup>
 	import Toolbar from "./Toolbar.vue";
-	import Tree from "./Tree.vue";
+	// import Tree from "./Tree.vue";
 	import List from "./List.vue";
 	import Upload from "./Upload.vue";
 
+	import { useFileManagerStore } from "@/store/fileManager";
 	import { useSnackBarsStore } from "~/store/snackBars";
+	const fileManagerStore = useFileManagerStore();
+
 	let snackBarStore = useSnackBarsStore();
 
 	// Props
 	const props = defineProps({
-		tree: { type: Boolean, default: true },
 		icons: { type: Object, default: () => fileIcons },
-		endpoints: { type: Object, default: () => endpoints },
-		maxUploadFilesCount: { type: Number, default: 0 },
-		maxUploadFileSize: { type: Number, default: 0 },
-		multipleSelect: { type: Boolean, default: false },
 	});
 
 	// Emit event for model binding
@@ -129,9 +123,10 @@
 	function addUploadingFiles(files) {
 		files = Array.from(files);
 
-		if (props.maxUploadFileSize) {
+		if (fileManager.options.maxUploadFileSize) {
 			files = files.filter((file) => {
-				if (file.size <= props.maxUploadFileSize) return true;
+				if (file.size <= fileManager.options.maxUploadFileSize)
+					return true;
 				// Handle file size too large
 				// You can replace this with your own snackbar or alert method
 				snackBarStore.setSnackBar({
@@ -148,13 +143,13 @@
 		}
 
 		if (
-			props.maxUploadFilesCount &&
+			fileManager.maxUploadFilesCount &&
 			uploadingFiles.value.length + files.length >
-				props.maxUploadFilesCount
+				fileManager.maxUploadFilesCount
 		) {
 			files = files.slice(
 				0,
-				props.maxUploadFilesCount - uploadingFiles.value.length
+				fileManager.maxUploadFilesCount - uploadingFiles.value.length
 			);
 		}
 

@@ -1,5 +1,5 @@
 <template>
-	<v-card
+	<!-- <v-card
 		flat
 		tile
 		width="250"
@@ -10,7 +10,7 @@
 			<v-treeview
 				:open="opened"
 				:active="activeTrees"
-				:items="items"
+				:items="fileManagerStore.items.dirs"
 				:search="filter"
 				:load-children="readFolder"
 				v-on:update:active="activeChanged"
@@ -26,13 +26,13 @@
 						@click="preventTreeclick(item, active, $event)"
 						@dblclick="returnItem(item)"
 					>
-						<v-icon v-if="item.type === 'dir'">{{
+						<v-icon v-if="!item.extension">{{
 							open
 								? "mdi-folder-open-outline"
 								: "mdi-folder-outline"
 						}}</v-icon>
 						<v-icon v-else>{{
-							icons[item.extension.toLowerCase()] ||
+							icons[item?.extension?.toLowerCase()] ||
 							icons["other"]
 						}}</v-icon>
 					</div>
@@ -72,13 +72,13 @@
 				<v-icon>mdi-collapse-all-outline</v-icon>
 			</v-btn>
 		</v-toolbar>
-	</v-card>
+	</v-card> -->
 </template>
 <script setup>
-	import { useFileManagerStore } from "@/store/fileManager";
+	/* import { useFileManagerStore } from "@/store/fileManager";
 	const fileManagerStore = useFileManagerStore();
 
-	import { ref, watch, onMounted } from "vue";
+	import { ref, watch } from "vue";
 	import { VTreeview } from "vuetify/labs/VTreeview";
 	let emit = defineEmits([
 		"loading",
@@ -99,7 +99,6 @@
 
 	const opened = ref([]);
 	const activeTrees = ref([]);
-	const items = ref([]);
 	const filter = ref("");
 
 	const preventTreeclick = (item, active, event) => {
@@ -109,23 +108,39 @@
 
 	const init = () => {
 		opened.value = [];
-		items.value = [];
 		setTimeout(() => {
-			items.value = [
-				{
-					type: "dir",
-					path: "/",
-					basename: "Hlavní adresář",
-					extension: "",
-					name: "root",
-					children: [],
-				},
-			];
 			activeTrees.value = ["/"];
 			setTimeout(() => {
 				opened.value = ["/"];
 			}, 0);
 		}, 0);
+	};
+
+	const activeChanged = (active) => {
+		activeTrees.value = active;
+		let path = "";
+		if (active.length) {
+			path = active[0];
+		}
+		if (fileManagerStore.path != path) {
+			emit("path-changed", path);
+		}
+	};
+
+	const findItem = (path) => {
+		let stack = [];
+		stack.push(fileManagerStore.items.value[0]);
+		while (stack.length > 0) {
+			let node = stack.pop();
+			if (node.path == path) {
+				return node;
+			} else if (node.children && node.children.length) {
+				for (let i = 0; i < node.children.length; i++) {
+					stack.push(node.children[i]);
+				}
+			}
+		}
+		return null;
 	};
 
 	const readFolder = async (item) => {
@@ -152,33 +167,6 @@
 		emit("loading", false);
 	};
 
-	const activeChanged = (active) => {
-		activeTrees.value = active;
-		let path = "";
-		if (active.length) {
-			path = active[0];
-		}
-		if (fileManagerStore.path != path) {
-			emit("path-changed", path);
-		}
-	};
-
-	const findItem = (path) => {
-		let stack = [];
-		stack.push(items.value[0]);
-		while (stack.length > 0) {
-			let node = stack.pop();
-			if (node.path == path) {
-				return node;
-			} else if (node.children && node.children.length) {
-				for (let i = 0; i < node.children.length; i++) {
-					stack.push(node.children[i]);
-				}
-			}
-		}
-		return null;
-	};
-
 	watch(
 		() => fileManagerStore.path,
 		() => {
@@ -199,5 +187,5 @@
 		}
 	);
 
-	onMounted(init);
+	init(); */
 </script>

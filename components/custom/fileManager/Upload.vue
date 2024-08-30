@@ -7,15 +7,18 @@
 					<v-chip color="info" class="mx-1">{{ storage }}</v-chip>
 					<v-chip>{{ path }}</v-chip>
 				</div>
-				<div v-if="maxUploadFilesCount">
+				<div v-if="fileManager.options.maxUploadFilesCount">
 					<span class="grey--text"
-						>Max files count: {{ maxUploadFilesCount }}</span
+						>Max files count:
+						{{ fileManager.options.maxUploadFilesCount }}</span
 					>
 				</div>
-				<div v-if="maxUploadFileSize">
+				<div v-if="fileManager.options.maxUploadFileSize">
 					<span class="grey--text"
 						>Max file size:
-						{{ formatBytes(maxUploadFileSize) }}</span
+						{{
+							formatBytes(fileManager.options.maxUploadFileSize)
+						}}</span
 					>
 				</div>
 			</v-card-text>
@@ -78,7 +81,10 @@
 					<v-icon>mdi-close</v-icon>Clear
 				</v-btn>
 				<v-btn
-					:disabled="listItems.length >= maxUploadFilesCount"
+					:disabled="
+						listItems.length >=
+						fileManager.options.maxUploadFilesCount
+					"
 					depressed
 					color="info"
 					@click="$refs.inputUpload.click()"
@@ -130,14 +136,8 @@
 	const imageMimeTypes = ["image/png", "image/jpeg"];
 
 	const props = defineProps({
-		path: String,
-		storage: String,
-		endpoint: Object,
 		files: { type: Array, default: () => [] },
 		icons: Object,
-		axios: Function,
-		maxUploadFilesCount: { type: Number, default: 0 },
-		maxUploadFileSize: { type: Number, default: 0 },
 	});
 
 	const emit = defineEmits([
