@@ -42,6 +42,7 @@
 		"sass": "^1.77.8",
 		"sequelize": "^6.37.3",
 		"sequelize-cli": "^6.6.2",
+		"sharp": "^0.33.5",
 		"tinymce": "^7.3.0",
 		"validator": "^13.12.0",
 		"vuetify": "^3.7.0"

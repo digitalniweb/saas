@@ -179,7 +179,6 @@
 
 	const props = defineProps({
 		icons: Object,
-		refreshPending: Boolean,
 	});
 
 	const emit = defineEmits(["path-changed", "refreshed", "file-deleted"]);
@@ -226,9 +225,9 @@
 	);
 
 	watch(
-		() => props.refreshPending,
+		() => fileManagerStore.refreshPending,
 		async () => {
-			if (props.refreshPending) {
+			if (fileManagerStore.refreshPending) {
 				await fileManagerStore.loadList();
 				emit("refreshed");
 			}

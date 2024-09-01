@@ -83,7 +83,6 @@
 	let emit = defineEmits([
 		"loading",
 		"path",
-		"endpoints",
 		"path-changed",
 		"refreshed",
 	]);
@@ -92,7 +91,6 @@
 		icons: Object,
 		storage: String,
 		path: String,
-		endpoints: Object,
 		axios: Function,
 		refreshPending: Boolean,
 	});

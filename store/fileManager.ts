@@ -194,7 +194,7 @@ export const useFileManagerStore = defineStore("fileManager", {
 			this.loading = false;
 		},
 		async upload() {
-			if (!this.files || !this.files.length) {
+			if (!this.uploadingFiles || !this.uploadingFiles.length) {
 				snackBarStore.setSnackBar({
 					text: "Nebyly vybrány žádné soubory.",
 					icon: "alert-circle-outline",
@@ -206,24 +206,23 @@ export const useFileManagerStore = defineStore("fileManager", {
 
 			// files
 			for (let file of this.uploadingFiles) {
-				formData.append("files", file, file.name);
+				formData.append("file", file);
 			}
 
 			this.uploading = true;
+
 			try {
 				const { fetchData } = useApiCall();
 				await fetchData<string[]>(
 					`${this.apiPrefix}/upload?path=${this.path}`,
 					{
 						method: "POST",
-						body: {
-							append: formData, // dont know if this is correct
-						},
+						body: formData,
 					}
 				);
 				snackBarStore.setSnackBar({
 					text:
-						this.files.length > 1
+						this.uploadingFiles.length > 1
 							? "Soubory byly nahrány"
 							: "Soubor byl nahrán",
 					icon: "check",
@@ -239,6 +238,8 @@ export const useFileManagerStore = defineStore("fileManager", {
 			}
 
 			this.uploading = false;
+			this.uploadingFiles = [];
+			this.refreshPending = true;
 		},
 		async loadList() {
 			this.loading = true;

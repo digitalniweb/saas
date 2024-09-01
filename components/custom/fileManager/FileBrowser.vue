@@ -1,17 +1,10 @@
 <template>
 	<v-card class="mx-auto" :loading="fileManagerStore.loading">
-		<Toolbar
-			:path="path"
-			:endpoints="endpoints"
-			v-on:add-files="addUploadingFiles"
-		></Toolbar>
+		<Toolbar></Toolbar>
 		<v-row no-gutters>
 			<v-col v-if="fileManagerStore.tree" sm="auto">
 				<!-- <Tree
-					:path="path"
-					:icons="icons"
-					:endpoints="endpoints"
-					:refreshPending="refreshPending"
+					:icons="icons"					
 					v-on:loading="loadingChanged"
 					v-on:refreshed="refreshPending = false"
 				></Tree> -->
@@ -19,50 +12,22 @@
 			<v-divider v-if="fileManagerStore.tree" vertical></v-divider>
 			<v-col>
 				<List
-					:path="path"
 					:icons="icons"
-					:endpoints="endpoints"
-					:refreshPending="refreshPending"
-					v-on:loading="loadingChanged"
-					v-on:refreshed="refreshPending = false"
-					v-on:file-deleted="refreshPending = true"
+					v-on:refreshed="fileManagerStore.refreshPending = false"
+					v-on:file-deleted="fileManagerStore.refreshPending = true"
 				></List>
 			</v-col>
 		</v-row>
 		<Upload
-			v-if="uploadingFiles !== false"
-			:path="path"
-			:files="uploadingFiles"
+			v-if="fileManagerStore.uploadingFiles.length > 0"
 			:icons="icons"
-			v-on:add-files="addUploadingFiles"
 			v-on:remove-file="removeUploadingFile"
-			v-on:clear-files="uploadingFiles = []"
-			v-on:cancel="uploadingFiles = false"
-			v-on:uploaded="uploaded"
+			v-on:clear-files="fileManagerStore.uploadingFiles = []"
+			v-on:cancel="fileManagerStore.uploadingFiles = []"
 		></Upload>
 	</v-card>
 </template>
-<script>
-	const endpointPrefix = "/api/filemanager";
-	const endpoints = {
-		list: {
-			url: endpointPrefix + "/storage/local/list?path={path}",
-			method: "get",
-		},
-		upload: {
-			url: endpointPrefix + "/storage/local/upload?path={path}",
-			method: "post",
-		},
-		mkdir: {
-			url: endpointPrefix + "/storage/local/mkdir?path={path}",
-			method: "post",
-		},
-		delete: {
-			url: endpointPrefix + "/storage/local/delete?path={path}",
-			method: "post",
-		},
-	};
-
+<script lang="ts">
 	const fileIcons = {
 		folder: "mdi-folder-outline",
 		zip: "mdi-folder-zip-outline",
@@ -88,17 +53,14 @@
 
 	export default {};
 </script>
-<script setup>
+<script setup lang="ts">
 	import Toolbar from "./Toolbar.vue";
 	// import Tree from "./Tree.vue";
 	import List from "./List.vue";
 	import Upload from "./Upload.vue";
 
 	import { useFileManagerStore } from "@/store/fileManager";
-	import { useSnackBarsStore } from "~/store/snackBars";
 	const fileManagerStore = useFileManagerStore();
-
-	let snackBarStore = useSnackBarsStore();
 
 	// Props
 	const props = defineProps({
@@ -108,60 +70,7 @@
 	// Emit event for model binding
 	const emit = defineEmits(["change", "path-changed", "add-files"]);
 
-	// State
-	const loading = ref(0);
-	const path = ref("/");
-	const uploadingFiles = ref(false); // Or an array of files
-	const refreshPending = ref(false);
-
-	// Methods
-	function loadingChanged(isLoading) {
-		if (isLoading) loading.value++;
-		else if (loading.value > 0) loading.value--;
-	}
-
-	function addUploadingFiles(files) {
-		files = Array.from(files);
-
-		if (fileManager.options.maxUploadFileSize) {
-			files = files.filter((file) => {
-				if (file.size <= fileManager.options.maxUploadFileSize)
-					return true;
-				// Handle file size too large
-				// You can replace this with your own snackbar or alert method
-				snackBarStore.setSnackBar({
-					text: `Soubor ${file.name} je příliš velký`,
-					icon: "alert-circle-outline",
-					color: "orange",
-				});
-				return false;
-			});
-		}
-
-		if (uploadingFiles.value === false) {
-			uploadingFiles.value = [];
-		}
-
-		if (
-			fileManager.maxUploadFilesCount &&
-			uploadingFiles.value.length + files.length >
-				fileManager.maxUploadFilesCount
-		) {
-			files = files.slice(
-				0,
-				fileManager.maxUploadFilesCount - uploadingFiles.value.length
-			);
-		}
-
-		uploadingFiles.value.push(...files);
-	}
-
-	function removeUploadingFile(index) {
-		uploadingFiles.value.splice(index, 1);
-	}
-
-	function uploaded() {
-		uploadingFiles.value = false;
-		refreshPending.value = true;
+	function removeUploadingFile(index: number) {
+		fileManagerStore.uploadingFiles.splice(index, 1);
 	}
 </script>

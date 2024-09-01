@@ -1,23 +1,28 @@
 <template>
-	<v-overlay :absolute="true">
-		<v-card flat light class="mx-auto" :loading="loading">
+	<v-overlay
+		:absolute="true"
+		:model-value="listItems.length > 0"
+		class="align-center justify-center"
+	>
+		<v-card flat light :loading="loading">
 			<v-card-text class="py-3 text-center">
 				<div>
 					<span class="grey--text">Upload to:</span>
-					<v-chip color="info" class="mx-1">{{ storage }}</v-chip>
-					<v-chip>{{ path }}</v-chip>
+					<v-chip>{{ fileManagerStore.path }}</v-chip>
 				</div>
-				<div v-if="fileManager.options.maxUploadFilesCount">
+				<div v-if="fileManagerStore.options.maxUploadFilesCount">
 					<span class="grey--text"
 						>Max files count:
-						{{ fileManager.options.maxUploadFilesCount }}</span
+						{{ fileManagerStore.options.maxUploadFilesCount }}</span
 					>
 				</div>
-				<div v-if="fileManager.options.maxUploadFileSize">
+				<div v-if="fileManagerStore.options.maxUploadFileSize">
 					<span class="grey--text"
 						>Max file size:
 						{{
-							formatBytes(fileManager.options.maxUploadFileSize)
+							formatBytes(
+								fileManagerStore.options.maxUploadFileSize
+							)
 						}}</span
 					>
 				</div>
@@ -40,7 +45,7 @@
 							></v-img>
 							<v-icon
 								v-else
-								v-text="icons[file.extension] || 'mdi-file'"
+								v-text="icons?.[file.extension] || 'mdi-file'"
 								class="mdi-36px"
 								color="grey lighten-1"
 							></v-icon>
@@ -63,31 +68,33 @@
 				</v-list>
 			</v-card-text>
 			<v-card-text v-else class="py-6 text-center">
-				<v-btn @click="$refs.inputUpload.click()">
+				<v-btn @click="($refs.inputUpload as HTMLInputElement).click()">
 					<v-icon left>mdi-plus-circle</v-icon>Add files
 				</v-btn>
 			</v-card-text>
 			<v-divider></v-divider>
 			<v-toolbar dense flat>
 				<div class="grow"></div>
-				<v-btn text @click="cancel" class="mx-1">Cancel</v-btn>
+				<v-btn variant="text" @click="cancel" class="mx-1"
+					>Cancel</v-btn
+				>
 				<v-btn
 					depressed
 					color="warning"
 					@click="clear"
 					class="mx-1"
-					:disabled="!files"
+					:disabled="!fileManagerStore.uploadingFiles"
 				>
 					<v-icon>mdi-close</v-icon>Clear
 				</v-btn>
 				<v-btn
 					:disabled="
 						listItems.length >=
-						fileManager.options.maxUploadFilesCount
+						fileManagerStore.options.maxUploadFilesCount
 					"
 					depressed
 					color="info"
-					@click="$refs.inputUpload.click()"
+					@click="($refs.inputUpload as HTMLInputElement).click()"
 					class="mx-1"
 				>
 					<v-icon left>mdi-plus-circle</v-icon>Add Files
@@ -96,15 +103,15 @@
 						ref="inputUpload"
 						type="file"
 						multiple
-						@change="add"
+						@change="add($event as Event)"
 					/>
 				</v-btn>
 				<v-btn
 					depressed
 					color="success"
-					@click="upload"
+					@click="fileManagerStore.upload"
 					class="ml-1"
-					:disabled="!files"
+					:disabled="!fileManagerStore.uploadingFiles"
 				>
 					Upload
 					<v-icon right>mdi-upload-outline</v-icon>
@@ -129,14 +136,15 @@
 		</v-card>
 	</v-overlay>
 </template>
-<script setup>
+<script setup lang="ts">
+	import { useFileManagerStore } from "@/store/fileManager";
+	const fileManagerStore = useFileManagerStore();
 	import { watch } from "vue";
 	import { formatBytes } from "~/digitalniweb-custom/functions/formatBytes";
 
-	const imageMimeTypes = ["image/png", "image/jpeg"];
+	const imageMimeTypes = ["image/png", "image/jpeg", "image/webp"];
 
 	const props = defineProps({
-		files: { type: Array, default: () => [] },
 		icons: Object,
 	});
 
@@ -145,29 +153,35 @@
 		"remove-file",
 		"clear-files",
 		"cancel",
-		"uploaded",
 	]);
 
 	const loading = ref(false);
 	const uploading = ref(false);
 	const progress = ref(0);
-	const listItems = ref([]);
+	type uploadFile = {
+		name: string;
+		type: string;
+		size: number;
+		extension: string;
+		preview?: string | null;
+	};
+	const listItems = ref<uploadFile[]>([]);
 
-	const filesMap = async (files) => {
+	const filesMap = async (files: File[]) => {
 		let promises = Array.from(files).map((file) => {
 			let result = {
 				name: file.name,
 				type: file.type,
 				size: file.size,
 				extension: file.name.split(".").pop(),
-			};
-			return new Promise((resolve) => {
+			} as uploadFile;
+			return new Promise<uploadFile>((resolve) => {
 				if (!imageMimeTypes.includes(result.type)) {
 					return resolve(result);
 				}
 				var reader = new FileReader();
 				reader.onload = function (e) {
-					result.preview = e.target.result;
+					result.preview = e.target?.result as string;
 					resolve(result);
 				};
 				reader.readAsDataURL(file);
@@ -177,13 +191,14 @@
 		return await Promise.all(promises);
 	};
 
-	const add = async (event) => {
-		let files = Array.from(event.target.files);
-		emit("add-files", files);
-		event.target.value = "";
+	const add = async (event: Event) => {
+		let el = event.target as HTMLInputElement;
+		if (el.files == null) return;
+		fileManagerStore.addUploadingFiles(el.files);
+		el.value = "";
 	};
 
-	const remove = (index) => {
+	const remove = (index: number) => {
 		emit("remove-file", index);
 		listItems.value.splice(index, 1);
 	};
@@ -197,66 +212,11 @@
 		emit("cancel");
 	};
 
-	const upload = async () => {
-		if (!props.files.length) {
-			// Assuming you have a store or some method to show notifications
-			// this.$store.dispatch('setSnackBars', {
-			//   text: 'Nebyly vybrány žádné soubory.',
-			//   icon: 'alert-circle-outline',
-			//   color: 'orange',
-			// });
-			return;
-		}
-		let formData = new FormData();
-
-		// files
-		for (let file of props.files) {
-			formData.append("files", file, file.name);
-		}
-
-		let url = props.endpoint.url
-			.replace(new RegExp("{storage}", "g"), props.storage)
-			.replace(new RegExp("{path}", "g"), props.path);
-
-		let config = {
-			url,
-			method: props.endpoint.method || "post",
-			data: formData,
-			onUploadProgress: (progressEvent) => {
-				progress.value =
-					(progressEvent.loaded / progressEvent.total) * 100;
-			},
-		};
-
-		uploading.value = true;
-		try {
-			await props.axios.request(config);
-			// Assuming you have a store or some method to show notifications
-			// this.$store.dispatch('setSnackBars', {
-			//   text: props.files.length > 1 ? 'Soubory byly nahrány' : 'Soubor byl nahrán',
-			//   icon: 'check',
-			//   color: 'light-green',
-			// });
-		} catch (error) {
-			if (process.env.NODE_ENV === "production")
-				console.log("Nepodařilo se nahrát soubor");
-			else console.log(error);
-			// Assuming you have a store or some method to show notifications
-			// this.$store.dispatch('setSnackBars', {
-			//   text: 'Něco se pokazilo.',
-			//   icon: 'alert-circle-outline',
-			//   color: 'red',
-			// });
-		}
-		uploading.value = false;
-		emit("uploaded");
-	};
-
 	watch(
-		() => props.files,
+		() => fileManagerStore.uploadingFiles,
 		async () => {
 			loading.value = true;
-			listItems.value = await filesMap(props.files);
+			listItems.value = await filesMap(fileManagerStore.uploadingFiles);
 			loading.value = false;
 		},
 		{ deep: true, immediate: true }
