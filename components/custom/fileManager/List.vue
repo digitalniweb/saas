@@ -181,8 +181,6 @@
 		icons: Object,
 	});
 
-	const emit = defineEmits(["path-changed", "refreshed", "file-deleted"]);
-
 	const selectedFilesChanged = (itemValueList: string[]) => {
 		let fullPathFiles = [] as string[];
 
@@ -221,16 +219,6 @@
 				files: [],
 			};
 			await fileManagerStore.loadList();
-		}
-	);
-
-	watch(
-		() => fileManagerStore.refreshPending,
-		async () => {
-			if (fileManagerStore.refreshPending) {
-				await fileManagerStore.loadList();
-				emit("refreshed");
-			}
 		}
 	);
 

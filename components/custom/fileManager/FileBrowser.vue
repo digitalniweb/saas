@@ -6,16 +6,11 @@
 				<!-- <Tree
 					:icons="icons"					
 					v-on:loading="loadingChanged"
-					v-on:refreshed="refreshPending = false"
 				></Tree> -->
 			</v-col>
 			<v-divider v-if="fileManagerStore.tree" vertical></v-divider>
 			<v-col>
-				<List
-					:icons="icons"
-					v-on:refreshed="fileManagerStore.refreshPending = false"
-					v-on:file-deleted="fileManagerStore.refreshPending = true"
-				></List>
+				<List :icons="icons"></List>
 			</v-col>
 		</v-row>
 		<Upload

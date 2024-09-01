@@ -4,7 +4,7 @@
 		:model-value="listItems.length > 0"
 		class="align-center justify-center"
 	>
-		<v-card flat light :loading="loading">
+		<v-card flat light :loading="fileManagerStore.loading">
 			<v-card-text class="py-3 text-center">
 				<div>
 					<span class="grey--text">Upload to:</span>
@@ -32,38 +32,51 @@
 				v-if="listItems.length"
 				class="pa-0 files-list-wrapper"
 			>
-				<v-list two-line v-if="listItems.length">
+				<v-list three-line v-if="listItems.length">
 					<v-list-item
 						v-for="(file, index) in listItems"
 						:key="index"
 						link
 					>
-						<v-avatar>
-							<v-img
-								v-if="file.preview"
-								:src="file.preview"
-							></v-img>
-							<v-icon
-								v-else
-								v-text="icons?.[file.extension] || 'mdi-file'"
-								class="mdi-36px"
-								color="grey lighten-1"
-							></v-icon>
-						</v-avatar>
-						<v-list-item-title
-							v-text="file.name"
-						></v-list-item-title>
-						<v-list-item-subtitle
-							>{{ formatBytes(file.size) }} -
-							{{ file.type }}</v-list-item-subtitle
+						<template v-slot:prepend>
+							<v-list-item-action
+								class="align-self-center ml-5 mr-2 my-0"
+							>
+								<img
+									v-if="file.preview"
+									:src="file.preview"
+									style="max-height: 60px"
+								/>
+								<v-icon
+									v-else
+									v-text="
+										icons?.[file.extension] || 'mdi-file'
+									"
+									class="mdi-36px"
+									color="grey lighten-1"
+								></v-icon>
+							</v-list-item-action>
+						</template>
+						<template v-slot:default>
+							<v-list-item-title
+								v-text="file.name"
+							></v-list-item-title>
+							<v-list-item-subtitle>
+								{{ file.type }}
+							</v-list-item-subtitle>
+							<v-list-item-subtitle>
+								{{ formatBytes(file.size) }}
+							</v-list-item-subtitle>
+						</template>
+						<template v-slot:append>
+							<v-list-item-action>
+								<v-btn icon @click="remove(index)">
+									<v-icon color="grey lighten-1"
+										>mdi-close</v-icon
+									>
+								</v-btn>
+							</v-list-item-action></template
 						>
-						<v-list-item-action>
-							<v-btn icon @click="remove(index)">
-								<v-icon color="grey lighten-1"
-									>mdi-close</v-icon
-								>
-							</v-btn>
-						</v-list-item-action>
 					</v-list-item>
 				</v-list>
 			</v-card-text>
@@ -118,19 +131,18 @@
 				</v-btn>
 			</v-toolbar>
 			<v-overlay
-				:value="uploading"
+				:value="fileManagerStore.uploading"
 				:absolute="true"
 				color="white"
 				opacity="0.9"
 			>
 				<v-progress-linear
-					v-model="progress"
 					height="25"
 					striped
 					rounded
 					reactive
+					indeterminate
 				>
-					<strong>{{ Math.ceil(progress) }}%</strong>
 				</v-progress-linear>
 			</v-overlay>
 		</v-card>
@@ -155,9 +167,6 @@
 		"cancel",
 	]);
 
-	const loading = ref(false);
-	const uploading = ref(false);
-	const progress = ref(0);
 	type uploadFile = {
 		name: string;
 		type: string;
@@ -215,9 +224,9 @@
 	watch(
 		() => fileManagerStore.uploadingFiles,
 		async () => {
-			loading.value = true;
+			fileManagerStore.loading = true;
 			listItems.value = await filesMap(fileManagerStore.uploadingFiles);
-			loading.value = false;
+			fileManagerStore.loading = false;
 		},
 		{ deep: true, immediate: true }
 	);

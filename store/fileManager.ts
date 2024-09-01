@@ -15,7 +15,6 @@ const confirmStore = useConfirmStore();
 export const useFileManagerStore = defineStore("fileManager", {
 	state: () => ({
 		opened: false as boolean,
-		refreshPending: false as boolean,
 		path: "/",
 		tree: false, // isn't implemented
 		selectedFiles: [] as string[], // resolve
@@ -56,25 +55,6 @@ export const useFileManagerStore = defineStore("fileManager", {
 		},
 	},
 	actions: {
-		/*
-		 just for info, delete later
-			 list: {
-				url: endpointPrefix + "/storage/local/list?path={path}",
-				method: "get",
-			},
-			upload: {
-				url: endpointPrefix + "/storage/local/upload?path={path}",
-				method: "post",
-			},
-			mkdir: {
-				url: endpointPrefix + "/storage/local/mkdir?path={path}",
-				method: "post",
-			},
-			delete: {
-				url: endpointPrefix + "/storage/local/delete?path={path}",
-				method: "post",
-			},
-		*/
 		open(options = {} as fileManagerOptions) {
 			this.options = { ...this.defaultOptions, ...options };
 			this.opened = true;
@@ -136,12 +116,19 @@ export const useFileManagerStore = defineStore("fileManager", {
 					method: "POST",
 				}
 			);
+
+			const deleteIndex = this.files.findIndex(
+				(file) => file.name === item.name
+			);
+			if (deleteIndex !== -1) {
+				this.items.files.splice(deleteIndex, 1);
+			}
+
 			snackBarStore.setSnackBar({
 				text: "soubor byl smazán",
 				icon: "check",
 				color: "light-green",
 			});
-			// emit("file-deleted");
 			this.loading = false;
 		},
 		async deleteDirectory(item: fileSystemDirectory) {
@@ -159,12 +146,12 @@ export const useFileManagerStore = defineStore("fileManager", {
 					method: "POST",
 				}
 			);
+
 			snackBarStore.setSnackBar({
 				text: "složka byla smazána",
 				icon: "check",
 				color: "light-green",
 			});
-			// emit("file-deleted");
 			this.loading = false;
 		},
 		async mkdir(folderPath: string) {
@@ -190,7 +177,6 @@ export const useFileManagerStore = defineStore("fileManager", {
 					color: "red",
 				});
 			}
-			this.refreshPending = true;
 			this.loading = false;
 		},
 		async upload() {
@@ -228,6 +214,7 @@ export const useFileManagerStore = defineStore("fileManager", {
 					icon: "check",
 					color: "light-green",
 				});
+				this.loadList();
 			} catch (error) {
 				if (process.env.NODE_ENV === "development") console.log(error);
 				snackBarStore.setSnackBar({
@@ -239,7 +226,6 @@ export const useFileManagerStore = defineStore("fileManager", {
 
 			this.uploading = false;
 			this.uploadingFiles = [];
-			this.refreshPending = true;
 		},
 		async loadList() {
 			this.loading = true;
