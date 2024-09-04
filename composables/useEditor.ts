@@ -5,6 +5,8 @@ let tinymce: tinymceImport | undefined;
 let editorConfig: Partial<EditorOptions> = {};
 
 import { useCurrentPageStore } from "@/store/currentPage";
+import { useFileManagerStore } from "@/store/fileManager";
+const fileManagerStore = useFileManagerStore();
 
 if (import.meta.client) {
 	tinymce = (await import("tinymce")).default;
@@ -49,32 +51,27 @@ if (import.meta.client) {
 			if (meta.filetype == "file") {
 				let toxTinyMceAux: HTMLElement | null =
 					document.querySelector(".tox-tinymce-aux");
-				console.log("file", toxTinyMceAux);
 				if (!toxTinyMceAux) return;
-				// toxTinyMceAux.style.display = "none";
-				// let openFB = await store.dispatch("openFileBrowser", { open: true });
-				// toxTinyMceAux
-				// 	.style.removeProperty("display");
-				// if (!openFB) return;
-				// callback(openFB[0]);
+				toxTinyMceAux.style.display = "none";
+				let openFB = await fileManagerStore.open();
+				toxTinyMceAux.style.removeProperty("display");
+				if (!openFB) return;
+				callback(openFB[0]);
 			}
 
 			// Provide image and alt text for the image dialog
 			if (meta.filetype == "image") {
 				let toxTinyMceAux: HTMLElement | null =
 					document.querySelector(".tox-tinymce-aux");
-				console.log("image", toxTinyMceAux);
 
 				if (!toxTinyMceAux) return;
-				// toxTinyMceAux.style.display = "none";
-				// let openFB = await store.dispatch("openFileBrowser", {
-				// 	open: true,
-				// 	options: { maxUploadFileSize: 5242880 },
-				// });
-				// toxTinyMceAux
-				// 	.style.removeProperty("display");
-				// if (!openFB) return;
-				// callback(openFB[0]);
+				toxTinyMceAux.style.display = "none";
+				let openFB = await fileManagerStore.open({
+					maxUploadFileSize: 5242880,
+				});
+				toxTinyMceAux.style.removeProperty("display");
+				if (!openFB) return;
+				callback(openFB[0]);
 			}
 		},
 
