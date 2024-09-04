@@ -198,8 +198,9 @@
 
 	const returnItem = (item: fileSystemFile) => {
 		if (fileManagerStore.options.multipleSelect) return;
-		const path = [fileUrl(item.path)];
-		fileManagerStore.confirm(path);
+		const path = fileUrl(item.path);
+		fileManagerStore.selectedFiles.push(path);
+		fileManagerStore.confirm();
 	};
 
 	const isImage = (extension: string) => {

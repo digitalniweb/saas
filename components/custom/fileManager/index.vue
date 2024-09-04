@@ -1,7 +1,7 @@
 <template>
 	<client-only>
 		<v-dialog
-			v-model="fileManager.opened"
+			v-model="fileManagerStore.opened"
 			fullscreen
 			hide-overlay
 			:retain-focus="false"
@@ -24,7 +24,7 @@
 							>Nahrajte a označte data, která chcete vložit do
 							editoru</v-list-item-subtitle
 						>
-						<FileBrowser :tree="fileManager.tree" />
+						<FileBrowser :tree="fileManagerStore.tree" />
 					</v-list-item>
 					<v-list-item>
 						<v-list-item-title class="text-right py-3">
@@ -43,15 +43,13 @@
 <script setup lang="ts">
 	import FileBrowser from "./FileBrowser.vue";
 	import { useFileManagerStore } from "@/store/fileManager";
-	const fileManager = useFileManagerStore();
+	const fileManagerStore = useFileManagerStore();
 	// const { opened: openFileBrowser } = storeToRefs(fileManagerStore);
 
 	const cancel = async () => {
-		fileManager.opened = false;
+		fileManagerStore.opened = false;
 	};
 	const confirm = async () => {
-		fileManager.confirm([
-			"dodelat, zmenit 'fileUrl' funkci v List, dat do store vse a vracet 'selectedFiles'",
-		]);
+		fileManagerStore.confirm();
 	};
 </script>

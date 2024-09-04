@@ -37,7 +37,7 @@ export const useFileManagerStore = defineStore("fileManager", {
 			maxUploadFilesCount: 1,
 			maxUploadFileSize: 20971520,
 			multipleSelect: false,
-		},
+		} as fileManagerOptions,
 	}),
 	getters: {
 		// files and directories in selected directory
@@ -55,7 +55,9 @@ export const useFileManagerStore = defineStore("fileManager", {
 		},
 	},
 	actions: {
-		open(options = {} as fileManagerOptions) {
+		async open(
+			options = {} as Partial<fileManagerOptions>
+		): Promise<string[]> {
 			this.options = { ...this.defaultOptions, ...options };
 			this.opened = true;
 			return new Promise((resolve, reject) => {
@@ -67,9 +69,9 @@ export const useFileManagerStore = defineStore("fileManager", {
 			this.opened = false;
 			this.resolve(false);
 		},
-		confirm(data: any) {
+		confirm() {
 			this.opened = false;
-			this.resolve(data);
+			this.resolve(this.selectedFiles);
 		},
 		addUploadingFiles(fileList: FileList) {
 			let files = Array.from(fileList);

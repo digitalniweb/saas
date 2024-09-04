@@ -26,7 +26,7 @@
 							color="primary"
 							fab
 							small
-							@click="chooseImage('mainImage')"
+							@click="chooseImage('mainImage', formdata)"
 						>
 							<v-icon>mdi-folder-image</v-icon>
 						</v-btn>
@@ -42,7 +42,17 @@
 					prepend-inner-icon="mdi-image"
 					v-model="formdata.logo"
 					dense
-				/>
+					><template v-slot:append>
+						<v-btn
+							color="primary"
+							fab
+							small
+							@click="chooseImage('logo', formdata)"
+						>
+							<v-icon>mdi-folder-image</v-icon>
+						</v-btn>
+					</template>
+				</v-text-field>
 
 				<v-text-field
 					variant="underlined"
@@ -53,7 +63,17 @@
 					prepend-inner-icon="mdi-image"
 					v-model="formdata.favicon"
 					dense
-				/>
+					><template v-slot:append>
+						<v-btn
+							color="primary"
+							fab
+							small
+							@click="chooseImage('favicon', formdata)"
+						>
+							<v-icon>mdi-folder-image</v-icon>
+						</v-btn>
+					</template>
+				</v-text-field>
 
 				<v-text-field
 					variant="underlined"
@@ -386,9 +406,15 @@
 
 	const formdata = ref(formdataWebInformation.dataClone);
 
-	const chooseImage = async (property: string) => {
-		let img = await fileManagerStore.open();
-		console.log("img", img);
+	const chooseImage = async <T>(
+		property: keyof T,
+		object: T,
+		multipleSelect: boolean = false
+	) => {
+		let img = await fileManagerStore.open({ multipleSelect });
+		if (object[property] === undefined) return;
+		if (multipleSelect) (object[property] as string) = img.join(",");
+		else (object[property] as string) = img[0] ?? "";
 	};
 
 	const saveWebInformation = async () => {
