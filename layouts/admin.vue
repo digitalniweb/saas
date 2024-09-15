@@ -23,6 +23,7 @@
 						</v-col>
 						<v-spacer></v-spacer>
 						<v-col class="text-right">
+							<CustomThemeToggle />
 							<v-menu>
 								<template v-slot:activator="{ props }">
 									<v-btn
@@ -31,7 +32,7 @@
 										icon="mdi-bell-outline"
 										v-bind="props"
 										flat
-									></v-btn>
+									/>
 								</template>
 
 								<v-list>
@@ -53,7 +54,7 @@
 										size="small"
 										icon="mdi-account"
 										v-bind="props"
-									></v-avatar>
+									/>
 								</template>
 
 								<v-list>

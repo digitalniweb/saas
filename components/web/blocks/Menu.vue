@@ -22,6 +22,7 @@
 		<WebMenuList :levelitems="menu" ulid="navitems" />
 		<template v-slot:append>
 			<ClientOnly>
+				<CustomThemeToggle />
 				<!-- ClientOnly because we don't check if user is logged on server - then there is a missmatch -->
 				<div v-if="!userStore.logged">
 					<v-tooltip
@@ -36,7 +37,7 @@
 								icon="mdi-account-plus"
 								v-bind="props"
 								:to="modulesLocale('users', 'Register', 'url')"
-							></v-btn>
+							/>
 						</template>
 					</v-tooltip>
 					<v-tooltip
@@ -51,7 +52,7 @@
 								icon="mdi-account-arrow-left"
 								v-bind="props"
 								:to="modulesLocale('users', 'Login', 'url')"
-							></v-btn>
+							/>
 						</template>
 					</v-tooltip>
 				</div>
@@ -68,7 +69,7 @@
 								icon="mdi-account-arrow-right"
 								v-bind="props"
 								:to="modulesLocale('users', 'Logout', 'url')"
-							></v-btn>
+							/>
 						</template>
 					</v-tooltip>
 
@@ -84,7 +85,7 @@
 								icon="mdi-account"
 								v-bind="props"
 								:to="modulesLocale('users', 'Profile', 'url')"
-							></v-btn>
+							/>
 						</template>
 					</v-tooltip>
 					<!-- add to globalData modules with languages -->
@@ -95,7 +96,7 @@
 								icon="mdi-account-cog"
 								v-bind="props"
 								to="/admin"
-							></v-btn>
+							/>
 						</template>
 					</v-tooltip>
 				</div>
@@ -109,8 +110,8 @@
 							icon="mdi-alert-box"
 							to="/nonExistingPage"
 							v-bind="props"
-						></v-btn
-					></template>
+						/>
+					</template>
 				</v-tooltip>
 			</ClientOnly>
 		</template>
@@ -121,6 +122,7 @@
 	import { useMenusStore } from "@/store/menus";
 	import { useUserStore } from "../../../store/user";
 	import { storeToRefs } from "pinia";
+
 	const config = useRuntimeConfig();
 
 	const { webinformationLocale, modulesLocale } = useLocales();

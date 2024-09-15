@@ -10,7 +10,9 @@ export default defineNuxtPlugin((nuxtApp) => {
 		components,
 		directives,
 		ssr: true,
-
+		theme: {
+			defaultTheme: "dark",
+		},
 		locale: { locale: "en", fallback: "en", messages: { en, cs } },
 	});
 

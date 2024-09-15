@@ -45,7 +45,8 @@
 				position: relative;
 
 				ul {
-					background: #fff;
+					background: rgb(var(--v-theme-surface));
+					color: rgb(var(--v-theme-on-surface));
 					display: flex;
 					visibility: hidden;
 					top: 100%;
