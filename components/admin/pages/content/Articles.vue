@@ -26,16 +26,6 @@
 					<v-icon v-if="item.otherUrl">mdi-link-variant</v-icon>
 					<v-icon v-else-if="item.freeMenu">mdi-menu-close</v-icon>
 				</template>
-				<!-- <template v-slot:append="{ item }">
-					<div class="hide">
-						<v-btn
-							@click.prevent.stop="deleteMenu(item)"
-							color="red"
-							icon="mdi-trash-can-outline"
-							size="sm"
-						></v-btn>
-					</div>
-				</template> -->
 			</v-treeview>
 		</v-col>
 		<v-divider class="mx-4" vertical></v-divider>
@@ -79,15 +69,40 @@
 					<v-tabs-window-item :value="'tab-assignment'">
 						<v-card class="pa-5">
 							<p class="text-overline">Pořadí</p>
+							<v-select
+								:items="pickMenuOrder"
+								return-object
+								item-value="id"
+								v-model="selectedOrder"
+							>
+								<template v-slot:item="{ props, item, index }">
+									<v-list-item v-bind="props" title=""
+										><i>{{ index + 1 }}.</i>
+										{{ item.value != 0 ? "Za " : "" }}
+										<strong>{{
+											item.raw.name
+										}}</strong></v-list-item
+									>
+								</template>
+							</v-select>
 							<p class="text-overline mt-5">
 								Zařazení do menu
-								<v-icon
-									v-tooltip:bottom="
-										'Aktuální zařazení do menu. Můžete jej změnit'
-									"
-									icon="mdi-help-circle"
-									class="cursor-help"
-								/>
+								<v-tooltip location="bottom">
+									<template v-slot:activator="{ props }">
+										<v-icon
+											icon="mdi-help-circle"
+											class="cursor-help"
+											v-bind="props"
+										/>
+									</template>
+									Aktuální zařazení do menu.<br />
+									Můžete jej změnit. <br />
+									Měnit zařazení indexové (hlavní stránky)
+									nemůžete měnit a nelze ani zařadit do tohoto
+									menu. <br />
+									Proto není ani v nabídce a pořadí první se
+									myslí první za indexovou stránkou.
+								</v-tooltip>
 							</p>
 							<v-treeview
 								density="compact"
@@ -114,8 +129,8 @@
 		</v-col>
 	</v-row>
 </template>
-<style scoped>
-	.pickMenuTree {
+<style>
+	/* .pickMenuTree {
 		.v-list-item {
 			&.v-list-item--active {
 				.v-list-item__prepend {
@@ -126,7 +141,7 @@
 				}
 			}
 		}
-	}
+	} */
 	.v-list-item {
 		.hide {
 			display: none;
@@ -142,13 +157,13 @@
 	import { VTreeview } from "vuetify/labs/VTreeview";
 	import { useMenusStore } from "~/store/menus.js";
 	import draggable from "vuedraggable";
-	import {
-		buildTreeType,
-		TreeNode,
-	} from "~/digitalniweb-custom/helpers/buildTree";
+	import { TreeNode } from "~/digitalniweb-custom/helpers/buildTree";
 	import { InferAttributes } from "sequelize";
 	import { Article } from "~/digitalniweb-types/models/content";
 	import getObjectFromArray from "~/digitalniweb-custom/functions/getObjectFromArray";
+	import { useSnackBarsStore } from "~/store/snackBars";
+
+	const snackBars = useSnackBarsStore();
 
 	type menuTreeNode = TreeNode<Partial<InferAttributes<Article>>>;
 
@@ -168,24 +183,42 @@
 				</p>`;
 	});
 
+	// const pickMenuOrder = ref([]);
+
+	const pickMenuOrder = computed(() => {
+		let orderOptions = [
+			{ id: 0, title: "1", name: "Jako první" },
+		] as menuTreeNode[];
+		if (pickMenuTreeActivated.value[0]?.children) {
+			let children = pickMenuTreeActivated.value[0]?.children.map(
+				(el) => {
+					return {
+						id: el.id,
+						title: ((el.order ?? 0) + 2).toString(),
+						name: el.name,
+					};
+				}
+			);
+			orderOptions.push(...children);
+		}
+		selectedOrder.value = orderOptions[0];
+		return orderOptions;
+	});
+
 	const menuTreeActivated = ref<menuTreeNode[]>([]);
 
 	const pickMenuTreeActivated = ref<menuTreeNode[]>([]);
+
+	const selectedOrder = ref({});
 
 	const deleteCurrentMenu = () => {
 		console.log(menuTreeActivated.value[0]);
 	};
 
-	// const deleteMenu = (
-	// 	item: buildTreeType<InferAttributes<Article>>[number]
-	// ) => {
-	// 	console.log(item.id);
-	// };
-
 	// for assigning menu to root
 	const rootObject = {
 		id: 0,
-		name: "root",
+		name: "Hlavní menu",
 		order: -1,
 		url: "/",
 	};
@@ -205,22 +238,57 @@
 			);
 			if (parentObj) pickMenuTreeActivated.value = [parentObj];
 		}
-		// let obj = {} as menuTreeNode;
-		// if (e[0].parentId === null) {
-		// 	obj = pickMenuTree.value[0];
-		// } else {
-		// 	let parentObj = getObjectFromArray<menuTreeNode>(
-		// 		e[0].parentId,
-		// 		pickMenuTree.value
-		// 	);
-		// 	if (parentObj != false) obj = parentObj;
-		// }
-		// pickMenuTreeActivated.value = [obj];
 	};
 
 	const activatedChangedPickedMenu = (e: menuTreeNode[]) => {
+		let currentMenuId = menuTreeActivated.value[0]?.id;
+		if (currentMenuId === undefined) {
+			pickMenuTreeActivated.value = [];
+			return;
+		}
+
+		let currentPickMenuId = pickMenuTreeActivated.value[0]?.id;
+		let clickedPickMenuId = e[0]?.id;
+
+		if (clickedPickMenuId === undefined) return;
+		if (clickedPickMenuId !== 0 && currentPickMenuId === clickedPickMenuId)
+			return;
+
+		if (currentMenuId === clickedPickMenuId) {
+			snackBars.setSnackBar({
+				color: "warning",
+				text: "Nemůžete zařadit menu do sebe sama.",
+			});
+			return;
+		}
+
+		let child = findById(menuTreeActivated.value[0], clickedPickMenuId);
+		if (child) {
+			snackBars.setSnackBar({
+				color: "warning",
+				text: "Nemůžete zařadit menu do sebe sama.",
+			});
+			return;
+		}
+
 		pickMenuTreeActivated.value = e;
 	};
+
+	const findById = (obj: menuTreeNode, id: number): menuTreeNode | null => {
+		if (obj.id === id) {
+			return obj;
+		}
+		if (obj.children) {
+			for (let child of obj.children) {
+				let result = findById(child, id);
+				if (result) {
+					return result;
+				}
+			}
+		}
+		return null;
+	};
+
 	const pickMenuTree = computed(() => {
 		return [
 			rootObject,
