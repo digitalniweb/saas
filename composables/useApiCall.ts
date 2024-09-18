@@ -88,7 +88,6 @@ export const useApiCall = () => {
 
 					return response;
 				} catch (error) {
-					console.log(error);
 					throw error;
 				}
 			}

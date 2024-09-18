@@ -10,16 +10,18 @@ export const useWebInformationStore = defineStore("webInformation", {
 	actions: {
 		async loadData() {
 			const website = useWebsiteStore();
+			const { fetchData } = useApiCall();
 			// const languages = useLanguagesStore();
-			let webInfo = await useFetch<InferAttributes<WebInformation>>(
+			let webInfo = await fetchData<InferAttributes<WebInformation>>(
 				`/api/website/webInformation?contentMsId=${website.data?.contentMsId}&id=${website.data?.id}`
 			);
-			if (!webInfo.data.value) return false;
-			this.data = webInfo.data.value;
+			if (!webInfo) return false;
+			this.data = webInfo;
 		},
 		async saveData(data: Partial<InferAttributes<WebInformation>>) {
-			let response = await useFetch<boolean>(
-				"/api/website/webinformation",
+			const { fetchData } = useApiCall();
+			let response = await fetchData<boolean>(
+				"/api/website/admin/webinformation",
 				{
 					method: "PATCH",
 					body: {
@@ -29,12 +31,6 @@ export const useWebInformationStore = defineStore("webInformation", {
 					},
 				}
 			);
-
-			if (
-				response.error.value?.statusCode ||
-				response.data.value == false
-			)
-				throw response.error.value;
 		},
 	},
 });

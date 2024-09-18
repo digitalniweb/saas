@@ -8,6 +8,7 @@
 				color="green"
 				block
 				class="my-5"
+				@click="createNewMenu"
 			></v-btn>
 			<h2>Upravit menu</h2>
 			<v-treeview
@@ -32,100 +33,116 @@
 		<v-spacer></v-spacer>
 
 		<v-col cols="6">
-			<v-card>
-				<v-tabs
-					v-model="tab"
-					align-tabs="center"
-					bg-color="basil"
-					stacked
-					grow
-				>
-					<v-tab value="tab-assignment">
-						<v-icon icon="mdi-format-list-numbered"></v-icon>
-						Zařazení
-					</v-tab>
-					<v-tab value="tab-menu">
-						<v-icon icon="mdi-menu"></v-icon>
-						Menu
-					</v-tab>
+			<v-scroll-x-transition origin="center right">
+				<v-card v-show="showEdits">
+					<v-tabs
+						v-model="tab"
+						align-tabs="center"
+						bg-color="basil"
+						stacked
+						grow
+					>
+						<v-tab value="tab-assignment">
+							<v-icon icon="mdi-format-list-numbered"></v-icon>
+							Zařazení
+						</v-tab>
+						<v-tab value="tab-menu">
+							<v-icon icon="mdi-menu"></v-icon>
+							Menu
+						</v-tab>
 
-					<v-tab value="tab-article">
-						<v-icon icon="mdi-pencil-outline"></v-icon>
-						Článek
-					</v-tab>
-				</v-tabs>
-				<v-card class="pa-5">
-					<div v-html="menuEditHeading"></div>
-					<v-fab
-						@click="deleteCurrentMenu()"
-						color="red"
-						icon="mdi-trash-can-outline"
-						v-tooltip:bottom="'Smazat menu'"
-						layout
-					></v-fab>
-				</v-card>
+						<v-tab value="tab-article">
+							<v-icon icon="mdi-pencil-outline"></v-icon>
+							Článek
+						</v-tab>
+					</v-tabs>
+					<v-card class="pa-5">
+						<div v-html="menuEditHeading"></div>
+						<v-fab
+							@click="deleteCurrentMenu()"
+							color="red"
+							icon="mdi-trash-can-outline"
+							v-tooltip:bottom="'Smazat menu'"
+							layout
+						></v-fab>
+					</v-card>
 
-				<v-tabs-window v-model="tab">
-					<v-tabs-window-item :value="'tab-assignment'">
-						<v-card class="pa-5">
-							<p class="text-overline">Pořadí</p>
-							<v-select
-								:items="pickMenuOrder"
-								return-object
-								item-value="id"
-								v-model="selectedOrder"
-							>
-								<template v-slot:item="{ props, item, index }">
-									<v-list-item v-bind="props" title=""
-										><i>{{ index + 1 }}.</i>
-										{{ item.value != 0 ? "Za " : "" }}
-										<strong>{{
-											item.raw.name
-										}}</strong></v-list-item
+					<v-tabs-window v-model="tab">
+						<v-tabs-window-item :value="'tab-assignment'">
+							<v-card class="pa-5">
+								<p class="text-overline">Pořadí</p>
+								<v-select
+									:items="pickMenuOrder"
+									return-object
+									item-value="id"
+									v-model="selectedOrder"
+								>
+									<template
+										v-slot:item="{ props, item, index }"
 									>
-								</template>
-							</v-select>
-							<p class="text-overline mt-5">
-								Zařazení do menu
-								<v-tooltip location="bottom">
-									<template v-slot:activator="{ props }">
-										<v-icon
-											icon="mdi-help-circle"
-											class="cursor-help"
-											v-bind="props"
-										/>
+										<v-list-item v-bind="props" title=""
+											><i>{{ index + 1 }}.</i>
+											{{ item.value != 0 ? "Za " : "" }}
+											<strong>{{
+												item.raw.name
+											}}</strong></v-list-item
+										>
 									</template>
-									Aktuální zařazení do menu.<br />
-									Můžete jej změnit. <br />
-									Měnit zařazení indexové (hlavní stránky)
-									nemůžete měnit a nelze ani zařadit do tohoto
-									menu. <br />
-									Proto není ani v nabídce a pořadí první se
-									myslí první za indexovou stránkou.
-								</v-tooltip>
-							</p>
-							<v-treeview
-								density="compact"
-								activatable
-								item-value="id"
-								item-title="name"
-								class="pickMenuTree"
-								:items="pickMenuTree"
-								return-object
-								:activated="pickMenuTreeActivated"
-								@update:activated="
-									activatedChangedPickedMenu as menuTreeNode
-								"
-							>
-							</v-treeview>
-						</v-card>
-					</v-tabs-window-item>
-					<v-tabs-window-item :value="'tab-menu'">
-					</v-tabs-window-item>
-					<v-tabs-window-item :value="'tab-article'">
-					</v-tabs-window-item>
-				</v-tabs-window>
-			</v-card>
+								</v-select>
+								<p class="text-overline mt-5">
+									Zařazení do menu
+									<v-tooltip location="bottom">
+										<template v-slot:activator="{ props }">
+											<v-icon
+												icon="mdi-help-circle"
+												class="cursor-help"
+												v-bind="props"
+											/>
+										</template>
+										Aktuální zařazení do menu.<br />
+										Můžete jej změnit. <br />
+										Měnit zařazení indexové (hlavní stránky)
+										nemůžete měnit a nelze ani zařadit do
+										tohoto menu. <br />
+										Proto není ani v nabídce a pořadí první
+										se myslí první za indexovou stránkou.
+									</v-tooltip>
+								</p>
+								<v-treeview
+									density="compact"
+									activatable
+									item-value="id"
+									item-title="name"
+									class="pickMenuTree"
+									:items="pickMenuTree"
+									return-object
+									:activated="pickMenuTreeActivated"
+									@update:activated="
+										activatedChangedPickedMenu as menuTreeNode
+									"
+								>
+								</v-treeview>
+							</v-card>
+						</v-tabs-window-item>
+						<v-tabs-window-item :value="'tab-menu'">
+							<v-card>
+								<!-- <v-text-field
+									variant="underlined"
+									id="name"
+									:label="translations.name.cs"
+									name="name"
+									counter="127"
+									prepend-inner-icon="mdi-domain"
+									v-model="formdata.name"
+									dense
+								/> -->
+							</v-card>
+						</v-tabs-window-item>
+						<v-tabs-window-item :value="'tab-article'">
+						</v-tabs-window-item>
+					</v-tabs-window>
+				</v-card>
+			</v-scroll-x-transition>
 		</v-col>
 	</v-row>
 </template>
@@ -162,12 +179,47 @@
 	import { Article } from "~/digitalniweb-types/models/content";
 	import getObjectFromArray from "~/digitalniweb-custom/functions/getObjectFromArray";
 	import { useSnackBarsStore } from "~/store/snackBars";
+	import { moduleResponse } from "~/digitalniweb-types/apps/communication/modules";
+
+	const menusStore = useMenusStore();
+
+	let translations = {
+		name: {
+			en: "Name",
+			cs: "Jméno",
+		},
+	};
+
+	// const { fetchData } = useApiCall();
+	// const { data: article } = await fetchData<moduleResponse<Article> | null>(
+	// 	"/api/content/article",
+	// 	{
+	// 		query: {
+	// 			...currentPage.route.query,
+	// 			url: currentPage.route.pathname,
+	// 		},
+	// 	}
+	// );
+
+	// let formdataMenu = useFormData(menusStore.loadData);
+	// const formdata = ref(formdataMenu.dataClone);
 
 	const snackBars = useSnackBarsStore();
 
 	type menuTreeNode = TreeNode<Partial<InferAttributes<Article>>>;
 
-	const menusStore = useMenusStore();
+	const newMenu = ref(false);
+
+	const createNewMenu = () => {
+		newMenu.value = true;
+		menuTreeActivated.value = [];
+	};
+
+	const showEdits = computed(() => {
+		if (newMenu.value === true || menuTreeActivated.value.length > 0)
+			return true;
+		return false;
+	});
 
 	const tab = ref(null);
 
@@ -225,9 +277,10 @@
 
 	const activatedChanged = (e: menuTreeNode[]) => {
 		// even though it returns array it can contain only 1 activated menu
-		if (!e[0]) {
+		if (e.length === 0) {
 			return;
 		}
+		newMenu.value = false;
 		menuTreeActivated.value = e;
 		if (e[0].parentId == null) {
 			pickMenuTreeActivated.value = [rootObject];

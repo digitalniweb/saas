@@ -14,7 +14,7 @@ export default eventHandler(async (event): Promise<number[] | null | false> => {
 			name: "websites",
 			id: websitesMsId,
 			path: "/api/current/modulesIds",
-			data: {
+			params: {
 				websiteId,
 			},
 		});

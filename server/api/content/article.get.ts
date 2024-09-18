@@ -14,7 +14,7 @@ export default eventHandler(async (event): Promise<Article | null | false> => {
 			name: "content",
 			id: resourceIds.contentMsId,
 			path: "/api/current/modules/article",
-			data: query,
+			params: query,
 		});
 
 		return article;

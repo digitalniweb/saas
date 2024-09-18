@@ -16,7 +16,7 @@ export default eventHandler(async (event) => {
 			name: "content",
 			id: contentMsId,
 			path: "/api/current/webinformation",
-			data: {
+			params: {
 				id,
 			},
 		});

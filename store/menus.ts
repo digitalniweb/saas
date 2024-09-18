@@ -25,7 +25,7 @@ export const useMenusStore = defineStore("menus", {
 			const { fetchData } = useApiCall();
 			let adminMenu = await fetchData<
 				buildTreeType<InferAttributes<AdminMenu>>
-			>("/api/website/adminmenu");
+			>("/api/website/admin/adminmenu");
 
 			this.admin = adminMenu ?? [];
 
@@ -35,7 +35,7 @@ export const useMenusStore = defineStore("menus", {
 			const user = useUserStore();
 			const { fetchData, fetchRef } = useApiCall();
 			// await nextTick(); // this fixes problem with pending useFetch() in useApiCall()
-			let adminMenu = await fetchRef<object[]>("/api/website/adminmenu", {
+			let adminMenu = await fetchRef<object[]>("/api/website/admin/adminmenu", {
 				query: { modules: user?.user?.UserModulesIds },
 			});
 			console.log(adminMenu.data.value);

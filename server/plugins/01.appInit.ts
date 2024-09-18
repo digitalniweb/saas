@@ -45,7 +45,7 @@ export default defineNitroPlugin(async () => {
 				name: "websites",
 				path: "/api/create",
 				method: "POST",
-				data: {
+				params: {
 					website: websiteData,
 					url: process.env["APP_HOSTNAME"],
 				},

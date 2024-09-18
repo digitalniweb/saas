@@ -16,10 +16,9 @@ export default eventHandler(async (event) => {
 				name: "websites",
 				id: websitesMsId,
 				path: "/api/current/languagesIds/",
-				data: {
+				params: {
 					websiteId,
 				},
-				method: "GET",
 			}
 		);
 		return ids;

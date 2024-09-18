@@ -19,8 +19,7 @@ export default eventHandler(async (event): Promise<appLanguages | false> => {
 		>({
 			name: "globalData",
 			path: "/api/languages/listbyids",
-			method: "GET",
-			data: { ids: languagesIds },
+			params: { ids: languagesIds },
 		});
 		let appLanguages = appLanguagesData;
 

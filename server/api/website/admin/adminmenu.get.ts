@@ -24,7 +24,7 @@ export default eventHandler(async (event) => {
 			name: "globalData",
 			path: "/api/adminmenu/list",
 			id: resourceIds.contentMsId,
-			data: query,
+			params: query,
 			cache: false,
 		});
 
