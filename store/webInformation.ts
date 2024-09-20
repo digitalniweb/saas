@@ -20,17 +20,19 @@ export const useWebInformationStore = defineStore("webInformation", {
 		},
 		async saveData(data: Partial<InferAttributes<WebInformation>>) {
 			const { fetchData } = useApiCall();
-			let response = await fetchData<boolean>(
+
+			// even though the sequelize update method describes the returning value differently it returns [1] on changing anything and [0] on changing nothing
+			let response = await fetchData<boolean[]>(
 				"/api/website/admin/webinformation",
 				{
 					method: "PATCH",
 					body: {
 						data,
-						websiteId: this.data.websiteId,
-						websitesMsId: this.data.websitesMsId,
+						id: this.data.id,
 					},
 				}
 			);
+			return response;
 		},
 	},
 });

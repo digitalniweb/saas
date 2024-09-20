@@ -3,28 +3,36 @@ import { log } from "~/digitalniweb-custom/helpers/logger";
 import { WebInformation } from "~/digitalniweb-types/models/content";
 import { InferAttributes } from "sequelize";
 import { verifyUser } from "~/custom/helpers/usersAuth";
+import { resourceIdsType } from "~/digitalniweb-types/apps/communication";
 
 export default eventHandler(async (event) => {
 	verifyUser(event);
-	let userVerified = event.context.verifiedUser;
-	console.log(userVerified);
+	// let userVerified = event.context.verifiedUser;
+	// console.log(userVerified);
 
-	let { data, websiteId, websitesMsId } = (await readBody(event)) as {
+	let { data, id } = (await readBody(event)) as {
 		data: InferAttributes<WebInformation>;
-		websiteId: number;
-		websitesMsId: number;
+		id: number;
 	};
+	let {
+		resourceIds,
+	}: {
+		resourceIds: string | resourceIdsType;
+	} = getQuery(event);
 	try {
-		if (!websiteId || !websitesMsId) return;
+		if (typeof resourceIds === "string")
+			resourceIds = JSON.parse(resourceIds) as resourceIdsType;
+
+		if (!resourceIds || !resourceIds.contentMsId || !id) return;
 
 		let { data: success } = await microserviceCall<boolean>({
 			method: "PATCH",
 			name: "content",
-			id: websitesMsId,
+			id: resourceIds.contentMsId,
 			path: "/api/current/webinformation",
 			data: {
 				data,
-				websiteId,
+				id,
 			},
 		});
 

@@ -429,7 +429,12 @@
 			return;
 		}
 		try {
-			await webInformationStore.saveData(dataDifference);
+			let saveDataResponse = await webInformationStore.saveData(
+				dataDifference
+			);
+			console.log(saveDataResponse);
+			if (!saveDataResponse || !saveDataResponse[0]) throw "err";
+
 			formdataWebInformation.saveDataDifference(dataDifference);
 			snackBarStore.setSnackBar({
 				text: "Informace o webu byly uloženy.",

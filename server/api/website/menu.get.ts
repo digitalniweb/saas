@@ -8,6 +8,7 @@ import { log } from "~/digitalniweb-custom/helpers/logger";
 export default eventHandler(async (event) => {
 	try {
 		let query = getQuery(event) as useApiCallQuery;
+
 		let resourceIds: resourceIdsType = JSON.parse(
 			query.resourceIds as string
 		);
