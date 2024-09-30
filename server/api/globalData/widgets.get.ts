@@ -14,7 +14,6 @@ export default eventHandler(async (event): Promise<Widget[] | null | false> => {
 			name: "globalData",
 			path: "/api/widgets/listbyids",
 			params: { ids },
-			cache: false,
 		});
 
 		return widgets;

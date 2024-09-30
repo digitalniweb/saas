@@ -18,9 +18,8 @@ export const useFormData = <T extends object>(dataOriginal: T) => {
 			if (!Object.prototype.hasOwnProperty.call(diffData, key)) return;
 			if (!Object.prototype.hasOwnProperty.call(dataOriginal, key))
 				return;
-			// this works but ts is complaining, just ignore it
-			// @ts-ignore
-			dataOriginal[key] = diffData[key];
+			if (typeof diffData[key] !== "undefined")
+				dataOriginal[key] = diffData[key];
 		}
 	};
 

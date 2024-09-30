@@ -25,7 +25,6 @@ export default eventHandler(async (event) => {
 			path: "/api/adminmenu/list",
 			id: resourceIds.contentMsId,
 			params: query,
-			cache: false,
 		});
 
 		return adminMenusGlobalData.data || [];

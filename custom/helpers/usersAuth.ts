@@ -13,6 +13,9 @@ import {
 } from "../../digitalniweb-types/users";
 import { commonError } from "../../digitalniweb-types/customHelpers/logger";
 import { InferAttributes } from "sequelize";
+import { modules } from "~/digitalniweb-types/functionality/modules";
+import { getGlobalDataList } from "~/digitalniweb-custom/helpers/getGlobalData";
+import AppModule from "~/server/models/apps/appModule";
 
 interface Options {
 	type?: string;
@@ -21,6 +24,31 @@ interface Options {
 }
 
 const accessTokenExpireTime: string = "5m";
+
+async function hasPermision(event: H3Event, wantedModule: modules) {
+	if (!event.context.verifiedUser) verifyUser(event);
+	if (!event.context.verifiedUser) return false;
+	let appModulesIds = await AppModule.findAll({
+		attributes: ["moduleId"],
+	});
+
+	const moduleIds = appModulesIds.map((module) => module.moduleId);
+	let modules = await getGlobalDataList<"modules", "id">(
+		"modules",
+		"id",
+		moduleIds
+	);
+	if (!modules) return;
+	let module = modules.find((e) => e.name === wantedModule);
+	if (!module) throw "Module not found.";
+	if (
+		!event.context.verifiedUser.UserModulesIds?.find(
+			(id) => id === module.id
+		)
+	)
+		throw `User doesn't have permission for "${wantedModule}" module.`;
+	return true;
+}
 
 async function userLoginData(
 	user: InferAttributes<User>,
@@ -140,4 +168,4 @@ function verifyUser(event: H3Event) {
 	}
 }
 
-export { accessTokenExpireTime, userLoginData, verifyUser };
+export { accessTokenExpireTime, userLoginData, verifyUser, hasPermision };

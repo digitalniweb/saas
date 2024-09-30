@@ -10,7 +10,41 @@ import { customLogObject } from "~/digitalniweb-types/customHelpers/logger.js";
 import { log } from "~/digitalniweb-custom/helpers/logger.js";
 export default defineNitroPlugin(async () => {
 	try {
+		await Subscriber.subscribe("globalDataMessage"); // subscribe to "globalDataMessage" messages from "globalData"
 		await Subscriber.psubscribe("serviceRegistry-responseInformation-*"); // handled in registerCurrentApp()
+
+		// register (if not registered already) app after globalData is registered
+		Subscriber.on("message", async (channel, message) => {
+			if (channel === "globalDataMessage") {
+				if (message === "registered") {
+					console.log("registered globalDataMessage");
+
+					let serviceRegistryInfo =
+						await requestServiceRegistryInfo();
+					if (!serviceRegistryInfo)
+						log({
+							type: "consoleLogProduction",
+							status: "error",
+							message:
+								"Couldn't get serviceRegistry information.",
+						});
+					try {
+						if (!process.env.APP_ID) await registerCurrentApp();
+						log({
+							message: `'${process.env.APP_NAME}' registered on 'globalData registered'.`,
+							type: "consoleLogProduction",
+							status: "success",
+						});
+					} catch (error) {
+						log({
+							type: "consoleLogProduction",
+							status: "error",
+							message: `Couldn't register '${process.env.APP_NAME}' after 'globalData registered'.`,
+						});
+					}
+				}
+			}
+		});
 		let serviceRegistryInfo = await requestServiceRegistryInfo();
 		if (!serviceRegistryInfo)
 			throw new Error("Couldn't get serviceRegistry information.");

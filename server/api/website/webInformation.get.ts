@@ -3,7 +3,6 @@ import { getQuery } from "h3";
 import { log } from "~/digitalniweb-custom/helpers/logger";
 import { WebInformation } from "~/digitalniweb-types/models/content";
 import { InferAttributes } from "sequelize";
-
 export default eventHandler(async (event) => {
 	let { contentMsId, id }: { contentMsId?: number; id?: number } =
 		getQuery(event);

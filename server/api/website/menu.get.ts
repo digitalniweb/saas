@@ -19,7 +19,6 @@ export default eventHandler(async (event) => {
 			path: "/api/current/menu",
 			id: resourceIds.contentMsId,
 			params: query,
-			cache: false,
 		});
 
 		return data.data || [];
