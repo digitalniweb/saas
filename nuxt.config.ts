@@ -15,6 +15,9 @@ export default defineNuxtConfig({
 			},
 		},
 	},
+	experimental: {
+		// renderJsonPayloads: false,
+	},
 	css: [
 		"vuetify/styles",
 		"@mdi/font/css/materialdesignicons.min.css",

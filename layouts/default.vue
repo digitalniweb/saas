@@ -7,6 +7,7 @@
 		<WebBlocksFooter />
 		<CustomConfirm />
 		<CustomSnackBars />
+		<CustomFileManager />
 	</v-app>
 </template>
 <script setup>

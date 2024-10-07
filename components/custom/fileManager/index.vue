@@ -44,7 +44,6 @@
 	import FileBrowser from "./FileBrowser.vue";
 	import { useFileManagerStore } from "@/store/fileManager";
 	const fileManagerStore = useFileManagerStore();
-	// const { opened: openFileBrowser } = storeToRefs(fileManagerStore);
 
 	const cancel = async () => {
 		fileManagerStore.opened = false;

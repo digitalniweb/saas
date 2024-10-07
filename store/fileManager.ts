@@ -3,15 +3,13 @@ type fileManagerOptions = {
 	maxUploadFileSize: number;
 	multipleSelect: boolean;
 };
-import {
+import type {
 	fileSystemDirectory,
 	fileSystemFile,
 	fileSystemItems,
 } from "~/digitalniweb-types/filesystem";
 import { useSnackBarsStore } from "~/store/snackBars";
-let snackBarStore = useSnackBarsStore();
 import { useConfirmStore } from "@/store/confirm";
-const confirmStore = useConfirmStore();
 export const useFileManagerStore = defineStore("fileManager", {
 	state: () => ({
 		opened: false as boolean,
@@ -21,8 +19,9 @@ export const useFileManagerStore = defineStore("fileManager", {
 		items: {} as fileSystemItems,
 		isDir: true, // if path is directory, otherwise it is file
 		filter: "", // filter names
-		resolve: (value: any) => {},
-		reject: (value: any) => {},
+		// resolve and reject are functions but we get stringified errors in some cases
+		resolve: null as null | ((value: any) => void),
+		reject: null as null | ((value: any) => void),
 		loading: false,
 		apiPrefix: "/api/filemanager/storage/local",
 		uploadingFiles: [] as File[],
@@ -67,13 +66,14 @@ export const useFileManagerStore = defineStore("fileManager", {
 		},
 		close() {
 			this.opened = false;
-			this.resolve(false);
+			this.resolve?.(false);
 		},
 		confirm() {
 			this.opened = false;
-			this.resolve(this.selectedFiles);
+			this.resolve?.(this.selectedFiles);
 		},
 		addUploadingFiles(fileList: FileList) {
+			let snackBarStore = useSnackBarsStore();
 			let files = Array.from(fileList);
 
 			if (this.options.maxUploadFileSize) {
@@ -104,6 +104,7 @@ export const useFileManagerStore = defineStore("fileManager", {
 			this.uploadingFiles.push(...files);
 		},
 		async deleteFile(item: fileSystemFile) {
+			const confirmStore = useConfirmStore();
 			let confirmed = await confirmStore.open(
 				"Delete",
 				`Opravdu chcete smazat tento soubor?<br><em>${item.name}</em>`
@@ -126,6 +127,7 @@ export const useFileManagerStore = defineStore("fileManager", {
 				this.items.files.splice(deleteIndex, 1);
 			}
 
+			let snackBarStore = useSnackBarsStore();
 			snackBarStore.setSnackBar({
 				text: "soubor byl smazán",
 				icon: "check",
@@ -134,6 +136,7 @@ export const useFileManagerStore = defineStore("fileManager", {
 			this.loading = false;
 		},
 		async deleteDirectory(item: fileSystemDirectory) {
+			const confirmStore = useConfirmStore();
 			let confirmed = await confirmStore.open(
 				"Delete",
 				`Opravdu chcete smazat tuto složku?<br><em>${item.basename}</em>`
@@ -149,6 +152,7 @@ export const useFileManagerStore = defineStore("fileManager", {
 				}
 			);
 
+			let snackBarStore = useSnackBarsStore();
 			snackBarStore.setSnackBar({
 				text: "složka byla smazána",
 				icon: "check",
@@ -166,6 +170,7 @@ export const useFileManagerStore = defineStore("fileManager", {
 						method: "POST",
 					}
 				);
+				let snackBarStore = useSnackBarsStore();
 				snackBarStore.setSnackBar({
 					text: "složka byla vytvořena",
 					icon: "check",
@@ -173,6 +178,7 @@ export const useFileManagerStore = defineStore("fileManager", {
 				});
 			} catch (error) {
 				if (process.env.NODE_ENV === "development") console.log(error);
+				let snackBarStore = useSnackBarsStore();
 				snackBarStore.setSnackBar({
 					text: "Něco se pokazilo.",
 					icon: "alert-circle-outline",
@@ -182,6 +188,7 @@ export const useFileManagerStore = defineStore("fileManager", {
 			this.loading = false;
 		},
 		async upload() {
+			let snackBarStore = useSnackBarsStore();
 			if (!this.uploadingFiles || !this.uploadingFiles.length) {
 				snackBarStore.setSnackBar({
 					text: "Nebyly vybrány žádné soubory.",
