@@ -6,7 +6,7 @@ export const useFormData = <T extends object>(dataOriginal: T) => {
 	/**
 	 * use this as ref(formdataCustomName.dataClone) i.e. as data for form
 	 */
-	const dataClone = <Partial<T>>structuredClone(toRaw(dataOriginal));
+	const dataClone = <T>structuredClone(toRaw(dataOriginal));
 
 	const dataDifference = () => diff(dataOriginal, dataClone) as Partial<T>;
 

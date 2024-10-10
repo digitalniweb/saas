@@ -52,7 +52,10 @@ export const useApiCall = () => {
 		if (!isObjectEmpty(resourceIds)) {
 			if (!opts) opts = {};
 			if (!opts.params) opts.params = {};
-			(opts.params as Record<string, any>).resourceIds = resourceIds;
+			(opts.params as Record<string, any>).resourceIds = {
+				...resourceIds,
+				...opts.params?.resourceIds,
+			};
 		}
 
 		try {

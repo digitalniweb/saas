@@ -125,17 +125,17 @@
 							</v-card>
 						</v-tabs-window-item>
 						<v-tabs-window-item :value="'tab-menu'">
-							<v-card>
-								<!-- <v-text-field
+							<v-card v-if="menudata" class="pa-5">
+								<v-text-field
 									variant="underlined"
 									id="name"
 									:label="translations.name.cs"
 									name="name"
 									counter="127"
 									prepend-inner-icon="mdi-domain"
-									v-model="formdata.name"
+									v-model="menudata.name"
 									dense
-								/> -->
+								/>
 							</v-card>
 						</v-tabs-window-item>
 						<v-tabs-window-item :value="'tab-article'">
@@ -182,33 +182,27 @@
 	import { moduleResponse } from "~/digitalniweb-types/apps/communication/modules";
 
 	const menusStore = useMenusStore();
+	const pickMenuTreeActivated = ref<menuTreeNode[]>([]);
+
+	const selectedOrder = ref({});
+
+	const newMenu = ref(false);
+	const menuTreeActivated = ref<menuTreeNode[]>([]);
 
 	let translations = {
 		name: {
 			en: "Name",
-			cs: "Jméno",
+			cs: "Název",
 		},
 	};
+	let formdataMenu: ReturnType<typeof useFormData<InferAttributes<Article>>>;
+	const menudata = ref<InferAttributes<Article> | null>(null);
 
-	// const { fetchData } = useApiCall();
-	// const { data: article } = await fetchData<moduleResponse<Article> | null>(
-	// 	"/api/content/article",
-	// 	{
-	// 		query: {
-	// 			...currentPage.route.query,
-	// 			url: currentPage.route.pathname,
-	// 		},
-	// 	}
-	// );
-
-	// let formdataMenu = useFormData(menusStore.loadData);
-	// const formdata = ref(formdataMenu.dataClone);
+	const { fetchData } = useApiCall();
 
 	const snackBars = useSnackBarsStore();
 
 	type menuTreeNode = TreeNode<Partial<InferAttributes<Article>>>;
-
-	const newMenu = ref(false);
 
 	const createNewMenu = () => {
 		newMenu.value = true;
@@ -257,12 +251,6 @@
 		return orderOptions;
 	});
 
-	const menuTreeActivated = ref<menuTreeNode[]>([]);
-
-	const pickMenuTreeActivated = ref<menuTreeNode[]>([]);
-
-	const selectedOrder = ref({});
-
 	const deleteCurrentMenu = () => {
 		console.log(menuTreeActivated.value[0]);
 	};
@@ -275,7 +263,7 @@
 		url: "/",
 	};
 
-	const activatedChanged = (e: menuTreeNode[]) => {
+	const activatedChanged = async (e: menuTreeNode[]) => {
 		// even though it returns array it can contain only 1 activated menu
 		if (e.length === 0) {
 			return;
@@ -290,6 +278,19 @@
 				menusStore.articles
 			);
 			if (parentObj) pickMenuTreeActivated.value = [parentObj];
+		}
+
+		const data = await fetchData<moduleResponse<
+			InferAttributes<Article>
+		> | null>("/api/content/article", {
+			params: {
+				url: menuTreeActivated.value[0]?.url ?? "/",
+			},
+		});
+
+		if (data?.moduleInfo) {
+			formdataMenu = useFormData(data?.moduleInfo);
+			menudata.value = formdataMenu.dataClone;
 		}
 	};
 
