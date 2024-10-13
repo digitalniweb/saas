@@ -128,12 +128,26 @@
 							<v-card v-if="menudata" class="pa-5">
 								<v-text-field
 									variant="underlined"
-									id="name"
 									:label="translations.name.cs"
-									name="name"
-									counter="127"
-									prepend-inner-icon="mdi-domain"
+									counter="64"
+									prepend-inner-icon="mdi-format-text-variant"
 									v-model="menudata.name"
+									dense
+								/>
+								<v-text-field
+									variant="underlined"
+									label="title"
+									counter="128"
+									prepend-inner-icon="mdi-text-short"
+									v-model="menudata.title"
+									dense
+								/>
+								<v-text-field
+									variant="underlined"
+									label="description"
+									counter="256"
+									prepend-inner-icon="mdi-text"
+									v-model="menudata.description"
 									dense
 								/>
 							</v-card>
