@@ -1,16 +1,16 @@
 <template>
 	<v-row no-gutters>
 		<v-col cols="5">
-			<h1>Menu webu</h1>
+			<h1>{{ translate("Web menu") }}</h1>
 			<v-btn
 				prepend-icon="mdi-plus"
-				text="Přidat menu"
+				:text="translate('Add menu')"
 				color="green"
 				block
 				class="my-5"
 				@click="createNewMenu"
 			></v-btn>
-			<h2>Upravit menu</h2>
+			<h2>{{ translate("Edit menu") }}</h2>
 			<v-treeview
 				:items="menusStore.articles"
 				density="compact"
@@ -44,7 +44,7 @@
 					>
 						<v-tab value="tab-assignment">
 							<v-icon icon="mdi-format-list-numbered"></v-icon>
-							Zařazení
+							{{ translate("Order") }}
 						</v-tab>
 						<v-tab value="tab-menu">
 							<v-icon icon="mdi-menu"></v-icon>
@@ -53,7 +53,7 @@
 
 						<v-tab value="tab-article">
 							<v-icon icon="mdi-pencil-outline"></v-icon>
-							Článek
+							{{ translate("Article") }}
 						</v-tab>
 					</v-tabs>
 					<v-card class="pa-5">
@@ -62,7 +62,7 @@
 							@click="deleteCurrentMenu()"
 							color="red"
 							icon="mdi-trash-can-outline"
-							v-tooltip:bottom="'Smazat menu'"
+							v-tooltip:bottom="translate('Delete') + ' menu'"
 							layout
 						></v-fab>
 					</v-card>
@@ -70,7 +70,9 @@
 					<v-tabs-window v-model="tab">
 						<v-tabs-window-item :value="'tab-assignment'">
 							<v-card class="pa-5">
-								<p class="text-overline">Pořadí</p>
+								<p class="text-overline">
+									{{ translate("Order") }}
+								</p>
 								<v-select
 									:items="pickMenuOrder"
 									return-object
@@ -90,7 +92,7 @@
 									</template>
 								</v-select>
 								<p class="text-overline mt-5">
-									Zařazení do menu
+									{{ translate("MenuParent") }}
 									<v-tooltip location="bottom">
 										<template v-slot:activator="{ props }">
 											<v-icon
@@ -99,13 +101,11 @@
 												v-bind="props"
 											/>
 										</template>
-										Aktuální zařazení do menu.<br />
-										Můžete jej změnit. <br />
-										Měnit zařazení indexové (hlavní stránky)
-										nemůžete měnit a nelze ani zařadit do
-										tohoto menu. <br />
-										Proto není ani v nabídce a pořadí první
-										se myslí první za indexovou stránkou.
+										<span
+											v-html="
+												translate('MenuParentTooltip')
+											"
+										></span>
 									</v-tooltip>
 								</p>
 								<v-treeview
@@ -128,15 +128,15 @@
 							<v-card v-if="menudata" class="pa-5">
 								<v-text-field
 									variant="underlined"
-									:label="translations.name.cs"
+									:label="translate('Name')"
 									counter="64"
-									prepend-inner-icon="mdi-format-text-variant"
+									prepend-inner-icon="mdi-alpha-n"
 									v-model="menudata.name"
 									dense
 								/>
 								<v-text-field
 									variant="underlined"
-									label="title"
+									label="Title"
 									counter="128"
 									prepend-inner-icon="mdi-text-short"
 									v-model="menudata.title"
@@ -144,12 +144,31 @@
 								/>
 								<v-text-field
 									variant="underlined"
-									label="description"
+									label="Description"
 									counter="256"
 									prepend-inner-icon="mdi-text"
 									v-model="menudata.description"
 									dense
 								/>
+								<v-text-field
+									variant="underlined"
+									:label="translate('Icon')"
+									counter="64"
+									:prepend-inner-icon="
+										(menudata.icon &&
+											'mdi-' + menudata.icon) ||
+										'mdi-close'
+									"
+									v-model="menudata.icon"
+									dense
+								>
+									<template v-slot:append>
+										<CustomIconPicker
+											:currentIcon="menudata.icon"
+											@changedIcon="changedIcon"
+										></CustomIconPicker>
+									</template>
+								</v-text-field>
 							</v-card>
 						</v-tabs-window-item>
 						<v-tabs-window-item :value="'tab-article'">
@@ -204,11 +223,47 @@
 	const menuTreeActivated = ref<menuTreeNode[]>([]);
 
 	let translations = {
-		name: {
-			en: "Name",
+		"Web menu": {
+			cs: "Menu webu",
+		},
+		"Add menu": {
+			cs: "Přidat menu",
+		},
+		"Edit menu": {
+			cs: "Upravit menu",
+		},
+		Article: {
+			cs: "Článek",
+		},
+		Order: {
+			cs: "Zařazení",
+		},
+		MenuParent: {
+			en: "Menu's parent",
+			cs: "Zařazení do menu",
+		},
+		MenuParentTooltip: {
+			en: `Current menu's parent.<br />
+				You can change this. <br />
+				Change of index page (main page)
+				can't be done and it can't be put into
+				this menu. <br />
+				That is why it is not even listed as the first item in the menu and 'Main menu'
+				means first after the index page.`,
+			cs: `Aktuální zařazení do menu.<br />
+				Můžete jej změnit. <br />
+				Měnit zařazení indexové (hlavní stránky)
+				nemůžete měnit a nelze ani zařadit do
+				tohoto menu. <br />
+				Proto není ani v nabídce a pořadí první
+				se myslí první za indexovou stránkou.`,
+		},
+		Name: {
 			cs: "Název",
 		},
 	};
+	const { translate } = useTranslations(translations);
+
 	let formdataMenu: ReturnType<typeof useFormData<InferAttributes<Article>>>;
 	const menudata = ref<InferAttributes<Article> | null>(null);
 
@@ -363,6 +418,10 @@
 			...menusStore.articles.filter((e) => e.url !== "/"),
 		];
 	});
+
+	const changedIcon = (icon: string) => {
+		if (menudata.value?.icon !== undefined) menudata.value.icon = icon;
+	};
 
 	// const pickMenuTree = ref<buildTreeType<Partial<InferAttributes<Article>>>>(
 	// 	[]

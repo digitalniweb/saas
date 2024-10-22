@@ -67,10 +67,14 @@ export const useFileManagerStore = defineStore("fileManager", {
 		close() {
 			this.opened = false;
 			this.resolve?.(false);
+			this.resolve = null;
+			this.reject = null;
 		},
 		confirm() {
 			this.opened = false;
 			this.resolve?.(this.selectedFiles);
+			this.resolve = null;
+			this.reject = null;
 		},
 		addUploadingFiles(fileList: FileList) {
 			let snackBarStore = useSnackBarsStore();

@@ -5,7 +5,7 @@
 				<v-text-field
 					variant="underlined"
 					id="name"
-					:label="translations.name.cs"
+					:label="translate('name')"
 					name="name"
 					counter="127"
 					prepend-inner-icon="mdi-domain"
@@ -15,7 +15,7 @@
 				<v-text-field
 					variant="underlined"
 					id="mainImage"
-					:label="translations.mainImage.cs"
+					:label="translate('Main image')"
 					name="mainImage"
 					counter="255"
 					prepend-inner-icon="mdi-image"
@@ -36,7 +36,7 @@
 				<v-text-field
 					variant="underlined"
 					id="logo"
-					:label="translations.logo.cs"
+					label="Logo"
 					name="logo"
 					counter="255"
 					prepend-inner-icon="mdi-image"
@@ -57,7 +57,7 @@
 				<v-text-field
 					variant="underlined"
 					id="favicon"
-					:label="translations.favicon.cs"
+					label="Favicon"
 					name="favicon"
 					counter="255"
 					prepend-inner-icon="mdi-image"
@@ -78,7 +78,7 @@
 				<v-text-field
 					variant="underlined"
 					id="googleTagManager"
-					:label="translations.googleTagManager.cs"
+					label="Google Tag Manager"
 					name="googleTagManager"
 					counter="31"
 					prepend-inner-icon="mdi-tag"
@@ -88,7 +88,7 @@
 
 				<v-checkbox
 					id="googleTagManagerActive"
-					:label="translations.googleTagManagerActive.cs"
+					:label="translate('Google Tag Manager Active')"
 					name="googleTagManagerActive"
 					v-model="formdata.googleTagManagerActive"
 				/>
@@ -96,7 +96,7 @@
 				<v-text-field
 					variant="underlined"
 					id="owner"
-					:label="translations.owner.cs"
+					:label="translate('owner')"
 					name="owner"
 					counter="127"
 					prepend-inner-icon="mdi-account"
@@ -106,7 +106,7 @@
 				<v-text-field
 					variant="underlined"
 					id="tin"
-					:label="translations.tin.cs"
+					:label="translate('TIN')"
 					name="tin"
 					counter="15"
 					prepend-inner-icon="mdi-card-account-details"
@@ -117,7 +117,7 @@
 				<v-text-field
 					variant="underlined"
 					id="vatId"
-					:label="translations.vatId.cs"
+					:label="translate('VAT ID')"
 					name="vatId"
 					counter="15"
 					prepend-inner-icon="mdi-card-account-details"
@@ -128,7 +128,7 @@
 				<v-text-field
 					variant="underlined"
 					id="country"
-					:label="translations.country.cs"
+					:label="translate('Country')"
 					name="country"
 					counter="31"
 					prepend-inner-icon="mdi-earth"
@@ -138,7 +138,7 @@
 				<v-text-field
 					variant="underlined"
 					id="city"
-					:label="translations.city.cs"
+					:label="translate('City')"
 					name="city"
 					counter="31"
 					prepend-inner-icon="mdi-city"
@@ -149,7 +149,7 @@
 				<v-text-field
 					variant="underlined"
 					id="zip"
-					:label="translations.zip.cs"
+					:label="translate('zip')"
 					name="zip"
 					counter="15"
 					prepend-inner-icon="mdi-home-search"
@@ -160,7 +160,7 @@
 				<v-text-field
 					variant="underlined"
 					id="streetAddress"
-					:label="translations.streetAddress.cs"
+					:label="translate('streetAddress')"
 					name="streetAddress"
 					counter="63"
 					prepend-inner-icon="mdi-home-city"
@@ -171,7 +171,7 @@
 				<v-text-field
 					variant="underlined"
 					id="houseNumber"
-					:label="translations.houseNumber.cs"
+					:label="translate('House number')"
 					name="houseNumber"
 					counter="7"
 					prepend-inner-icon="mdi-home-floor-1"
@@ -182,7 +182,7 @@
 				<v-text-field
 					variant="underlined"
 					id="landRegistryNumber"
-					:label="translations.landRegistryNumber.cs"
+					:label="translate('Land Registry Number')"
 					name="landRegistryNumber"
 					counter="31"
 					prepend-inner-icon="mdi-home-floor-2"
@@ -193,7 +193,7 @@
 				<v-text-field
 					variant="underlined"
 					id="addressPattern"
-					:label="translations.addressPattern.cs"
+					:label="translate('Address Pattern')"
 					name="addressPattern"
 					counter="63"
 					prepend-inner-icon="mdi-home-edit"
@@ -204,7 +204,7 @@
 				<v-text-field
 					variant="underlined"
 					id="fullAddress"
-					:label="translations.fullAddress.cs"
+					:label="translate('Full Address')"
 					name="fullAddress"
 					counter="255"
 					prepend-inner-icon="mdi-home-map-marker"
@@ -215,7 +215,7 @@
 				<v-text-field
 					variant="underlined"
 					id="telephone"
-					:label="translations.telephone.cs"
+					:label="translate('Telephone')"
 					name="telephone"
 					counter="15"
 					prepend-inner-icon="mdi-phone"
@@ -226,7 +226,7 @@
 				<v-text-field
 					variant="underlined"
 					id="email"
-					:label="translations.email.cs"
+					:label="translate('Email')"
 					name="email"
 					counter="63"
 					prepend-inner-icon="mdi-email"
@@ -237,7 +237,7 @@
 				<v-text-field
 					variant="underlined"
 					id="bankName"
-					:label="translations.bankName.cs"
+					:label="translate('Bank name')"
 					name="bankName"
 					counter="31"
 					prepend-inner-icon="mdi-bank"
@@ -248,7 +248,7 @@
 				<v-text-field
 					variant="underlined"
 					id="bankAccountNumber"
-					:label="translations.bankAccountNumber.cs"
+					:label="translate('Bank Account Number')"
 					name="bankAccountNumber"
 					counter="31"
 					prepend-inner-icon="mdi-numeric"
@@ -259,7 +259,7 @@
 				<v-text-field
 					variant="underlined"
 					id="bankCode"
-					:label="translations.bankCode.cs"
+					:label="translate('Bank Code')"
 					name="bankCode"
 					counter="31"
 					prepend-inner-icon="mdi-numeric"
@@ -270,7 +270,7 @@
 				<v-text-field
 					variant="underlined"
 					id="bankIBAN"
-					:label="translations.bankIBAN.cs"
+					:label="translate('Bank IBAN')"
 					name="bankIBAN"
 					counter="31"
 					prepend-inner-icon="mdi-alphabetical-variant"
@@ -293,102 +293,61 @@
 	</customForm>
 </template>
 <script setup lang="ts">
+	import { useSnackBarsStore } from "~/store/snackBars";
+	let snackBarStore = useSnackBarsStore();
+
 	let translations = {
-		name: {
-			en: "Name",
-			cs: "Jméno",
-		},
-		mainImage: {
-			en: "Main image",
+		"Main image": {
 			cs: "Hlavní obrázek",
 		},
-		logo: {
-			en: "Logo",
-			cs: "Logo",
-		},
-		favicon: {
-			en: "Favicon",
-			cs: "Favicon",
-		},
-		googleTagManager: {
-			en: "Google Tag Manager",
-			cs: "Google Tag Manager",
-		},
-		googleTagManagerActive: {
-			en: "Google Tag Manager Active",
+		"Google Tag Manager Active": {
 			cs: "Google Tag Manager Aktivní",
 		},
-		owner: {
-			en: "Owner",
+		Owner: {
 			cs: "Majitel",
 		},
-		tin: {
-			en: "TIN",
+		TIN: {
 			cs: "IČ",
 		},
-		vatId: {
-			en: "VAT ID",
+		"VAT ID": {
 			cs: "DIČ",
 		},
-		country: {
-			en: "Country",
+		Country: {
 			cs: "Země",
 		},
-		city: {
-			en: "City",
-			cs: "Město",
-		},
-		zip: {
-			en: "ZIP",
+		ZIP: {
 			cs: "PSČ",
 		},
-		streetAddress: {
-			en: "Street Address",
+		"Street Address": {
 			cs: "Ulice",
 		},
-		landRegistryNumber: {
-			en: "Land Registry Number",
+		"Land Registry Number": {
 			cs: "Číslo katastrálního území",
 		},
-		houseNumber: {
-			en: "House Number",
+		"House number": {
 			cs: "Číslo domu",
 		},
-		addressPattern: {
-			en: "Address Pattern",
+		"Address Pattern": {
 			cs: "Vzor adresy",
 		},
-		fullAddress: {
-			en: "Full Address",
-			cs: "Plná adresa",
+		"Full Address": {
+			cs: "Celá adresa",
 		},
-		telephone: {
-			en: "Telephone",
-			cs: "Telefon",
-		},
-		email: {
-			en: "Email",
-			cs: "Email",
-		},
-		bankName: {
-			en: "Bank Name",
+		"Bank name": {
 			cs: "Název banky",
 		},
-		bankAccountNumber: {
-			en: "Bank Account Number",
+		"Bank Account Number": {
 			cs: "Číslo bankovního účtu",
 		},
-		bankCode: {
-			en: "Bank Code",
+		"Bank Code": {
 			cs: "Kód banky",
 		},
-		bankIBAN: {
-			en: "Bank IBAN",
+		"Bank IBAN": {
 			cs: "Bankovní IBAN",
 		},
 	};
-	import { useSnackBarsStore } from "~/store/snackBars";
-	let snackBarStore = useSnackBarsStore();
+
+	const { translate } = useTranslations(translations);
 
 	import { useWebInformationStore } from "~/store/webInformation";
 	import { formHeader } from "~/types/components/form";

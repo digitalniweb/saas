@@ -11,10 +11,11 @@ import {
 	WebInformationLanguage,
 } from "../digitalniweb-types/models/content";
 
-const currentPage = useCurrentPageStore();
-const modules = useModulesStore();
-const webInformation = useWebInformationStore();
 export const useLocales = () => {
+	const currentPage = useCurrentPageStore();
+	const modules = useModulesStore();
+	const webInformation = useWebInformationStore();
+
 	const webinformationLocale = (
 		param:
 			| keyof InferAttributes<WebInformation>

@@ -2,13 +2,9 @@
 
 ## Installation
 
-If you see errors (`npm ERR! code ERESOLVE` etc.) while installing it might be because of this dependency:
-
-    "@tinymce/tinymce-vue": "^5.1.1"
-
-Remove this package from `package.json` and install it afterwards:
-
-    npm i @tinymce/tinymce-vue
+```bash
+npm run i
+```
 
 ## Migrations
 

@@ -1,4 +1,5 @@
 <template>
+	<NuxtLoadingIndicator />
 	<client-only>
 		<v-app id="admin">
 			<v-navigation-drawer v-model="drawer">

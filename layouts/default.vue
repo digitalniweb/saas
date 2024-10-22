@@ -1,4 +1,5 @@
 <template>
+	<NuxtLoadingIndicator />
 	<v-app>
 		<WebBlocksMenu />
 		<v-main>
