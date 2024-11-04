@@ -1,5 +1,4 @@
 <template>
-	<NuxtLoadingIndicator />
 	<client-only>
 		<v-app id="admin">
 			<v-navigation-drawer v-model="drawer">
@@ -80,9 +79,6 @@
 					</v-row>
 				</v-container>
 			</v-main>
-			<CustomConfirm />
-			<CustomSnackBars />
-			<CustomFileManager />
 		</v-app>
 	</client-only>
 </template>

@@ -126,8 +126,10 @@ function generateToken(data: object, options: Options = {}): string {
  * Verifies user via Bearer header with JWT.
  *
  * On fail: Throw error.
+ * It is designed to be used out of trycatch block in api routes to automatically use the refresh token
  *
- * On success: Return void. "User" Is saved to "event.context.verifiedUser".
+ * On success: Return void.
+ * "User" Is saved to "event.context.verifiedUser".
  */
 function verifyUser(event: H3Event) {
 	// back-end (server) jwt verification

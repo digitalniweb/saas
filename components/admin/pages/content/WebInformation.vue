@@ -5,75 +5,29 @@
 				<v-text-field
 					variant="underlined"
 					id="name"
-					:label="translate('name')"
+					:label="translate('Name')"
 					name="name"
 					counter="127"
 					prepend-inner-icon="mdi-domain"
 					v-model="formdata.name"
 					dense
 				/>
-				<v-text-field
-					variant="underlined"
-					id="mainImage"
-					:label="translate('Main image')"
-					name="mainImage"
-					counter="255"
-					prepend-inner-icon="mdi-image"
-					v-model="formdata.mainImage"
-					dense
-					><template v-slot:append>
-						<v-btn
-							color="primary"
-							fab
-							small
-							@click="chooseImage('mainImage', formdata)"
-						>
-							<v-icon>mdi-folder-image</v-icon>
-						</v-btn>
-					</template>
-				</v-text-field>
-
-				<v-text-field
-					variant="underlined"
-					id="logo"
-					label="Logo"
-					name="logo"
-					counter="255"
-					prepend-inner-icon="mdi-image"
-					v-model="formdata.logo"
-					dense
-					><template v-slot:append>
-						<v-btn
-							color="primary"
-							fab
-							small
-							@click="chooseImage('logo', formdata)"
-						>
-							<v-icon>mdi-folder-image</v-icon>
-						</v-btn>
-					</template>
-				</v-text-field>
-
-				<v-text-field
-					variant="underlined"
-					id="favicon"
-					label="Favicon"
-					name="favicon"
-					counter="255"
-					prepend-inner-icon="mdi-image"
-					v-model="formdata.favicon"
-					dense
-					><template v-slot:append>
-						<v-btn
-							color="primary"
-							fab
-							small
-							@click="chooseImage('favicon', formdata)"
-						>
-							<v-icon>mdi-folder-image</v-icon>
-						</v-btn>
-					</template>
-				</v-text-field>
+				<CustomFormPickImage
+					:object="formdata"
+					property="mainImage"
+					name="Main image"
+					:translation="{ 'Main image': { cs: 'Hlavní obrázek' } }"
+				/>
+				<CustomFormPickImage
+					:object="formdata"
+					property="logo"
+					name="Logo"
+				/>
+				<CustomFormPickImage
+					:object="formdata"
+					property="favicon"
+					name="Favicon"
+				/>
 
 				<v-text-field
 					variant="underlined"
@@ -86,8 +40,10 @@
 					dense
 				/>
 
-				<v-checkbox
+				<v-switch
 					id="googleTagManagerActive"
+					color="green"
+					inset
 					:label="translate('Google Tag Manager Active')"
 					name="googleTagManagerActive"
 					v-model="formdata.googleTagManagerActive"
@@ -96,7 +52,7 @@
 				<v-text-field
 					variant="underlined"
 					id="owner"
-					:label="translate('owner')"
+					:label="translate('Owner')"
 					name="owner"
 					counter="127"
 					prepend-inner-icon="mdi-account"
@@ -160,7 +116,7 @@
 				<v-text-field
 					variant="underlined"
 					id="streetAddress"
-					:label="translate('streetAddress')"
+					:label="translate('Street')"
 					name="streetAddress"
 					counter="63"
 					prepend-inner-icon="mdi-home-city"
@@ -355,8 +311,6 @@
 		image: "https://images.pexels.com/photos/196655/pexels-photo-196655.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
 		headline: "Informace o webu",
 	});
-	import { useFileManagerStore } from "@/store/fileManager";
-	const fileManagerStore = useFileManagerStore();
 
 	const disabled = ref(false);
 	const webInformationStore = useWebInformationStore();
@@ -364,17 +318,6 @@
 	let formdataWebInformation = useFormData(webInformationStore.data);
 
 	const formdata = ref(formdataWebInformation.dataClone);
-
-	const chooseImage = async <T>(
-		property: keyof T,
-		object: T,
-		multipleSelect: boolean = false
-	) => {
-		let img = await fileManagerStore.open({ multipleSelect });
-		if (object[property] === undefined) return;
-		if (multipleSelect) (object[property] as string) = img.join(",");
-		else (object[property] as string) = img[0] ?? "";
-	};
 
 	const saveWebInformation = async () => {
 		disabled.value = true;

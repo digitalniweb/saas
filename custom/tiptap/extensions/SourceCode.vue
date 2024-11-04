@@ -39,7 +39,8 @@
 	import type { Editor } from "@tiptap/vue-3";
 	import { ActionButton } from "vuetify-pro-tiptap";
 
-	import { html as beautifyHtml } from "js-beautify";
+	import pkg from "js-beautify";
+	const { html: beautifyHtml } = pkg;
 	import { oneDark } from "@codemirror/theme-one-dark";
 
 	// must be installed separately https://github.com/codemirror/lang-html

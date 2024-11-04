@@ -1,14 +1,10 @@
 <template>
-	<NuxtLoadingIndicator />
 	<v-app>
 		<WebBlocksMenu />
 		<v-main>
 			<slot />
 		</v-main>
 		<WebBlocksFooter />
-		<CustomConfirm />
-		<CustomSnackBars />
-		<CustomFileManager />
 	</v-app>
 </template>
 <script setup>

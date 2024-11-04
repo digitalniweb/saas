@@ -12,7 +12,7 @@
 			></v-btn>
 			<h2>{{ translate("Edit menu") }}</h2>
 			<v-treeview
-				:items="menusStore.articles"
+				:items="menus ?? []"
 				density="compact"
 				activatable
 				item-value="id"
@@ -44,7 +44,7 @@
 					>
 						<v-tab value="tab-assignment">
 							<v-icon icon="mdi-format-list-numbered"></v-icon>
-							{{ translate("Order") }}
+							{{ translate("Location") }}
 						</v-tab>
 						<v-tab value="tab-menu">
 							<v-icon icon="mdi-menu"></v-icon>
@@ -57,13 +57,40 @@
 						</v-tab>
 					</v-tabs>
 					<v-card class="pa-5">
-						<div v-html="menuEditHeading"></div>
+						<div>
+							<p
+								class="text-subtitle-1 pa-5 border-s-xl rounded border-info bg-black"
+							>
+								<span class="font-weight-bold">
+									{{ menuEditHeading }}
+								</span>
+
+								<v-switch
+									v-if="menudata"
+									id="menuActive"
+									color="green"
+									density="compact"
+									hide-details
+									:label="translate('Active')"
+									name="menuActive"
+									v-model="menudata.active"
+								/>
+							</p>
+						</div>
+						<v-fab
+							@click="saveCurrentMenu()"
+							color="green"
+							icon="mdi-check"
+							v-tooltip:bottom="translate('Save') + ' menu'"
+							style="left: 10px"
+						></v-fab>
 						<v-fab
 							@click="deleteCurrentMenu()"
 							color="red"
 							icon="mdi-trash-can-outline"
 							v-tooltip:bottom="translate('Delete') + ' menu'"
-							layout
+							style="left: 70px"
+							size="small"
 						></v-fab>
 					</v-card>
 
@@ -76,7 +103,7 @@
 								<v-select
 									:items="pickMenuOrder"
 									return-object
-									item-value="id"
+									item-value="order"
 									v-model="selectedOrder"
 								>
 									<template
@@ -84,15 +111,19 @@
 									>
 										<v-list-item v-bind="props" title=""
 											><i>{{ index + 1 }}.</i>
-											{{ item.value != 0 ? "Za " : "" }}
-											<strong>{{
-												item.raw.name
-											}}</strong></v-list-item
-										>
+											{{
+												index === 0
+													? ""
+													: translate("After")
+											}}
+											<strong>
+												{{ item.raw.name }}
+											</strong>
+										</v-list-item>
 									</template>
 								</v-select>
 								<p class="text-overline mt-5">
-									{{ translate("MenuParent") }}
+									{{ translate("MenuLocation") }}
 									<v-tooltip location="bottom">
 										<template v-slot:activator="{ props }">
 											<v-icon
@@ -126,6 +157,19 @@
 						</v-tabs-window-item>
 						<v-tabs-window-item :value="'tab-menu'">
 							<v-card v-if="menudata" class="pa-5">
+								<CustomDate
+									:date="menudata.createdAt"
+									title="Created"
+									icon="mdi-calendar-clock"
+									variant="outlined"
+								/>
+								<CustomDate
+									:date="menudata.updatedAt"
+									title="Updated"
+									icon="mdi-calendar-edit"
+									variant="outlined"
+								/>
+								<v-divider class="my-3"></v-divider>
 								<v-text-field
 									variant="underlined"
 									:label="translate('Name')"
@@ -163,12 +207,16 @@
 									dense
 								>
 									<template v-slot:append>
-										<CustomIconPicker
+										<CustomFormPickIcon
 											:currentIcon="menudata.icon"
 											@changedIcon="changedIcon"
-										></CustomIconPicker>
+										></CustomFormPickIcon>
 									</template>
 								</v-text-field>
+								<CustomFormPickImage
+									:object="menudata"
+									property="image"
+								/>
 							</v-card>
 						</v-tabs-window-item>
 						<v-tabs-window-item :value="'tab-article'">
@@ -205,16 +253,33 @@
 </style>
 <script setup lang="ts">
 	import { VTreeview } from "vuetify/labs/VTreeview";
-	import { useMenusStore } from "~/store/menus.js";
 	import draggable from "vuedraggable";
-	import { TreeNode } from "~/digitalniweb-custom/helpers/buildTree";
+	import {
+		buildTreeType,
+		TreeNode,
+	} from "~/digitalniweb-custom/helpers/buildTree";
 	import { InferAttributes } from "sequelize";
 	import { Article } from "~/digitalniweb-types/models/content";
 	import getObjectFromArray from "~/digitalniweb-custom/functions/getObjectFromArray";
 	import { useSnackBarsStore } from "~/store/snackBars";
+	const snackBars = useSnackBarsStore();
+
 	import { moduleResponse } from "~/digitalniweb-types/apps/communication/modules";
 
-	const menusStore = useMenusStore();
+	const { fetchData } = useApiCall();
+
+	const menus = ref<buildTreeType<InferAttributes<Article>> | null>(null);
+	menus.value =
+		(await fetchData<buildTreeType<InferAttributes<Article>> | null>(
+			"/api/website/admin/menu"
+		)) ?? [];
+
+	if (menus.value.length === 0)
+		snackBars.setSnackBar({
+			color: "error",
+			text: "Nepodařilo se stáhnout menu.",
+		});
+
 	const pickMenuTreeActivated = ref<menuTreeNode[]>([]);
 
 	const selectedOrder = ref({});
@@ -223,6 +288,9 @@
 	const menuTreeActivated = ref<menuTreeNode[]>([]);
 
 	let translations = {
+		"Main menu": {
+			cs: "Hlavní menu",
+		},
 		"Web menu": {
 			cs: "Menu webu",
 		},
@@ -235,19 +303,18 @@
 		Article: {
 			cs: "Článek",
 		},
-		Order: {
+		Location: {
 			cs: "Zařazení",
 		},
-		MenuParent: {
-			en: "Menu's parent",
+		MenuLocation: {
+			en: "Menu location",
 			cs: "Zařazení do menu",
 		},
 		MenuParentTooltip: {
-			en: `Current menu's parent.<br />
+			en: `Current menu's location; menu's parent.<br />
 				You can change this. <br />
 				Change of index page (main page)
-				can't be done and it can't be put into
-				this menu. <br />
+				can't be done, it can't be put into this menu. <br />
 				That is why it is not even listed as the first item in the menu and 'Main menu'
 				means first after the index page.`,
 			cs: `Aktuální zařazení do menu.<br />
@@ -261,21 +328,25 @@
 		Name: {
 			cs: "Název",
 		},
+		"As first": {
+			cs: "Jako první",
+		},
+		After: {
+			cs: "Za",
+		},
 	};
 	const { translate } = useTranslations(translations);
 
 	let formdataMenu: ReturnType<typeof useFormData<InferAttributes<Article>>>;
 	const menudata = ref<InferAttributes<Article> | null>(null);
 
-	const { fetchData } = useApiCall();
-
-	const snackBars = useSnackBarsStore();
-
 	type menuTreeNode = TreeNode<Partial<InferAttributes<Article>>>;
 
 	const createNewMenu = () => {
 		newMenu.value = true;
 		menuTreeActivated.value = [];
+		pickMenuTreeActivated.value = [rootObject];
+		menudata.value = {} as InferAttributes<Article>;
 	};
 
 	const showEdits = computed(() => {
@@ -287,64 +358,77 @@
 	const tab = ref(null);
 
 	const menuEditHeading = computed(() => {
-		let currentName = menuTreeActivated.value[0]?.name ?? "Nové menu";
-		return `<p
-					class="text-subtitle-1 pa-5 border-s-xl rounded border-info bg-black"
-				>
-					Úprava menu:
-					<span class="font-weight-bold">
-						${currentName}
-					</span>
-				</p>`;
+		return menuTreeActivated.value[0]?.name ?? "Nové menu";
 	});
 
-	// const pickMenuOrder = ref([]);
-
-	const pickMenuOrder = computed(() => {
+	// currently picked Menu's order
+	const pickMenuOrder = ref<menuTreeNode[]>([]);
+	const createMenuOrder = () => {
 		let orderOptions = [
-			{ id: 0, title: "1", name: "Jako první" },
+			{ title: "1", name: translate("As first"), order: 0 },
 		] as menuTreeNode[];
-		if (pickMenuTreeActivated.value[0]?.children) {
-			let children = pickMenuTreeActivated.value[0]?.children.map(
-				(el) => {
-					return {
-						id: el.id,
-						title: ((el.order ?? 0) + 2).toString(),
-						name: el.name,
-					};
-				}
-			);
-			orderOptions.push(...children);
+
+		let children = [] as menuTreeNode[];
+
+		let pickedLevelMenus = [] as menuTreeNode[];
+		if (pickMenuTreeActivated.value[0]?.id === 0) {
+			// top level menus
+			pickedLevelMenus = menus.value ?? [];
+		} else if (pickMenuTreeActivated.value[0]?.children) {
+			pickedLevelMenus = pickMenuTreeActivated.value[0]?.children ?? [];
 		}
-		selectedOrder.value = orderOptions[0];
-		return orderOptions;
-	});
+
+		pickedLevelMenus.forEach((el, i) => {
+			let currentOrderOption = {
+				title: (i + 2).toString(),
+				name: el.name,
+				order: (el?.order ?? 0) + 1,
+			};
+
+			if (i === menuTreeActivated.value[0].order) {
+				if (i === 0) {
+					selectedOrder.value = orderOptions[0];
+				} else {
+					selectedOrder.value = children[i - 1];
+				}
+				return;
+			}
+			children.push(currentOrderOption);
+		});
+
+		orderOptions.push(...children);
+
+		pickMenuOrder.value = orderOptions;
+	};
 
 	const deleteCurrentMenu = () => {
+		console.log(menuTreeActivated.value[0]);
+	};
+
+	const saveCurrentMenu = () => {
 		console.log(menuTreeActivated.value[0]);
 	};
 
 	// for assigning menu to root
 	const rootObject = {
 		id: 0,
-		name: "Hlavní menu",
+		name: translate("Main menu"),
 		order: -1,
 		url: "/",
 	};
 
 	const activatedChanged = async (e: menuTreeNode[]) => {
 		// even though it returns array it can contain only 1 activated menu
-		if (e.length === 0) {
-			return;
-		}
+		if (e.length === 0) return;
+
 		newMenu.value = false;
 		menuTreeActivated.value = e;
 		if (e[0].parentId == null) {
 			pickMenuTreeActivated.value = [rootObject];
-		} else {
+		} else if (menus.value) {
 			let parentObj = getObjectFromArray<menuTreeNode>(
 				e[0].parentId,
-				menusStore.articles
+				menus.value
 			);
 			if (parentObj) pickMenuTreeActivated.value = [parentObj];
 		}
@@ -361,6 +445,7 @@
 			formdataMenu = useFormData(data?.moduleInfo);
 			menudata.value = formdataMenu.dataClone;
 		}
+		createMenuOrder();
 	};
 
 	const activatedChangedPickedMenu = (e: menuTreeNode[]) => {
@@ -415,7 +500,7 @@
 	const pickMenuTree = computed(() => {
 		return [
 			rootObject,
-			...menusStore.articles.filter((e) => e.url !== "/"),
+			...(menus.value?.filter((e) => e.url !== "/") ?? []),
 		];
 	});
 
@@ -431,7 +516,7 @@
 	// 	(activatedMenu) => {
 	// 		let pickMenuTreeNew: buildTreeType<
 	// 			Partial<InferAttributes<Article>>
-	// 		> = structuredClone(toRaw(menusStore.articles));
+	// 		> = structuredClone(toRaw(menus.value));
 
 	// 		pickMenuTreeNew.shift(); // we don't want index page
 	// 		pickMenuTreeNew.unshift({

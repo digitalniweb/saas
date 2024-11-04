@@ -1,9 +1,7 @@
-import path, { basename } from "path";
-import { existsSync, Dirent, promises as fsPromises } from "fs";
-import util from "util";
-import rimraf from "rimraf";
+import path from "path";
+import { existsSync, promises as fsPromises } from "fs";
 import { verifyUser } from "~/custom/helpers/usersAuth";
-const { readdir, mkdir, stat, rename, unlink, lstat } = fsPromises;
+const { readdir, mkdir, stat } = fsPromises;
 
 import {
 	fileSystemFile,
