@@ -15,10 +15,8 @@ export default eventHandler(async (event) => {
 			scope: "all",
 		});
 
-		let mainWebsiteInfo = mainWebsiteInfoData;
-
-		if (!mainWebsiteInfo) return false;
-		return mainWebsiteInfo;
+		if (!mainWebsiteInfoData) return false;
+		return mainWebsiteInfoData;
 	} catch (error: any) {
 		log({
 			type: "routing",

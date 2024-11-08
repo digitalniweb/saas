@@ -141,12 +141,12 @@
 								</p>
 								<v-treeview
 									density="compact"
-									activatable
 									item-value="id"
 									item-title="name"
 									class="pickMenuTree"
 									:items="pickMenuTree"
 									return-object
+									activatable
 									:activated="pickMenuTreeActivated"
 									@update:activated="
 										activatedChangedPickedMenu as menuTreeNode
@@ -342,6 +342,14 @@
 
 	type menuTreeNode = TreeNode<Partial<InferAttributes<Article>>>;
 
+	// for assigning menu to root
+	const rootObject = {
+		id: 0,
+		name: translate("Main menu"),
+		order: -1,
+		url: "/",
+	};
+
 	const createNewMenu = () => {
 		newMenu.value = true;
 		menuTreeActivated.value = [];
@@ -363,10 +371,10 @@
 
 	// currently picked Menu's order
 	const pickMenuOrder = ref<menuTreeNode[]>([]);
-	const createMenuOrder = () => {
-		let orderOptions = [
-			{ title: "1", name: translate("As first"), order: 0 },
-		] as menuTreeNode[];
+	const firstOrder = { title: "1", name: translate("As first"), order: 0 };
+	const createMenuOrder = (selectFirst = false) => {
+		let orderOptions = [firstOrder] as menuTreeNode[];
+		if (selectFirst) selectedOrder.value = firstOrder;
 
 		let children = [] as menuTreeNode[];
 
@@ -409,14 +417,6 @@
 		console.log(menuTreeActivated.value[0]);
 	};
 
-	// for assigning menu to root
-	const rootObject = {
-		id: 0,
-		name: translate("Main menu"),
-		order: -1,
-		url: "/",
-	};
-
 	const activatedChanged = async (e: menuTreeNode[]) => {
 		// even though it returns array it can contain only 1 activated menu
 		if (e.length === 0) return;
@@ -450,17 +450,13 @@
 
 	const activatedChangedPickedMenu = (e: menuTreeNode[]) => {
 		let currentMenuId = menuTreeActivated.value[0]?.id;
-		if (currentMenuId === undefined) {
-			pickMenuTreeActivated.value = [];
-			return;
-		}
+		if (currentMenuId === undefined) return;
 
 		let currentPickMenuId = pickMenuTreeActivated.value[0]?.id;
 		let clickedPickMenuId = e[0]?.id;
 
 		if (clickedPickMenuId === undefined) return;
-		if (clickedPickMenuId !== 0 && currentPickMenuId === clickedPickMenuId)
-			return;
+		if (currentPickMenuId === clickedPickMenuId) return;
 
 		if (currentMenuId === clickedPickMenuId) {
 			snackBars.setSnackBar({
@@ -480,6 +476,7 @@
 		}
 
 		pickMenuTreeActivated.value = e;
+		createMenuOrder(true);
 	};
 
 	const findById = (obj: menuTreeNode, id: number): menuTreeNode | null => {

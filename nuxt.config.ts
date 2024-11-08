@@ -57,5 +57,5 @@ export default defineNuxtConfig({
 	},
 	ignore: ["digitalniweb-custom", "digitalniweb-types", "sequelize"],
 	devtools: { enabled: false },
-	compatibilityDate: "2024-07-07",
+	compatibilityDate: "2024-11-04",
 });
