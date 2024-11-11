@@ -1,6 +1,6 @@
 <template>
 	<v-row no-gutters>
-		<v-col cols="5">
+		<v-col cols="12" md="5">
 			<h1>{{ translate("Web menu") }}</h1>
 			<v-btn
 				prepend-icon="mdi-plus"
@@ -10,7 +10,34 @@
 				class="my-5"
 				@click="createNewMenu"
 			></v-btn>
+
 			<h2>{{ translate("Edit menu") }}</h2>
+			<div class="hints text-right mb-3">
+				<v-tooltip location="bottom">
+					<template v-slot:activator="{ props }">
+						<v-icon color="blue" v-bind="props" class="mr-2">
+							mdi-link-variant
+						</v-icon>
+					</template>
+					<span v-html="translate('Other URL')"></span>
+				</v-tooltip>
+				<v-tooltip location="bottom">
+					<template v-slot:activator="{ props }">
+						<v-icon color="grey" v-bind="props" class="mr-2"
+							>mdi-menu-close</v-icon
+						>
+					</template>
+					<span v-html="translate('Free menu')"></span>
+				</v-tooltip>
+				<v-tooltip location="bottom">
+					<template v-slot:activator="{ props }">
+						<v-icon color="red" v-bind="props" class="mr-2"
+							>mdi-toggle-switch-off-outline</v-icon
+						>
+					</template>
+					<span v-html="translate('Inactive')"></span>
+				</v-tooltip>
+			</div>
 			<v-treeview
 				:items="menus ?? []"
 				density="compact"
@@ -23,16 +50,24 @@
 					activatedChanged as Partial<InferAttributes<Article>>
 				"
 			>
-				<template v-slot:prepend="{ item }">
-					<v-icon v-if="item.otherUrl">mdi-link-variant</v-icon>
-					<v-icon v-else-if="item.freeMenu">mdi-menu-close</v-icon>
+				<template v-slot:append="{ item }">
+					<v-icon v-if="item.otherUrl" color="blue" size="xs"
+						>mdi-link-variant</v-icon
+					>
+					<v-icon v-if="item.freeMenu" color="grey" size="xs"
+						>mdi-menu-close</v-icon
+					>
+					<v-icon v-if="!item.active" color="red" size="xs"
+						>mdi-toggle-switch-off-outline</v-icon
+					>
 				</template>
 			</v-treeview>
 		</v-col>
-		<v-divider class="mx-4" vertical></v-divider>
+		<v-divider class="mx-4 d-none d-md-block" vertical></v-divider>
+		<v-divider class="my-4 d-block d-md-none"></v-divider>
 		<v-spacer></v-spacer>
 
-		<v-col cols="6">
+		<v-col cols="12" md="6">
 			<v-scroll-x-transition origin="center right">
 				<v-card v-show="showEdits">
 					<v-tabs
@@ -162,21 +197,40 @@
 									title="Created"
 									icon="mdi-calendar-clock"
 									variant="outlined"
+									class="mb-2"
 								/>
 								<CustomDate
 									:date="menudata.updatedAt"
 									title="Updated"
 									icon="mdi-calendar-edit"
 									variant="outlined"
+									class="mb-2"
+								/>
+								<v-divider class="my-4"></v-divider>
+								<v-switch
+									v-if="menudata"
+									id="menuFreeMenu"
+									color="green"
+									density="compact"
+									hide-details
+									:label="translate('Free menu')"
+									name="menuFreeMenu"
+									v-model="menudata.freeMenu"
 								/>
 								<v-divider class="my-3"></v-divider>
+								<p
+									class="text-grey text-caption px-1 pb-5 font-italic"
+								>
+									{{ currentSlug }}
+								</p>
 								<v-text-field
 									variant="underlined"
 									:label="translate('Name')"
 									counter="64"
 									prepend-inner-icon="mdi-alpha-n"
 									v-model="menudata.name"
-									dense
+									validate-on="blur"
+									:rules="validationMenuNameRules"
 								/>
 								<v-text-field
 									variant="underlined"
@@ -184,7 +238,6 @@
 									counter="128"
 									prepend-inner-icon="mdi-text-short"
 									v-model="menudata.title"
-									dense
 								/>
 								<v-text-field
 									variant="underlined"
@@ -192,7 +245,6 @@
 									counter="256"
 									prepend-inner-icon="mdi-text"
 									v-model="menudata.description"
-									dense
 								/>
 								<v-text-field
 									variant="underlined"
@@ -204,7 +256,6 @@
 										'mdi-close'
 									"
 									v-model="menudata.icon"
-									dense
 								>
 									<template v-slot:append>
 										<CustomFormPickIcon
@@ -253,6 +304,7 @@
 </style>
 <script setup lang="ts">
 	import { VTreeview } from "vuetify/labs/VTreeview";
+	import slugify from "slugify";
 	import draggable from "vuedraggable";
 	import {
 		buildTreeType,
@@ -333,6 +385,15 @@
 		},
 		After: {
 			cs: "Za",
+		},
+		"Other URL": {
+			cs: "Vlastní URL",
+		},
+		Inactive: {
+			cs: "Neaktivní",
+		},
+		"Free menu": {
+			cs: "Volné menu",
 		},
 	};
 	const { translate } = useTranslations(translations);
@@ -503,6 +564,41 @@
 
 	const changedIcon = (icon: string) => {
 		if (menudata.value?.icon !== undefined) menudata.value.icon = icon;
+	};
+
+	const validationMenuNameRules = computed(() => [
+		() => !!menudata.value?.name || "Vyplňte prosím toto pole",
+		() =>
+			menuSlugValidation() ||
+			"Menu se shodným URL již existuje! Změňte prosím název.",
+	]);
+
+	const currentNameSlug = computed(() => createSlug(menudata.value?.name));
+	const currentSlug = computed(() => {
+		if (menudata.value?.url === "/") return "/";
+		return (
+			(pickMenuTreeActivated.value[0].id !== 0
+				? pickMenuTreeActivated.value[0].url
+				: "") + currentNameSlug.value
+		);
+	});
+
+	const menuSlugValidation = () => {
+		let children =
+			pickMenuTreeActivated.value[0].id !== 0
+				? pickMenuTreeActivated.value[0].children
+				: menus.value;
+
+		return !children?.find(
+			(e) => e.url === currentSlug.value && e.id != menudata.value?.id
+		);
+	};
+
+	const createSlug = (string: string | null | undefined) => {
+		let slug = "/";
+		if (!string) return slug;
+		slug += slugify(string, { lower: true, strict: true });
+		return slug;
 	};
 
 	// const pickMenuTree = ref<buildTreeType<Partial<InferAttributes<Article>>>>(

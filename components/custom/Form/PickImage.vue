@@ -6,7 +6,6 @@
 			counter="255"
 			prepend-inner-icon="mdi-image"
 			v-model="props.object[props.property]"
-			dense
 		>
 			<template v-slot:append>
 				<v-btn

@@ -87,7 +87,6 @@
 									counter="10"
 									prepend-inner-icon="mdi-school"
 									v-model="formdata.Tenant.academicDegree"
-									dense
 								/>
 							</v-col>
 							<v-col cols="12" md="5">
@@ -107,7 +106,6 @@
 											'Vyplňte prosím Vaše jméno',
 									]"
 									validate-on="blur"
-									dense
 								/>
 							</v-col>
 							<v-col cols="12" md="5">
@@ -127,7 +125,6 @@
 											'Vyplňte prosím Vaše příjmení',
 									]"
 									validate-on="blur"
-									dense
 								/>
 							</v-col>
 							<v-col cols="12">
@@ -141,7 +138,6 @@
 									v-model="formdata.Tenant.telephone"
 									:rules="isMobilePhone()"
 									validate-on="blur"
-									dense
 							/></v-col>
 							<v-col cols="12">
 								<v-select
@@ -151,7 +147,6 @@
 									item-title="text"
 									item-value="id"
 									prepend-inner-icon="mdi-map"
-									dense
 									disabled
 								></v-select>
 							</v-col>
@@ -172,7 +167,6 @@
 											'Vyplňte prosím město',
 									]"
 									validate-on="blur"
-									dense
 							/></v-col>
 							<v-col cols="12" md="4">
 								<v-text-field
@@ -185,7 +179,6 @@
 									v-model="formdata.Tenant.zip"
 									:rules="isPostalCode()"
 									validate-on="blur"
-									dense
 							/></v-col>
 							<v-col cols="12" md="6">
 								<v-text-field
@@ -204,7 +197,6 @@
 											'Vyplňte prosím ulici',
 									]"
 									validate-on="blur"
-									dense
 							/></v-col>
 							<v-col cols="12" md="3">
 								<v-text-field
@@ -222,7 +214,6 @@
 											'Vyplňte prosím orientační číslo',
 									]"
 									validate-on="blur"
-									dense
 									counter="6"
 							/></v-col>
 							<v-col cols="12" md="3">
@@ -239,7 +230,6 @@
 											'Vyplňte prosím číslo popisné',
 									]"
 									validate-on="blur"
-									dense
 									counter="6"
 							/></v-col>
 							<v-col cols="12" class="pb-0">
@@ -305,7 +295,6 @@
 													'Vyplňte název firmy.',
 											]"
 											validate-on="blur"
-											dense
 											counter="200"
 										/>
 									</v-col>
@@ -324,7 +313,6 @@
 													'Vyplňte IČO',
 											]"
 											validate-on="blur"
-											dense
 											counter="15"
 										/>
 									</v-col>
@@ -343,7 +331,6 @@
 													'Vyplňte DIČ',
 											]"
 											validate-on="blur"
-											dense
 											counter="15"
 										/>
 									</v-col>
@@ -365,7 +352,6 @@
 									v-model="formdata.email"
 									:rules="emailRules()"
 									validate-on="blur"
-									dense
 									counter="100"
 								/>
 							</v-col>
@@ -396,7 +382,6 @@
 									"
 									@click:append="generateStrongPassword()"
 									:type="showPassword ? 'text' : 'password'"
-									dense
 								/>
 								<CustomPasswordScore
 									:password="formdata.password"
@@ -426,7 +411,6 @@
 										() => (showPassword = !showPassword)
 									"
 									:type="showPassword ? 'text' : 'password'"
-									dense
 								/>
 							</v-col>
 							<v-col cols="12" class="pb-0">
@@ -438,7 +422,6 @@
 										formdata.Tenant.subscribeNewsletters
 									"
 									label="Chci dostávat novinky formou newsletteru"
-									dense
 									v-if="formdata.Tenant"
 								/>
 								<v-checkbox
@@ -448,7 +431,6 @@
 											!!v ||
 											'Musíte souhlasit s obchodními podmínkami',
 									]"
-									dense
 									:disabled="type === 'profile'"
 								>
 									<template v-slot:label

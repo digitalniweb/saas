@@ -10,7 +10,6 @@
 					counter="127"
 					prepend-inner-icon="mdi-domain"
 					v-model="formdata.name"
-					dense
 				/>
 				<CustomFormPickImage
 					:object="formdata"
@@ -37,7 +36,6 @@
 					counter="31"
 					prepend-inner-icon="mdi-tag"
 					v-model="formdata.googleTagManager"
-					dense
 				/>
 
 				<v-switch
@@ -57,7 +55,6 @@
 					counter="127"
 					prepend-inner-icon="mdi-account"
 					v-model="formdata.owner"
-					dense
 				/>
 				<v-text-field
 					variant="underlined"
@@ -67,7 +64,6 @@
 					counter="15"
 					prepend-inner-icon="mdi-card-account-details"
 					v-model="formdata.tin"
-					dense
 				/>
 
 				<v-text-field
@@ -78,7 +74,6 @@
 					counter="15"
 					prepend-inner-icon="mdi-card-account-details"
 					v-model="formdata.vatId"
-					dense
 				/>
 
 				<v-text-field
@@ -89,7 +84,6 @@
 					counter="31"
 					prepend-inner-icon="mdi-earth"
 					v-model="formdata.country"
-					dense
 				/>
 				<v-text-field
 					variant="underlined"
@@ -99,7 +93,6 @@
 					counter="31"
 					prepend-inner-icon="mdi-city"
 					v-model="formdata.city"
-					dense
 				/>
 
 				<v-text-field
@@ -110,7 +103,6 @@
 					counter="15"
 					prepend-inner-icon="mdi-home-search"
 					v-model="formdata.zip"
-					dense
 				/>
 
 				<v-text-field
@@ -121,7 +113,6 @@
 					counter="63"
 					prepend-inner-icon="mdi-home-city"
 					v-model="formdata.streetAddress"
-					dense
 				/>
 
 				<v-text-field
@@ -132,7 +123,6 @@
 					counter="7"
 					prepend-inner-icon="mdi-home-floor-1"
 					v-model="formdata.houseNumber"
-					dense
 				/>
 
 				<v-text-field
@@ -143,7 +133,6 @@
 					counter="31"
 					prepend-inner-icon="mdi-home-floor-2"
 					v-model="formdata.landRegistryNumber"
-					dense
 				/>
 
 				<v-text-field
@@ -154,7 +143,6 @@
 					counter="63"
 					prepend-inner-icon="mdi-home-edit"
 					v-model="formdata.addressPattern"
-					dense
 				/>
 
 				<v-text-field
@@ -165,7 +153,6 @@
 					counter="255"
 					prepend-inner-icon="mdi-home-map-marker"
 					v-model="formdata.fullAddress"
-					dense
 				/>
 
 				<v-text-field
@@ -176,7 +163,6 @@
 					counter="15"
 					prepend-inner-icon="mdi-phone"
 					v-model="formdata.telephone"
-					dense
 				/>
 
 				<v-text-field
@@ -187,7 +173,6 @@
 					counter="63"
 					prepend-inner-icon="mdi-email"
 					v-model="formdata.email"
-					dense
 				/>
 
 				<v-text-field
@@ -198,7 +183,6 @@
 					counter="31"
 					prepend-inner-icon="mdi-bank"
 					v-model="formdata.bankName"
-					dense
 				/>
 
 				<v-text-field
@@ -209,7 +193,6 @@
 					counter="31"
 					prepend-inner-icon="mdi-numeric"
 					v-model="formdata.bankAccountNumber"
-					dense
 				/>
 
 				<v-text-field
@@ -220,7 +203,6 @@
 					counter="31"
 					prepend-inner-icon="mdi-numeric"
 					v-model="formdata.bankCode"
-					dense
 				/>
 
 				<v-text-field
@@ -231,7 +213,6 @@
 					counter="31"
 					prepend-inner-icon="mdi-alphabetical-variant"
 					v-model="formdata.bankIBAN"
-					dense
 				/>
 				<v-btn
 					color="primary"
