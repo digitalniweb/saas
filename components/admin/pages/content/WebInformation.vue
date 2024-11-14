@@ -11,18 +11,18 @@
 					prepend-inner-icon="mdi-domain"
 					v-model="formdata.name"
 				/>
-				<CustomFormPickImage
+				<customFormPickFiles
 					:object="formdata"
 					property="mainImage"
 					name="Main image"
 					:translation="{ 'Main image': { cs: 'Hlavní obrázek' } }"
 				/>
-				<CustomFormPickImage
+				<customFormPickFiles
 					:object="formdata"
 					property="logo"
 					name="Logo"
 				/>
-				<CustomFormPickImage
+				<customFormPickFiles
 					:object="formdata"
 					property="favicon"
 					name="Favicon"

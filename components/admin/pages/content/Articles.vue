@@ -218,11 +218,6 @@
 									v-model="menudata.freeMenu"
 								/>
 								<v-divider class="my-3"></v-divider>
-								<p
-									class="text-grey text-caption px-1 pb-5 font-italic"
-								>
-									{{ currentSlug }}
-								</p>
 								<v-text-field
 									variant="underlined"
 									:label="translate('Name')"
@@ -231,6 +226,20 @@
 									v-model="menudata.name"
 									validate-on="blur"
 									:rules="validationMenuNameRules"
+								/>
+								<p
+									class="text-grey text-caption px-1 pb-5 font-italic"
+								>
+									{{ currentSlug }}
+								</p>
+								<customFormPickFiles
+									:object="menudata"
+									property="otherUrl"
+									icon="mdi-alpha-u"
+									icon-button="mdi-file"
+									:rules="validationMenuOtherUrl"
+									name="Other URL"
+									:translation="translations"
 								/>
 								<v-text-field
 									variant="underlined"
@@ -264,7 +273,7 @@
 										></CustomFormPickIcon>
 									</template>
 								</v-text-field>
-								<CustomFormPickImage
+								<customFormPickFiles
 									:object="menudata"
 									property="image"
 								/>
@@ -317,6 +326,7 @@
 	const snackBars = useSnackBarsStore();
 
 	import { moduleResponse } from "~/digitalniweb-types/apps/communication/modules";
+	import validator from "validator";
 
 	const { fetchData } = useApiCall();
 
@@ -571,6 +581,18 @@
 		() =>
 			menuSlugValidation() ||
 			"Menu se shodným URL již existuje! Změňte prosím název.",
+	]);
+
+	const validationMenuOtherUrl = computed(() => [
+		() =>
+			menudata.value?.otherUrl == "" ||
+			/^\/(?!\/)[\w\-.\s/]+$/.test(menudata.value?.otherUrl ?? "") ||
+			validator.isURL(menudata.value?.otherUrl ?? "", {
+				protocols: ["http", "https"],
+				require_protocol: false,
+				allow_protocol_relative_urls: true, // //example.com
+			}) ||
+			"Špatný formát URL adresy.",
 	]);
 
 	const currentNameSlug = computed(() => createSlug(menudata.value?.name));
