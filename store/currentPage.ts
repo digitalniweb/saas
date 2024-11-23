@@ -46,7 +46,7 @@ export const useCurrentPageStore = defineStore("currentPage", {
 		},
 		language: null as InferAttributes<Language> | null, // currently picked language
 		module: {
-			current: null as Module | null,
+			current: null as InferAttributes<Module> | null,
 			currentModulePage: null as Optional<
 				InferCreationAttributes<ModulePage>,
 				"id" | "ModuleId"

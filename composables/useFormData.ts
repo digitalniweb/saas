@@ -2,7 +2,7 @@ import { diff } from "deep-object-diff";
 /**
  * Use as `let formdataCustomName = useFormData(object);`
  */
-export const useFormData = <T extends object>(dataOriginal: T) => {
+export const useFormData = <T extends object | object[]>(dataOriginal: T) => {
 	/**
 	 * use this as ref(formdataCustomName.dataClone) i.e. as data for form
 	 */

@@ -1,8 +1,9 @@
+import { InferAttributes } from "sequelize";
 import { Widget } from "~/digitalniweb-types/models/globalData";
 export const useWidgetsStore = defineStore("widgets", {
 	state: () => ({
 		app: [] as number[],
-		globalData: [] as Widget[],
+		globalData: [] as InferAttributes<Widget>[],
 	}),
 	getters: {},
 	actions: {

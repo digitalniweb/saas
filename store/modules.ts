@@ -1,10 +1,11 @@
 import { Module } from "~/digitalniweb-types/models/globalData";
 import { useWebInformationStore } from "./webInformation";
+import { InferAttributes } from "sequelize";
 export const useModulesStore = defineStore("modules", {
 	state: () => ({
 		app: [] as number[],
 		website: [] as number[],
-		globalData: [] as Module[],
+		globalData: [] as InferAttributes<Module>[],
 	}),
 	getters: {},
 	actions: {
