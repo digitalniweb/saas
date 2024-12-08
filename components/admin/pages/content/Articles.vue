@@ -279,126 +279,148 @@
 							</v-card>
 						</v-tabs-window-item>
 						<v-tabs-window-item :value="'tab-article'">
-							<draggable
-								v-if="widgetsdata"
-								v-model="widgetsdata"
-								@change="
-									changePositionDragged($event, widgetsdata)
-								"
-								item-key="id"
-								tag="v-list"
-							>
-								<template #item="{ element: widget, index: i }">
-									<v-list-item
-										:key="widget.id"
-										variant="elevated"
-										class="mb-1"
+							<v-card v-if="widgetsdata" class="pa-5">
+								<v-alert
+									icon="mdi-help-circle-outline"
+									border="start"
+								>
+									{{ translate("Use mouse to drag") }}
+								</v-alert>
+								<draggable
+									v-model="widgetsdata"
+									@change="changePositionDragged"
+									item-key="id"
+									tag="v-list"
+								>
+									<template
+										#item="{
+											element: widget,
+											index: i,
+										}: {
+											element: WidgetContent,
+											index: number,
+										}"
 									>
-										<template v-slot:prepend>
-											<!-- <v-icon
+										<v-list-item
+											:key="widget.id"
+											variant="elevated"
+											class="mb-1"
+										>
+											<template v-slot:prepend>
+												<!-- <v-icon
 												icon="mdi-swap-vertical"
 											></v-icon> -->
-											<v-switch
-												class="mr-1"
-												v-model="widget.active"
-												color="green"
-												:hide-details="true"
-												@change="
-													changeArticleWidgetProperty(
-														$event,
-														'active',
-														widget
-													)
-												"
-											></v-switch>
-											<v-icon>
-												{{
-													getWidget(widget.widgetId)
-														?.icon || "mdi-cube"
-												}}
-											</v-icon>
-										</template>
-										<template v-slot:default>
-											<v-list-item-subtitle
-												class="text--primary"
-												v-text="
-													getWidget(widget.widgetId)
-														?.name || ''
-												"
-											></v-list-item-subtitle>
-											<v-list-item-title
-												v-text="translate(widget.name)"
-											></v-list-item-title>
-										</template>
-										<template v-slot:append>
-											<v-list-item-action>
-												<v-btn
-													icon="mdi-chevron-up"
-													size="x-small"
-													:disabled="i === 0"
-													@click="
-														changeWidgetPosition(
-															'up',
-															i,
+												<v-switch
+													class="mr-1"
+													v-model="widget.active"
+													color="green"
+													:hide-details="true"
+													@change="
+														changeArticleWidgetProperty(
+															$event,
+															'active',
 															widget
 														)
 													"
-												/>
-												<v-btn
-													class="mr-1"
-													icon="mdi-chevron-down"
-													size="x-small"
-													:disabled="
-														i ===
-														widgetsdata.length - 1
+												></v-switch>
+												<v-icon>
+													{{
+														getWidget(
+															widget.widgetId
+														)?.icon || "mdi-cube"
+													}}
+												</v-icon>
+											</template>
+											<template v-slot:default>
+												<!-- <v-list-item-subtitle
+													class="text--primary"
+													v-text="
+														getWidget(
+															widget.widgetId
+														)?.name || ''
 													"
-													@click="
-														changeWidgetPosition(
-															'down',
-															i,
-															widget
-														)
+												></v-list-item-subtitle> -->
+												<v-list-item-title
+													v-text="
+														translate(widget.name)
 													"
-												/>
-												<v-btn
-													class="mr-1"
-													size="x-small"
-													color="blue-lighten-5"
-													icon="mdi-pencil"
-												/>
-												<v-btn
-													size="x-small"
-													color="red"
-													icon="mdi-delete-outline"
-													@click="
-														deleteWidget(widget, i)
-													"
-												/>
-											</v-list-item-action>
-										</template>
-									</v-list-item>
-								</template>
-							</draggable>
+												></v-list-item-title>
+											</template>
+											<template v-slot:append>
+												<v-list-item-action>
+													<v-btn
+														icon="mdi-chevron-up"
+														size="x-small"
+														:disabled="i === 0"
+														@click="
+															changeWidgetPosition(
+																'up',
+																i,
+																widget
+															)
+														"
+													/>
+													<v-btn
+														class="mr-1"
+														icon="mdi-chevron-down"
+														size="x-small"
+														:disabled="
+															i ===
+															widgetsdata.length -
+																1
+														"
+														@click="
+															changeWidgetPosition(
+																'down',
+																i,
+																widget
+															)
+														"
+													/>
+													<v-btn
+														class="mr-1"
+														size="x-small"
+														color="blue-lighten-5"
+														icon="mdi-pencil"
+													/>
+													<v-btn
+														size="x-small"
+														color="red"
+														icon="mdi-delete-outline"
+														@click="deleteWidget(i)"
+													/>
+												</v-list-item-action>
+											</template>
+										</v-list-item>
+									</template>
+								</draggable>
+								<v-btn
+									prepend-icon="mdi-plus"
+									:text="translate('Add widget')"
+									color="green"
+									block
+									class="my-5"
+									@click="openChooseWidget"
+								></v-btn>
+							</v-card>
 						</v-tabs-window-item>
 					</v-tabs-window>
 				</v-card>
 			</v-scroll-x-transition>
 		</v-col>
 	</v-row>
+	<AdminBlocksPickWidget
+		v-model="chooseWidgetDialog"
+		@widgetSelected="widgetSelected"
+	/>
+	<AdminBlocksPickWidgetContent
+		v-model="chooseWidgetContentDialog"
+		:widget="pickedWidget"
+		@newWidgetContent="newWidgetContent"
+		@updateWidgetContent="updateWidgetContent"
+	/>
 </template>
 <style>
-	/* .pickMenuTree {
-		.v-list-item {
-			&.v-list-item--active {
-				.v-list-item__prepend {
-					display: none;
-				}
-				& + .v-list-group__items {
-					display: none !important;
-				}
-			}
-		}
-	} */
 	.v-list-item {
 		.hide {
 			display: none;
@@ -429,7 +451,16 @@
 
 	import { moduleResponse } from "~/digitalniweb-types/apps/communication/modules";
 	import validator from "validator";
-	import { Widget } from "../../../../digitalniweb-types/models/globalData";
+
+	import { useConfirmStore } from "~/store/confirm";
+	const confirmStore = useConfirmStore();
+
+	const chooseWidgetDialog = ref(false);
+	const openChooseWidget = async () => {
+		chooseWidgetDialog.value = true;
+	};
+
+	const chooseWidgetContentDialog = ref(false);
 
 	const { fetchData } = useApiCall();
 
@@ -452,6 +483,26 @@
 	const newMenu = ref(false);
 	const menuTreeActivated = ref<menuTreeNode[]>([]);
 
+	const pickedWidget = ref<InferAttributes<Widget> | null>(null);
+
+	const widgetSelected = (widget: InferAttributes<Widget>) => {
+		console.log(widget);
+		pickedWidget.value = widget;
+		chooseWidgetContentDialog.value = true;
+	};
+
+	const newWidgetContent = (
+		widgetContent: InferAttributes<WidgetContent>
+	) => {
+		console.log(widgetContent);
+	};
+
+	const updateWidgetContent = (
+		widgetContent: InferAttributes<WidgetContent>
+	) => {
+		console.log(widgetContent);
+	};
+
 	let translations = {
 		"Main menu": {
 			cs: "Hlavní menu",
@@ -461,6 +512,9 @@
 		},
 		"Add menu": {
 			cs: "Přidat menu",
+		},
+		"Add widget": {
+			cs: "Přidat widget",
 		},
 		"Edit menu": {
 			cs: "Upravit menu",
@@ -508,13 +562,16 @@
 		"Free menu": {
 			cs: "Volné menu",
 		},
+		"Use mouse to drag": {
+			en: "To change order of widgets you can drag and drop individual widgets using mouse.",
+			cs: "Ke změně pořadí widgetů můžete kliknou a přetáhnout jednotlivé widgety pomocí myši.",
+		},
 	};
 	const { translate } = useTranslations(translations);
 
-	let formdataMenu: ReturnType<typeof useFormData<InferAttributes<Article>>>;
-	let formdataWidgets: ReturnType<
-		typeof useFormData<InferAttributes<WidgetContent>[]>
-	>;
+	let formDataFunctions = useFormData();
+
+	let formdataWidgets: InferAttributes<WidgetContent>[];
 	const menudata = ref<InferAttributes<Article> | null>(null);
 	const widgetsdata = ref<InferAttributes<WidgetContent>[] | null>(null);
 
@@ -593,6 +650,9 @@
 
 	const saveCurrentMenu = () => {
 		console.log(menuTreeActivated.value[0]);
+		console.log(
+			formDataFunctions.dataDifference(formdataWidgets, formdataWidgets)
+		);
 	};
 
 	const activatedChanged = async (e: menuTreeNode[]) => {
@@ -620,13 +680,13 @@
 		});
 
 		if (data?.moduleInfo) {
-			formdataMenu = useFormData(data?.moduleInfo);
-			menudata.value = formdataMenu.dataClone;
+			menudata.value = formDataFunctions.cloneData(data?.moduleInfo);
 		}
 
 		if (data?.widgetContents) {
-			formdataWidgets = useFormData(data?.widgetContents);
-			widgetsdata.value = formdataWidgets.dataClone;
+			widgetsdata.value = formDataFunctions.cloneData(
+				data?.widgetContents
+			);
 		}
 		createMenuOrder();
 	};
@@ -718,8 +778,33 @@
 	});
 
 	const changeArticleWidgetProperty = (a: any, b: any, c: any) => {};
-	const changeWidgetPosition = (a: any, b: any, c: any) => {};
-	const deleteWidget = (a: any, b: any) => {};
+	const changeWidgetPosition = (
+		way: "up" | "down",
+		index: number,
+		widget: WidgetContent
+	) => {
+		let changed = {
+			moved: {
+				element: widget,
+				newIndex: way == "up" ? index - 1 : index + 1,
+				oldIndex: index,
+			},
+		};
+		changeDraggablePositionProgramatically(changed.moved.newIndex, index);
+	};
+
+	const deleteWidget = async (index: number) => {
+		let response = await confirmStore.open(translate("Delete?"), "", {
+			width: 400,
+			type: "yesNo",
+		});
+		if (!response) return;
+		widgetsdata.value?.splice(index, 1);
+
+		// reorder widgets' `order` property if there is any widget left
+		if (widgetsdata.value?.length)
+			changeObjectsOrderFrom(index, widgetsdata.value);
+	};
 
 	const menuSlugValidation = () => {
 		let children =
@@ -739,67 +824,167 @@
 		return slug;
 	};
 
-	const changePositionDragged = async (changed: any, list: any) => {
-		if (!(await changeWidgetsOrder(changed))) {
-			revertDraggable(changed, list);
+	type draggablePositionChanged<T> = {
+		moved: {
+			element: T;
+			newIndex: number;
+			oldIndex: number;
+		};
+	};
+	const changePositionDragged = (
+		changed: draggablePositionChanged<WidgetContent>
+	) => {
+		console.log(changed);
+
+		console.log(changed.moved.element.content);
+
+		if (!changeWidgetsOrder(changed)) {
+			revertDraggable(changed);
 		}
 	};
 
 	const changeDraggablePositionProgramatically = (
-		newIndex: any,
-		oldIndex: any,
-		list: any
+		newIndex: number,
+		oldIndex: number
 	) => {
-		let tmpList = list.splice(newIndex, 1);
-		list.splice(oldIndex, 0, tmpList[0]);
+		let tmpList = widgetsdata.value?.splice(newIndex, 1);
+		if (tmpList) widgetsdata.value?.splice(oldIndex, 0, tmpList[0]);
 	};
-	const revertDraggable = (changed: any, list: any) => {
+	const revertDraggable = (
+		changed: draggablePositionChanged<WidgetContent>
+	) => {
 		changeDraggablePositionProgramatically(
 			changed.moved.newIndex,
-			changed.moved.oldIndex,
-			list
+			changed.moved.oldIndex
 		);
 	};
 
 	import { useWidgetsStore } from "~/store/widgets";
+	import { Widget } from "../../../../digitalniweb-types/models/globalData";
+
 	const widgets = useWidgetsStore();
 	const getWidget = (widgetId: number) => {
 		return widgets.$state.globalData.find((e) => e.id === widgetId);
 	};
 
-	const changeWidgetsOrder = async (changed: any) => {
+	const changeWidgetsOrder = (
+		changed: draggablePositionChanged<WidgetContent>
+	) => {
+		//create custom function
+		if (widgetsdata.value)
+			changeObjectsOrderRange(
+				changed.moved.oldIndex,
+				changed.moved.newIndex,
+				widgetsdata.value
+			);
+		console.log(widgetsdata.value);
+
+		// also add:
+		// - reindex when deleted
+		// - reindex after adding to whatever place
+
 		return true;
-		// changed = vuedraggable object {moved: {element: element, newIndex: 1, oldIndex: 0}}
-		// this.$axios({
-		// 	method: "put",
-		// 	url: "/api/articleswidgets/changeorder",
-		// 	data: {
-		// 		formdata: {
-		// 			articlesWidgets: {
-		// 				ArticleId: this.article.id,
-		// 				id: changed.moved.element.id,
-		// 				newOrder: changed.moved.newIndex,
-		// 			},
-		// 		},
-		// 	},
-		// })
-		// .then(async (response) => {
-		// 	this.$store.dispatch("setSnackBars", {
-		// 		text: `Pořadí bylo změněno.`,
-		// 		icon: "check",
-		// 		color: "light-green",
-		// 	});
-		// 	this.getArticle();
-		// 	return true;
-		// })
-		// .catch((error) => {
-		// 	this.$store.dispatch("setSnackBars", {
-		// 		text: "Něco se pokazilo.",
-		// 		icon: "alert-circle-outline",
-		// 		color: "red",
-		// 	});
-		// 	this.disableForm = false;
-		// 	return false;
-		// });
 	};
+
+	/**
+	 * Mutates array
+	 * @param {number} fromIndex - The index of the element to move.
+	 * @param {number} toIndex - The target index to move the element to.
+	 * @param {any[]} array - The array containing the elements to move.
+	 * @returns {boolean} - Returns `true` if the operation is successful, or `false` if indices are out of bounds.
+	 */
+	function changeArrayOrder(
+		fromIndex: number,
+		toIndex: number,
+		array: any[]
+	) {
+		if (
+			fromIndex < 0 ||
+			toIndex < 0 ||
+			fromIndex >= array.length ||
+			toIndex >= array.length
+		) {
+			return false;
+		}
+		const [item] = array.splice(fromIndex, 1); // Remove the item at `fromIndex`
+		array.splice(toIndex, 0, item); // Insert the item at `toIndex`
+		return true;
+	}
+
+	/**
+	 * Updates a specified numeric property (e.g., "order") from 'fromIndex' to end. Can be used after deletion or addition of object to array.
+	 * @param fromIndex
+	 * @param array
+	 * @param property
+	 */
+	function changeObjectsOrderFrom<
+		T extends Record<string, any> & { [key in P]: number },
+		P extends string = "order"
+	>(fromIndex: number, array: T[], property: P = "order" as P) {
+		for (let index = fromIndex; index < array.length; index++) {
+			array[index][property] = index as T[P];
+		}
+	}
+
+	/**
+	 * Updates a specified numeric property (e.g., "order") fromIndex to toIndex which reflects order of elements in array.
+	 *
+	 * @template T - The type of elements in the array, which must include a numeric property specified by `P`.
+	 * @template P - The key of the numeric property to update, defaults to "order".
+	 *
+	 * @param {number} fromIndex - The index of the element to move.
+	 * @param {number} toIndex - The target index to move the element to.
+	 * @param {T[]} array - The array containing the elements with property to reorder.
+	 * @param {P} [property="order"] - The name of the numeric property to update. Defaults to "order".
+	 *
+	 * @returns {boolean} - Returns `true` if the operation is successful, or `false` if indices are out of bounds.
+	 */
+	function changeObjectsOrderRange<
+		T extends Record<string, any> & { [key in P]: number },
+		P extends string = "order"
+	>(
+		fromIndex: number,
+		toIndex: number,
+		array: T[],
+		property: P = "order" as P
+	): boolean {
+		if (
+			fromIndex < 0 ||
+			toIndex < 0 ||
+			fromIndex >= array.length ||
+			toIndex >= array.length
+		) {
+			return false;
+		}
+		if (toIndex === fromIndex) return true;
+
+		if (toIndex > fromIndex) {
+			// moved to higher order (lower down if ascending ordering)
+			for (let index = fromIndex; index <= toIndex; index++) {
+				array[index][property] = index as T[P];
+			}
+		} else {
+			// moved to lower order (raise up if ascending ordering)
+			for (let index = toIndex; index <= fromIndex; index++) {
+				array[index][property] = index as T[P];
+			}
+		}
+		return true;
+	}
+
+	/**
+	 *
+	 * @param {T[]} array - The array containing the elements with property to reorder.
+	 * @param {P} [property="order"] - The name of the numeric property to update with index of given array. Defaults to "order".
+	 */
+	function resetObjectsOrderPropertyInArray<
+		T extends Record<string, any> & { [key in P]: number },
+		P extends string = "order"
+	>(array: T[], property: P = "order" as P): boolean {
+		if (!array[0] || !array[0][property]) return false;
+		array.forEach((el, i) => {
+			el[property] = i as T[P];
+		});
+		return true;
+	}
 </script>

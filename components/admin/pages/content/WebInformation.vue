@@ -296,13 +296,20 @@
 	const disabled = ref(false);
 	const webInformationStore = useWebInformationStore();
 
-	let formdataWebInformation = useFormData(webInformationStore.data);
+	let formDataFunctions = useFormData();
 
-	const formdata = ref(formdataWebInformation.dataClone);
+	let formdataWebInformation = formDataFunctions.cloneData(
+		webInformationStore.data
+	);
+
+	const formdata = ref(formdataWebInformation);
 
 	const saveWebInformation = async () => {
 		disabled.value = true;
-		let dataDifference = formdataWebInformation.dataDifference();
+		let dataDifference = formDataFunctions.dataDifference(
+			webInformationStore.data,
+			formdataWebInformation
+		);
 		if (Object.getOwnPropertyNames(dataDifference).length === 0) {
 			disabled.value = false;
 			snackBarStore.setSnackBar({
@@ -318,7 +325,10 @@
 			console.log(saveDataResponse);
 			if (!saveDataResponse || !saveDataResponse[0]) throw "err";
 
-			formdataWebInformation.saveDataDifference(dataDifference);
+			formDataFunctions.saveDataDifference(
+				webInformationStore.data,
+				dataDifference
+			);
 			snackBarStore.setSnackBar({
 				text: "Informace o webu byly uloženy.",
 				color: "green",

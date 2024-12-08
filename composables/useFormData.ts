@@ -2,18 +2,25 @@ import { diff } from "deep-object-diff";
 /**
  * Use as `let formdataCustomName = useFormData(object);`
  */
-export const useFormData = <T extends object | object[]>(dataOriginal: T) => {
+export const useFormData = () => {
 	/**
 	 * use this as ref(formdataCustomName.dataClone) i.e. as data for form
 	 */
-	const dataClone = <T>structuredClone(toRaw(dataOriginal));
+	const cloneData = <T>(dataOriginal: T) =>
+		structuredClone(toRaw(dataOriginal));
 
-	const dataDifference = () => diff(dataOriginal, dataClone) as Partial<T>;
+	const dataDifference = <T extends Record<string, any>>(
+		dataOriginal: T,
+		dataClone: T
+	) => diff(dataOriginal, dataClone) as Partial<T>;
 
 	/**
-	 * puts
+	 * puts diffData to dataOriginal by mutating dataOriginal object
 	 */
-	const saveDataDifference = (diffData: Partial<T>) => {
+	const saveDataDifference = <T extends Record<string, any>>(
+		dataOriginal: T,
+		diffData: Partial<T>
+	) => {
 		for (const key in diffData) {
 			if (!Object.prototype.hasOwnProperty.call(diffData, key)) return;
 			if (!Object.prototype.hasOwnProperty.call(dataOriginal, key))
@@ -24,7 +31,7 @@ export const useFormData = <T extends object | object[]>(dataOriginal: T) => {
 	};
 
 	return {
-		dataClone,
+		cloneData,
 		dataDifference,
 		saveDataDifference,
 	};

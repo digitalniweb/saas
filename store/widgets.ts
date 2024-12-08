@@ -1,9 +1,11 @@
 import { InferAttributes } from "sequelize";
 import { Widget } from "~/digitalniweb-types/models/globalData";
+import { modules } from "../digitalniweb-types/functionality/modules";
 export const useWidgetsStore = defineStore("widgets", {
 	state: () => ({
 		app: [] as number[],
 		globalData: [] as InferAttributes<Widget>[],
+		moduleWidgets: {} as { [key in modules]: InferAttributes<Widget>[] },
 	}),
 	getters: {},
 	actions: {
@@ -27,6 +29,26 @@ export const useWidgetsStore = defineStore("widgets", {
 			);
 			if (!globalDataWidgets.data.value) return false;
 			this.globalData = globalDataWidgets.data.value;
+		},
+		async loadModuleWidgets(
+			module: modules,
+			force: boolean = false
+		): Promise<InferAttributes<Widget>[]> {
+			if (!force && this.moduleWidgets[module])
+				return this.moduleWidgets[module];
+			const { fetchData } = useApiCall();
+			let moduleWidgetsIds = await fetchData<number[]>(
+				"/api/globalData/moduleWidgets",
+				{
+					query: { module },
+				}
+			);
+			if (!moduleWidgetsIds) return [];
+			let moduleWidgets = this.globalData.filter((widget) =>
+				moduleWidgetsIds.includes(widget.id)
+			);
+			this.moduleWidgets[module] = moduleWidgets;
+			return moduleWidgets;
 		},
 	},
 });
