@@ -294,7 +294,7 @@
 								>
 									<template
 										#item="{
-											element: widget,
+											element: widgetContent,
 											index: i,
 										}: {
 											element: WidgetContent,
@@ -302,7 +302,7 @@
 										}"
 									>
 										<v-list-item
-											:key="widget.id"
+											:key="widgetContent.id"
 											variant="elevated"
 											class="mb-1"
 										>
@@ -312,21 +312,23 @@
 											></v-icon> -->
 												<v-switch
 													class="mr-1"
-													v-model="widget.active"
+													v-model="
+														widgetContent.active
+													"
 													color="green"
 													:hide-details="true"
 													@change="
 														changeArticleWidgetProperty(
 															$event,
 															'active',
-															widget
+															widgetContent
 														)
 													"
 												></v-switch>
 												<v-icon>
 													{{
 														getWidget(
-															widget.widgetId
+															widgetContent.widgetId
 														)?.icon || "mdi-cube"
 													}}
 												</v-icon>
@@ -336,13 +338,15 @@
 													class="text--primary"
 													v-text="
 														getWidget(
-															widget.widgetId
+															widgetContent.widgetId
 														)?.name || ''
 													"
 												></v-list-item-subtitle> -->
 												<v-list-item-title
 													v-text="
-														translate(widget.name)
+														translate(
+															widgetContent.name
+														)
 													"
 												></v-list-item-title>
 											</template>
@@ -356,7 +360,7 @@
 															changeWidgetPosition(
 																'up',
 																i,
-																widget
+																widgetContent
 															)
 														"
 													/>
@@ -373,7 +377,7 @@
 															changeWidgetPosition(
 																'down',
 																i,
-																widget
+																widgetContent
 															)
 														"
 													/>
@@ -382,6 +386,11 @@
 														size="x-small"
 														color="blue-lighten-5"
 														icon="mdi-pencil"
+														@click="
+															editWidgetContent(
+																widgetContent
+															)
+														"
 													/>
 													<v-btn
 														size="x-small"
@@ -413,9 +422,10 @@
 		v-model="chooseWidgetDialog"
 		@widgetSelected="widgetSelected"
 	/>
-	<AdminBlocksPickWidgetContent
-		v-model="chooseWidgetContentDialog"
+	<AdminBlocksEditWidgetContent
+		v-model="editWidgetContentDialog"
 		:widget="pickedWidget"
+		:widget-content="pickedWidgetContent"
 		@newWidgetContent="newWidgetContent"
 		@updateWidgetContent="updateWidgetContent"
 	/>
@@ -460,9 +470,13 @@
 		chooseWidgetDialog.value = true;
 	};
 
-	const chooseWidgetContentDialog = ref(false);
+	const editWidgetContentDialog = ref(false);
 
 	const { fetchData } = useApiCall();
+
+	const pickedWidgetContent = ref<InferAttributes<WidgetContent> | null>(
+		null
+	);
 
 	const menus = ref<buildTreeType<InferAttributes<Article>> | null>(null);
 	menus.value =
@@ -488,19 +502,29 @@
 	const widgetSelected = (widget: InferAttributes<Widget>) => {
 		console.log(widget);
 		pickedWidget.value = widget;
-		chooseWidgetContentDialog.value = true;
+		editWidgetContentDialog.value = true;
+	};
+
+	const editWidgetContent = (
+		widgetContent: InferAttributes<WidgetContent>
+	) => {
+		pickedWidget.value = getWidget(widgetContent.widgetId) ?? null;
+		pickedWidgetContent.value = widgetContent;
+		editWidgetContentDialog.value = true;
 	};
 
 	const newWidgetContent = (
 		widgetContent: InferAttributes<WidgetContent>
 	) => {
-		console.log(widgetContent);
+		pickedWidget.value = getWidget(widgetContent.id) ?? null;
+		pickedWidgetContent.value = widgetContent;
 	};
 
 	const updateWidgetContent = (
 		widgetContent: InferAttributes<WidgetContent>
 	) => {
-		console.log(widgetContent);
+		pickedWidget.value = getWidget(widgetContent.id) ?? null;
+		pickedWidgetContent.value = widgetContent;
 	};
 
 	let translations = {
@@ -749,7 +773,7 @@
 	};
 
 	const validationMenuNameRules = computed(() => [
-		() => !!menudata.value?.name || "Vyplňte prosím toto pole",
+		() => !!menudata.value?.name || translate("Fill in this field"),
 		() =>
 			menuSlugValidation() ||
 			"Menu se shodným URL již existuje! Změňte prosím název.",

@@ -13,7 +13,11 @@
 			</v-toolbar>
 			<v-card-text class="pa-4 text-center"> </v-card-text>
 			<v-card-text>
-				<component v-if="widget" :is="createWidgetPicker(widget)" />
+				<component
+					v-if="props.widget && props.widgetContent"
+					:is="createWidgetPickerComponentString(props.widget)"
+					v-model="props.widgetContent"
+				/>
 			</v-card-text>
 			<v-card-actions class="pt-0">
 				<v-spacer></v-spacer>
@@ -36,13 +40,15 @@
 
 	const open = defineModel<boolean>({ default: false });
 
-	const createWidgetPicker = (widget: InferAttributes<Widget>) => {
+	const createWidgetPickerComponentString = (
+		widget: InferAttributes<Widget>
+	) => {
 		return `Admin${widget.component}`;
 	};
 
 	const props = defineProps<{
 		widget: InferAttributes<Widget> | null;
-		widgetContent?: InferAttributes<WidgetContent>;
+		widgetContent: InferAttributes<WidgetContent> | null;
 	}>();
 
 	const widgets = useWidgetsStore();

@@ -3,7 +3,7 @@
 		<VuetifyTiptap
 			ref="VuetifyTiptapRef"
 			v-model="content"
-			title="Text editor"
+			:title="translate('Text editor')"
 			:output="output"
 			:hide-toolbar="hideToolbar"
 			:disable-toolbar="disableToolbar"
@@ -17,16 +17,18 @@
 	</ClientOnly>
 </template>
 <script setup lang="ts">
+	const { translate } = useTranslations();
 	import { locale } from "vuetify-pro-tiptap";
 
 	const VuetifyTiptapRef = ref<null | Record<string, any>>(null);
 	const output = ref<"html" | "json" | "text">("html");
-	const content = ref("<p>Test html</p>");
 	const outlined = ref(true);
 	const dense = ref(false);
 	const hideToolbar = ref(false);
 	const disableToolbar = ref(false);
 	const errorMessages = ref(null);
+
+	const content = defineModel<string>({ default: "" });
 
 	function mountedTipTap() {
 		locale.setLang("en");
