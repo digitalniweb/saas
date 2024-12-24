@@ -6,16 +6,11 @@
 		@after-leave="afterLeave"
 	>
 		<v-card>
-			<v-toolbar dark :color="confirmStore.options.color" dense flat>
+			<v-toolbar dark dense flat>
 				<v-toolbar-title class="white--text">
 					{{ translate("Choose Widget") }}
 				</v-toolbar-title>
 			</v-toolbar>
-			<v-card-text
-				v-if="confirmStore.message"
-				class="pa-4 text-center"
-				v-html="confirmStore.message"
-			/>
 			<v-card-text>
 				<v-list>
 					<v-list-item
@@ -48,29 +43,24 @@
 	import { useWidgetsStore } from "~/store/widgets";
 	import { Widget } from "../../../digitalniweb-types/models/globalData";
 	import { InferAttributes } from "sequelize";
+	import { modules } from "../../../digitalniweb-types/functionality/modules";
 
 	const { translate } = useTranslations();
 
 	const open = defineModel<boolean>({ default: false });
 
-	/* const props = withDefaults(
-		defineProps<{
-			open: boolean;
-		}>(),
-		{
-			open: false,
-		}
-	); */
+	const props = defineProps<{
+		moduleName: modules;
+	}>();
 
 	const widgets = useWidgetsStore();
-	const moduleWidgets = ref(await widgets.loadModuleWidgets("articles"));
+	const moduleWidgets = ref(
+		await widgets.loadModuleWidgets(props.moduleName)
+	);
 
 	const emit = defineEmits<{
 		widgetSelected: [value: InferAttributes<Widget>];
 	}>();
-
-	import { useConfirmStore } from "~/store/confirm";
-	const confirmStore = useConfirmStore();
 
 	const chooseWidget = (widget: InferAttributes<Widget>) => {
 		open.value = false;

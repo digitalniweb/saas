@@ -9,6 +9,7 @@
 			:rules="props.rules"
 			validate-on="blur"
 			ref="textField"
+			:disabled="props.disabled"
 		>
 			<template v-slot:append>
 				<v-btn
@@ -68,6 +69,7 @@
 				icon?: string;
 				iconButton?: string;
 				rules?: ValidationRule[];
+				disabled?: boolean;
 			} & (
 				| { translation: translations; name: string } // if `translation` is provided then `name` is required
 				| { translation?: undefined; name?: string }
@@ -77,6 +79,7 @@
 			name: "Image",
 			icon: "mdi-image",
 			iconButton: "mdi-folder-image",
+			disabled: false,
 		}
 	);
 

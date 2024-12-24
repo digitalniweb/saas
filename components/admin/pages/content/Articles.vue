@@ -1,75 +1,92 @@
 <template>
 	<v-row no-gutters>
 		<v-col cols="12" md="5">
-			<h1>{{ translate("Web menu") }}</h1>
-			<v-btn
-				prepend-icon="mdi-plus"
-				:text="translate('Add menu')"
-				color="green"
-				block
-				class="my-5"
-				@click="createNewMenu"
-			></v-btn>
-
-			<h2>{{ translate("Edit menu") }}</h2>
-			<div class="hints text-right mb-3">
-				<v-tooltip location="bottom">
-					<template v-slot:activator="{ props }">
-						<v-icon color="blue" v-bind="props" class="mr-2">
-							mdi-link-variant
-						</v-icon>
-					</template>
-					<span v-html="translate('Other URL')"></span>
-				</v-tooltip>
-				<v-tooltip location="bottom">
-					<template v-slot:activator="{ props }">
-						<v-icon color="grey" v-bind="props" class="mr-2"
-							>mdi-menu-close</v-icon
-						>
-					</template>
-					<span v-html="translate('Free menu')"></span>
-				</v-tooltip>
-				<v-tooltip location="bottom">
-					<template v-slot:activator="{ props }">
-						<v-icon color="red" v-bind="props" class="mr-2"
-							>mdi-toggle-switch-off-outline</v-icon
-						>
-					</template>
-					<span v-html="translate('Inactive')"></span>
-				</v-tooltip>
-			</div>
-			<v-treeview
-				:items="menus ?? []"
-				density="compact"
-				activatable
-				item-value="id"
-				item-title="name"
-				return-object
-				:activated="menuTreeActivated"
-				@update:activated="
-					activatedChanged as Partial<InferAttributes<Article>>
-				"
-			>
-				<template v-slot:append="{ item }">
-					<v-icon v-if="item.otherUrl" color="blue" size="xs"
-						>mdi-link-variant</v-icon
+			<v-card>
+				<v-card-title>
+					{{ translate("Edit menu") }}
+				</v-card-title>
+				<v-card-text>
+					<v-alert
+						icon="mdi-help-circle-outline"
+						border="start"
+						class="mb-3"
+						density="compact"
 					>
-					<v-icon v-if="item.freeMenu" color="grey" size="xs"
-						>mdi-menu-close</v-icon
+						<v-tooltip location="bottom">
+							<template v-slot:activator="{ props }">
+								<v-icon
+									color="blue"
+									v-bind="props"
+									class="mr-2"
+								>
+									mdi-link-variant
+								</v-icon>
+							</template>
+							<span v-html="translate('Other URL')"></span>
+						</v-tooltip>
+						<v-tooltip location="bottom">
+							<template v-slot:activator="{ props }">
+								<v-icon color="grey" v-bind="props" class="mr-2"
+									>mdi-menu-close</v-icon
+								>
+							</template>
+							<span v-html="translate('Free menu')"></span>
+						</v-tooltip>
+						<v-tooltip location="bottom">
+							<template v-slot:activator="{ props }">
+								<v-icon color="red" v-bind="props" class="mr-2"
+									>mdi-toggle-switch-off-outline</v-icon
+								>
+							</template>
+							<span v-html="translate('Inactive')"></span>
+						</v-tooltip>
+					</v-alert>
+					<v-treeview
+						:items="menus ?? []"
+						density="compact"
+						activatable
+						item-value="id"
+						item-title="name"
+						return-object
+						:activated="menuTreeActivated"
+						@update:activated="
+							activatedChanged as Partial<
+								InferAttributes<Article>
+							>
+						"
+						class="py-0"
 					>
-					<v-icon v-if="!item.active" color="red" size="xs"
-						>mdi-toggle-switch-off-outline</v-icon
-					>
-				</template>
-			</v-treeview>
+						<template v-slot:append="{ item }">
+							<v-icon v-if="item.otherUrl" color="blue" size="xs"
+								>mdi-link-variant</v-icon
+							>
+							<v-icon v-if="item.freeMenu" color="grey" size="xs"
+								>mdi-menu-close</v-icon
+							>
+							<v-icon v-if="!item.active" color="red" size="xs"
+								>mdi-toggle-switch-off-outline</v-icon
+							>
+						</template>
+					</v-treeview>
+					<v-btn
+						prepend-icon="mdi-plus"
+						:text="translate('Add menu')"
+						color="green"
+						block
+						class="my-5"
+						@click="createNewMenu"
+						:disabled="newMenuActive"
+					></v-btn>
+				</v-card-text>
+			</v-card>
 		</v-col>
-		<v-divider class="mx-4 d-none d-md-block" vertical></v-divider>
-		<v-divider class="my-4 d-block d-md-none"></v-divider>
+		<!-- <v-divider class="mx-4 d-none d-md-block" vertical></v-divider>
+		<v-divider class="my-4 d-block d-md-none"></v-divider> -->
 		<v-spacer></v-spacer>
 
 		<v-col cols="12" md="6">
 			<v-scroll-x-transition origin="center right">
-				<v-card v-show="showEdits">
+				<v-card v-show="menuTreeActivated.length > 0">
 					<v-tabs
 						v-model="tab"
 						align-tabs="center"
@@ -97,7 +114,7 @@
 								class="text-subtitle-1 pa-5 border-s-xl rounded border-info bg-black"
 							>
 								<span class="font-weight-bold">
-									{{ menuEditHeading }}
+									{{ menuTreeActivated[0]?.name }}
 								</span>
 								<div v-if="menudata">
 									<v-switch
@@ -108,6 +125,7 @@
 										:label="translate('Active')"
 										name="menuActive"
 										v-model="menudata.active"
+										:disabled="indexMenuActivated"
 									/>
 									<v-divider class="mb-4"></v-divider>
 									<CustomDate
@@ -141,6 +159,7 @@
 							v-tooltip:bottom="translate('Delete') + ' menu'"
 							style="left: 70px"
 							size="small"
+							:disabled="indexMenuActivated"
 						></v-fab>
 					</v-card>
 
@@ -201,6 +220,7 @@
 									@update:activated="
 										activatedChangedPickedMenu as menuTreeNode
 									"
+									:disabled="indexMenuActivated"
 								>
 								</v-treeview>
 							</v-card>
@@ -239,6 +259,7 @@
 									:rules="validationMenuOtherUrl"
 									name="Other URL"
 									:translation="translations"
+									:disabled="indexMenuActivated"
 								/>
 								<v-text-field
 									variant="underlined"
@@ -283,6 +304,8 @@
 								<v-alert
 									icon="mdi-help-circle-outline"
 									border="start"
+									class="mb-3"
+									density="compact"
 								>
 									{{ translate("Use mouse to drag") }}
 								</v-alert>
@@ -290,7 +313,6 @@
 									v-model="widgetsdata"
 									@change="changePositionDragged"
 									item-key="id"
-									tag="v-list"
 								>
 									<template
 										#item="{
@@ -302,7 +324,6 @@
 										}"
 									>
 										<v-list-item
-											:key="widgetContent.id"
 											variant="elevated"
 											class="mb-1"
 										>
@@ -420,14 +441,14 @@
 	</v-row>
 	<AdminBlocksPickWidget
 		v-model="chooseWidgetDialog"
+		:moduleName="moduleName"
 		@widgetSelected="widgetSelected"
 	/>
 	<AdminBlocksEditWidgetContent
 		v-model="editWidgetContentDialog"
 		:widget="pickedWidget"
 		:widget-content="pickedWidgetContent"
-		@newWidgetContent="newWidgetContent"
-		@updateWidgetContent="updateWidgetContent"
+		@returnWidgetContent="returnedWidgetContent"
 	/>
 </template>
 <style>
@@ -443,91 +464,7 @@
 	}
 </style>
 <script setup lang="ts">
-	import { VTreeview } from "vuetify/labs/VTreeview";
-	import slugify from "slugify";
-	import draggable from "vuedraggable";
-	import {
-		buildTreeType,
-		TreeNode,
-	} from "~/digitalniweb-custom/helpers/buildTree";
-	import { InferAttributes } from "sequelize";
-	import {
-		Article,
-		WidgetContent,
-	} from "~/digitalniweb-types/models/content";
-	import getObjectFromArray from "~/digitalniweb-custom/functions/getObjectFromArray";
-	import { useSnackBarsStore } from "~/store/snackBars";
-	const snackBars = useSnackBarsStore();
-
-	import { moduleResponse } from "~/digitalniweb-types/apps/communication/modules";
-	import validator from "validator";
-
-	import { useConfirmStore } from "~/store/confirm";
-	const confirmStore = useConfirmStore();
-
-	const chooseWidgetDialog = ref(false);
-	const openChooseWidget = async () => {
-		chooseWidgetDialog.value = true;
-	};
-
-	const editWidgetContentDialog = ref(false);
-
-	const { fetchData } = useApiCall();
-
-	const pickedWidgetContent = ref<InferAttributes<WidgetContent> | null>(
-		null
-	);
-
-	const menus = ref<buildTreeType<InferAttributes<Article>> | null>(null);
-	menus.value =
-		(await fetchData<buildTreeType<InferAttributes<Article>> | null>(
-			"/api/website/admin/menu"
-		)) ?? [];
-
-	if (menus.value.length === 0)
-		snackBars.setSnackBar({
-			color: "error",
-			text: "Nepodařilo se stáhnout menu.",
-		});
-
-	const pickMenuTreeActivated = ref<menuTreeNode[]>([]);
-
-	const selectedOrder = ref({});
-
-	const newMenu = ref(false);
-	const menuTreeActivated = ref<menuTreeNode[]>([]);
-
-	const pickedWidget = ref<InferAttributes<Widget> | null>(null);
-
-	const widgetSelected = (widget: InferAttributes<Widget>) => {
-		console.log(widget);
-		pickedWidget.value = widget;
-		editWidgetContentDialog.value = true;
-	};
-
-	const editWidgetContent = (
-		widgetContent: InferAttributes<WidgetContent>
-	) => {
-		pickedWidget.value = getWidget(widgetContent.widgetId) ?? null;
-		pickedWidgetContent.value = widgetContent;
-		editWidgetContentDialog.value = true;
-	};
-
-	const newWidgetContent = (
-		widgetContent: InferAttributes<WidgetContent>
-	) => {
-		pickedWidget.value = getWidget(widgetContent.id) ?? null;
-		pickedWidgetContent.value = widgetContent;
-	};
-
-	const updateWidgetContent = (
-		widgetContent: InferAttributes<WidgetContent>
-	) => {
-		pickedWidget.value = getWidget(widgetContent.id) ?? null;
-		pickedWidgetContent.value = widgetContent;
-	};
-
-	let translations = {
+	const translations = {
 		"Main menu": {
 			cs: "Hlavní menu",
 		},
@@ -553,20 +490,24 @@
 			en: "Menu location",
 			cs: "Zařazení do menu",
 		},
+		MenuLocationFail: {
+			en: "You cannot assign a menu to itself.",
+			cs: "Nemůžete zařadit menu do sebe sama.",
+		},
 		MenuParentTooltip: {
 			en: `Current menu's location; menu's parent.<br />
-				You can change this. <br />
-				Change of index page (main page)
-				can't be done, it can't be put into this menu. <br />
-				That is why it is not even listed as the first item in the menu and 'Main menu'
-				means first after the index page.`,
+			You can change this. <br />
+			Change of index page (main page)
+			can't be done, it can't be put into this menu. <br />
+			That is why it is not even listed as the first item in the menu and 'Main menu'
+			means first after the index page.`,
 			cs: `Aktuální zařazení do menu.<br />
-				Můžete jej změnit. <br />
-				Měnit zařazení indexové (hlavní stránky)
-				nemůžete měnit a nelze ani zařadit do
-				tohoto menu. <br />
-				Proto není ani v nabídce a pořadí první
-				se myslí první za indexovou stránkou.`,
+			Můžete jej změnit. <br />
+			Měnit zařazení indexové (hlavní stránky)
+			nemůžete měnit a nelze ani zařadit do
+			tohoto menu. <br />
+			Proto není ani v nabídce a pořadí první
+			se myslí první za indexovou stránkou.`,
 		},
 		Name: {
 			cs: "Název",
@@ -590,43 +531,216 @@
 			en: "To change order of widgets you can drag and drop individual widgets using mouse.",
 			cs: "Ke změně pořadí widgetů můžete kliknou a přetáhnout jednotlivé widgety pomocí myši.",
 		},
+		"New menu": {
+			cs: "Nové menu",
+		},
+		MenuDownloadFail: {
+			en: "Failed to download menu.",
+			cs: "Nepodařilo se stáhnout menu.",
+		},
 	};
+
 	const { translate } = useTranslations(translations);
 
-	let formDataFunctions = useFormData();
+	import { VTreeview } from "vuetify/labs/VTreeview";
+	import slugify from "slugify";
+	import draggable from "vuedraggable";
 
-	let formdataWidgets: InferAttributes<WidgetContent>[];
-	const menudata = ref<InferAttributes<Article> | null>(null);
-	const widgetsdata = ref<InferAttributes<WidgetContent>[] | null>(null);
+	import {
+		WidgetContentNew,
+		WidgetContentCreate,
+	} from "../../../../digitalniweb-types";
 
-	type menuTreeNode = TreeNode<Partial<InferAttributes<Article>>>;
+	import {
+		buildTreeType,
+		TreeNode,
+	} from "~/digitalniweb-custom/helpers/buildTree";
+	import { InferAttributes } from "sequelize";
+	import {
+		Article,
+		WidgetContent,
+	} from "~/digitalniweb-types/models/content";
+	import getObjectFromArray from "~/digitalniweb-custom/functions/getObjectFromArray";
+	import { useSnackBarsStore } from "~/store/snackBars";
+	const snackBars = useSnackBarsStore();
+
+	import { moduleResponse } from "~/digitalniweb-types/apps/communication/modules";
+	import validator from "validator";
+
+	import { useConfirmStore } from "~/store/confirm";
+	const confirmStore = useConfirmStore();
+
+	import { useCurrentPageStore } from "../../../../store/currentPage";
+	const currentPage = useCurrentPageStore();
+
+	import { useWebsiteStore } from "~/store/website";
+	const websiteStore = useWebsiteStore();
+
+	const menuSlugValidation = () => {
+		let children =
+			pickMenuTreeActivated.value[0].id !== -1
+				? pickMenuTreeActivated.value[0].children
+				: menus.value;
+
+		return !children?.find(
+			(e) => e.url === currentSlug.value && e.id != menudata.value?.id
+		);
+	};
+
+	const createSlug = (string: string | null | undefined) => {
+		let slug = "/";
+		if (!string) return slug;
+		slug += slugify(string, { lower: true, strict: true });
+		return slug;
+	};
 
 	// for assigning menu to root
 	const rootObject = {
-		id: 0,
+		id: -1,
 		name: translate("Main menu"),
 		order: -1,
 		url: "/",
 	};
 
-	const createNewMenu = () => {
-		newMenu.value = true;
-		menuTreeActivated.value = [];
-		pickMenuTreeActivated.value = [rootObject];
-		menudata.value = {} as InferAttributes<Article>;
+	const newMenuDefault = {
+		name: translate("New menu"),
+		id: 0,
+		title: "",
+		description: "",
+		active: true,
+		languageId: currentPage.language?.id,
+		otherUrl: "",
+		freeMenu: false,
+		websiteId: websiteStore.$state.data?.id,
+		websitesMsId: websiteStore.$state.data?.websitesMsId,
+		url: createSlug(translate("New menu")),
+	} as Partial<InferAttributes<Article>>;
+
+	const chooseWidgetDialog = ref(false);
+	const openChooseWidget = async () => {
+		chooseWidgetDialog.value = true;
 	};
 
-	const showEdits = computed(() => {
-		if (newMenu.value === true || menuTreeActivated.value.length > 0)
-			return true;
-		return false;
-	});
+	const editWidgetContentDialog = ref(false);
+
+	const { fetchData } = useApiCall();
+
+	const pickedWidgetContent = ref<InferAttributes<WidgetContent> | null>(
+		null
+	);
+
+	const menus = ref<buildTreeType<
+		InferAttributes<Article> | Partial<InferAttributes<Article>>
+	> | null>(null);
+	menus.value =
+		(await fetchData<buildTreeType<InferAttributes<Article>> | null>(
+			"/api/website/admin/menu"
+		)) ?? [];
+
+	if (menus.value.length === 0)
+		snackBars.setSnackBar({
+			color: "error",
+			text: translate("MenuDownloadFail"),
+		});
+
+	const pickMenuTreeActivated = ref<menuTreeNode[]>([]);
+
+	const selectedOrder = ref({});
+
+	const menuTreeActivated = ref<menuTreeNode[]>([]);
+
+	const pickedWidget = ref<InferAttributes<Widget> | null>(null);
+
+	const widgetSelected = (widget: InferAttributes<Widget>) => {
+		pickedWidget.value = widget;
+		editWidgetContentDialog.value = true;
+	};
+
+	const editWidgetContent = (
+		widgetContent: InferAttributes<WidgetContent>
+	) => {
+		if (!pickedWidget.value)
+			pickedWidget.value = getWidget(widgetContent.widgetId) ?? null;
+
+		pickedWidgetContent.value = widgetContent;
+		editWidgetContentDialog.value = true;
+	};
+
+	import { useModulesStore } from "~/store/modules";
+	const modules = useModulesStore();
+
+	const moduleName = "articles";
+	const currentModule = modules.globalData.find((e) => e.name === moduleName);
+	// I should do some error handling here, because "currentModule" should must exist
+
+	const returnedWidgetContent = (
+		newInfoWidgetContent:
+			| WidgetContentNew
+			| InferAttributes<WidgetContent>
+			| null
+	) => {
+		if (!pickedWidget.value || !newInfoWidgetContent) {
+			pickedWidgetContent.value = null;
+			pickedWidget.value = null;
+			return;
+		}
+		pickedWidget.value = getWidget(pickedWidget.value.id) ?? null;
+
+		if (!("id" in newInfoWidgetContent)) {
+			let newWidgetContent = {
+				...newInfoWidgetContent,
+				order: widgetsdata.value?.length || 0,
+				moduleId: currentModule?.id,
+				widgetId: pickedWidget.value?.id,
+			} as WidgetContentCreate;
+			widgetsdata.value?.push(newWidgetContent);
+		} else {
+			for (const key in newInfoWidgetContent) {
+				if (
+					Object.prototype.hasOwnProperty.call(
+						newInfoWidgetContent,
+						key
+					)
+				) {
+					// @ts-ignore
+					pickedWidgetContent.value[key] = newInfoWidgetContent[key];
+				}
+			}
+		}
+		pickedWidgetContent.value = null;
+		pickedWidget.value = null;
+	};
+
+	const indexMenuActivated = computed(
+		() => menuTreeActivated.value?.[0]?.url === "/"
+	);
+
+	let formDataFunctions = useFormData();
+
+	const formdataOriginalWidgetContent = ref<InferAttributes<WidgetContent>[]>(
+		[]
+	);
+	const menudata = ref<InferAttributes<Article> | null>(null);
+	const widgetsdata = ref<
+		(InferAttributes<WidgetContent> | WidgetContentCreate)[] | null
+	>(null);
+
+	type menuTreeNode = TreeNode<Partial<InferAttributes<Article>>>;
+
+	const newMenuActive = ref(false);
+	const createNewMenu = () => {
+		newMenuActive.value = true;
+		let newMenu = structuredClone(newMenuDefault);
+		newMenu.order = menus.value?.length ?? 0;
+		menus.value?.push(newMenu);
+		menuTreeActivated.value = [newMenu];
+
+		pickMenuTreeActivated.value = [rootObject];
+		menudata.value = newMenu as InferAttributes<Article>;
+		createMenuOrder();
+	};
 
 	const tab = ref(null);
-
-	const menuEditHeading = computed(() => {
-		return menuTreeActivated.value[0]?.name ?? "Nové menu";
-	});
 
 	// currently picked Menu's order
 	const pickMenuOrder = ref<menuTreeNode[]>([]);
@@ -638,7 +752,7 @@
 		let children = [] as menuTreeNode[];
 
 		let pickedLevelMenus = [] as menuTreeNode[];
-		if (pickMenuTreeActivated.value[0]?.id === 0) {
+		if (pickMenuTreeActivated.value[0]?.id === -1) {
 			// top level menus
 			pickedLevelMenus = menus.value ?? [];
 		} else if (pickMenuTreeActivated.value[0]?.children) {
@@ -673,17 +787,60 @@
 	};
 
 	const saveCurrentMenu = () => {
+		// menu
 		console.log(menuTreeActivated.value[0]);
-		console.log(
-			formDataFunctions.dataDifference(formdataWidgets, formdataWidgets)
-		);
+
+		//  menu's WidgetContent - create new / edited / deleted
+		let deletedWCs = [] as number[];
+		let newWCs = [] as WidgetContentCreate[];
+		let editedWCs = [] as Partial<InferAttributes<WidgetContent>>[];
+
+		let newWidgetContentData = [] as (
+			| InferAttributes<WidgetContent>
+			| WidgetContentCreate
+		)[];
+		if (widgetsdata.value) newWidgetContentData = [...widgetsdata.value];
+
+		formdataOriginalWidgetContent.value.forEach((wc) => {
+			let indexWC = newWidgetContentData.findIndex((el) => {
+				if ("id" in el && wc.id === el?.id) return true;
+			});
+			if (indexWC === -1) {
+				deletedWCs.push(wc.id);
+				return;
+			}
+
+			let editCandidateWC = newWidgetContentData[
+				indexWC
+			] as InferAttributes<WidgetContent>;
+			let diff = formDataFunctions.dataDifference(wc, editCandidateWC);
+			if (Object.keys(diff).length > 0) {
+				editedWCs.push({
+					...diff,
+					moduleId: currentModule?.id,
+					id: editCandidateWC.id,
+				});
+			}
+			newWidgetContentData.splice(indexWC, 1);
+		});
+		newWCs = newWidgetContentData;
+		console.log(deletedWCs, newWCs, editedWCs);
+
+		// console.log(
+		// 	formDataFunctions.dataDifference(formdataOriginalWidgetContent, formdataOriginalWidgetContent)
+		// );
 	};
 
 	const activatedChanged = async (e: menuTreeNode[]) => {
 		// even though it returns array it can contain only 1 activated menu
 		if (e.length === 0) return;
 
-		newMenu.value = false;
+		if (newMenuActive) {
+			// assure user he wants to cancel his "new menu creation"
+			return;
+			newMenuActive.value = false;
+		}
+
 		menuTreeActivated.value = e;
 		if (e[0].parentId == null) {
 			pickMenuTreeActivated.value = [rootObject];
@@ -708,6 +865,7 @@
 		}
 
 		if (data?.widgetContents) {
+			formdataOriginalWidgetContent.value = data.widgetContents;
 			widgetsdata.value = formDataFunctions.cloneData(
 				data?.widgetContents
 			);
@@ -717,7 +875,6 @@
 
 	const activatedChangedPickedMenu = (e: menuTreeNode[]) => {
 		let currentMenuId = menuTreeActivated.value[0]?.id;
-		if (currentMenuId === undefined) return;
 
 		let currentPickMenuId = pickMenuTreeActivated.value[0]?.id;
 		let clickedPickMenuId = e[0]?.id;
@@ -728,7 +885,7 @@
 		if (currentMenuId === clickedPickMenuId) {
 			snackBars.setSnackBar({
 				color: "warning",
-				text: "Nemůžete zařadit menu do sebe sama.",
+				text: "MenuLocationFail",
 			});
 			return;
 		}
@@ -737,7 +894,7 @@
 		if (child) {
 			snackBars.setSnackBar({
 				color: "warning",
-				text: "Nemůžete zařadit menu do sebe sama.",
+				text: "MenuLocationFail",
 			});
 			return;
 		}
@@ -781,6 +938,7 @@
 
 	const validationMenuOtherUrl = computed(() => [
 		() =>
+			!menudata.value?.otherUrl ||
 			menudata.value?.otherUrl == "" ||
 			/^\/(?!\/)[\w\-.\s/]+$/.test(menudata.value?.otherUrl ?? "") ||
 			validator.isURL(menudata.value?.otherUrl ?? "", {
@@ -795,7 +953,7 @@
 	const currentSlug = computed(() => {
 		if (menudata.value?.url === "/") return "/";
 		return (
-			(pickMenuTreeActivated.value[0].id !== 0
+			(pickMenuTreeActivated.value[0].id !== -1
 				? pickMenuTreeActivated.value[0].url
 				: "") + currentNameSlug.value
 		);
@@ -828,24 +986,6 @@
 		// reorder widgets' `order` property if there is any widget left
 		if (widgetsdata.value?.length)
 			changeObjectsOrderFrom(index, widgetsdata.value);
-	};
-
-	const menuSlugValidation = () => {
-		let children =
-			pickMenuTreeActivated.value[0].id !== 0
-				? pickMenuTreeActivated.value[0].children
-				: menus.value;
-
-		return !children?.find(
-			(e) => e.url === currentSlug.value && e.id != menudata.value?.id
-		);
-	};
-
-	const createSlug = (string: string | null | undefined) => {
-		let slug = "/";
-		if (!string) return slug;
-		slug += slugify(string, { lower: true, strict: true });
-		return slug;
 	};
 
 	type draggablePositionChanged<T> = {
@@ -885,6 +1025,7 @@
 
 	import { useWidgetsStore } from "~/store/widgets";
 	import { Widget } from "../../../../digitalniweb-types/models/globalData";
+	import { cs } from "vuetify/locale";
 
 	const widgets = useWidgetsStore();
 	const getWidget = (widgetId: number) => {
