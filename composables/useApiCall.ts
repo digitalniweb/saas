@@ -51,11 +51,25 @@ export const useApiCall = () => {
 
 		if (!isObjectEmpty(resourceIds)) {
 			if (!opts) opts = {};
-			if (!opts.params) opts.params = {};
-			(opts.params as Record<string, any>).resourceIds = {
-				...resourceIds,
-				...opts.params?.resourceIds,
-			};
+			if (
+				["DELETE", "PATCH", "PUT", "POST"].includes(
+					opts.method ?? "GET"
+				)
+			) {
+				if (!opts) opts = {};
+				if (!opts.body) opts.body = {};
+				(opts.body as Record<string, any>).resourceIds = {
+					...resourceIds,
+					...(opts.body as Record<string, any>)?.resourceIds,
+				};
+			} else {
+				if (!opts) opts = {};
+				if (!opts.params) opts.params = {};
+				(opts.params as Record<string, any>).resourceIds = {
+					...resourceIds,
+					...opts.params?.resourceIds,
+				};
+			}
 		}
 
 		try {

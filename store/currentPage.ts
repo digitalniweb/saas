@@ -16,6 +16,7 @@ import {
 	buildTreeType,
 	TreeNode,
 } from "~/digitalniweb-custom/helpers/buildTree";
+import { useWebInformationStore } from "./webInformation";
 const queryParamsKeys = ["page", "limit", "offset", "search"] as const;
 type queryParamsTypes = {
 	page: number;
@@ -106,6 +107,7 @@ export const useCurrentPageStore = defineStore("currentPage", {
 			return false;
 		},
 		async getAdminData() {
+			let websiteStore = useWebInformationStore();
 			// set pages data to null
 			this.module.current = null;
 			this.module.currentComponent = null;
@@ -127,6 +129,13 @@ export const useCurrentPageStore = defineStore("currentPage", {
 				menuStore.admin,
 				this.route.pathname
 			);
+
+			this.page.title =
+				(this.admin.currentAdminMenuLanguage?.name
+					? this.admin.currentAdminMenuLanguage?.name + " - "
+					: "") +
+				"Admin | " +
+				websiteStore.data.name;
 			if (!setAdminMenu) {
 				console.log(404);
 			}

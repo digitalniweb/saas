@@ -16,6 +16,7 @@ import { InferAttributes } from "sequelize";
 import { modules } from "~/digitalniweb-types/functionality/modules";
 import { getGlobalDataList } from "~/digitalniweb-custom/helpers/getGlobalData";
 import AppModule from "~/server/models/apps/appModule";
+import { resourceIdsType } from "~/digitalniweb-types/apps/communication";
 
 interface Options {
 	type?: string;
@@ -154,6 +155,7 @@ function verifyUser(event: H3Event) {
 			process.env.APP_ACCESS_TOKEN_SECRET
 		) as userJWT;
 		event.context.verifiedUser = user;
+		verifyUsersResourceInfo(event);
 	} catch (err: any) {
 		if (err.name == "TokenExpiredError") {
 			throw createError({
@@ -167,6 +169,36 @@ function verifyUser(event: H3Event) {
 				statusMessage: "Invalid token",
 			});
 		}
+		throw createError({
+			statusCode: 401,
+			statusMessage: err.message ?? "Invalid user validation",
+		});
+	}
+}
+
+function verifyUsersResourceInfo(event: H3Event) {
+	let user = event.context.verifiedUser;
+	if (!user)
+		throw {
+			statusCode: 403,
+			message: "User is not logged in!",
+		};
+	if (user.role.name === "superadmin") return;
+	let query = getQuery(event);
+	if (query.resourceIds) {
+		let resourceIds = query.resourceIds as resourceIdsType | string;
+		if (typeof resourceIds === "string")
+			resourceIds = JSON.parse(resourceIds) as resourceIdsType;
+
+		if (
+			resourceIds.websiteId != user.websiteId ||
+			resourceIds.websitesMsId != user.websitesMsId
+		)
+			throw {
+				statusCode: 403,
+				message:
+					"User's website info doesn't match website's info about the website!",
+			};
 	}
 }
 

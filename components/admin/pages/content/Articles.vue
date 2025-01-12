@@ -86,356 +86,358 @@
 
 		<v-col cols="12" md="6">
 			<v-scroll-x-transition origin="center right">
-				<v-card v-show="menuTreeActivated.length > 0">
-					<v-tabs
-						v-model="tab"
-						align-tabs="center"
-						bg-color="basil"
-						stacked
-						grow
-					>
-						<v-tab value="tab-assignment">
-							<v-icon icon="mdi-format-list-numbered"></v-icon>
-							{{ translate("Location") }}
-						</v-tab>
-						<v-tab value="tab-menu">
-							<v-icon icon="mdi-menu"></v-icon>
-							Menu
-						</v-tab>
+				<v-form ref="form">
+					<v-card v-show="menuTreeActivated.length > 0">
+						<v-tabs
+							v-model="tab"
+							align-tabs="center"
+							bg-color="basil"
+							stacked
+							grow
+						>
+							<v-tab value="tab-assignment">
+								<v-icon
+									icon="mdi-format-list-numbered"
+								></v-icon>
+								{{ translate("Location") }}
+							</v-tab>
+							<v-tab value="tab-menu">
+								<v-icon icon="mdi-menu"></v-icon>
+								Menu
+							</v-tab>
 
-						<v-tab value="tab-article">
-							<v-icon icon="mdi-pencil-outline"></v-icon>
-							{{ translate("Article") }}
-						</v-tab>
-					</v-tabs>
-					<v-card class="pa-5">
-						<div>
-							<div
-								class="text-subtitle-1 pa-5 border-s-xl rounded border-info bg-black"
-							>
-								<span class="font-weight-bold">
-									{{ menuTreeActivated[0]?.name }}
-								</span>
-								<div v-if="menudata">
+							<v-tab value="tab-article">
+								<v-icon icon="mdi-pencil-outline"></v-icon>
+								{{ translate("Article") }}
+							</v-tab>
+						</v-tabs>
+						<v-card class="pa-5">
+							<div>
+								<div
+									class="text-subtitle-1 pa-5 border-s-xl rounded border-info bg-black"
+								>
+									<span class="font-weight-bold">
+										{{ menuTreeActivated[0]?.name }}
+									</span>
+									<div v-if="menudata">
+										<v-switch
+											id="menuActive"
+											color="green"
+											density="compact"
+											hide-details
+											:label="translate('Active')"
+											name="menuActive"
+											v-model="menudata.active"
+											:disabled="indexMenuActivated"
+										/>
+										<v-divider class="mb-4"></v-divider>
+										<CustomDate
+											:date="menudata.createdAt"
+											title="Created"
+											icon="mdi-calendar-clock"
+											variant="outlined"
+											class="mb-2"
+										/>
+										<CustomDate
+											:date="menudata.updatedAt"
+											title="Updated"
+											icon="mdi-calendar-edit"
+											variant="outlined"
+											class="mb-2"
+										/>
+									</div>
+								</div>
+							</div>
+							<v-fab
+								@click="saveCurrentMenu()"
+								color="green"
+								icon="mdi-check"
+								v-tooltip:bottom="translate('Save') + ' menu'"
+								style="left: 10px"
+							></v-fab>
+							<v-fab
+								@click="deleteCurrentMenu()"
+								color="red"
+								icon="mdi-trash-can-outline"
+								v-tooltip:bottom="translate('Delete') + ' menu'"
+								style="left: 70px"
+								size="small"
+								:disabled="indexMenuActivated"
+							></v-fab>
+						</v-card>
+
+						<v-tabs-window v-model="tab">
+							<v-tabs-window-item :value="'tab-assignment'">
+								<v-card class="pa-5">
+									<p class="text-overline">
+										{{ translate("Order") }}
+									</p>
+									<v-select
+										:items="pickMenuOrder"
+										return-object
+										item-value="order"
+										@update:model-value="(el)=>orderChanged(el as orderType)"
+										v-model="selectedOrder"
+									>
+										<template
+											v-slot:item="{ props, item, index }"
+										>
+											<v-list-item v-bind="props" title=""
+												><i>{{ index + 1 }}.</i>
+												{{
+													index === 0
+														? ""
+														: translate("After")
+												}}
+												<strong>
+													{{ item.raw.name }}
+												</strong>
+											</v-list-item>
+										</template>
+									</v-select>
+									<p class="text-overline mt-5">
+										{{ translate("MenuLocation") }}
+										<v-tooltip location="bottom">
+											<template
+												v-slot:activator="{ props }"
+											>
+												<v-icon
+													icon="mdi-help-circle"
+													class="cursor-help"
+													v-bind="props"
+												/>
+											</template>
+											<span
+												v-html="
+													translate(
+														'MenuParentTooltip'
+													)
+												"
+											></span>
+										</v-tooltip>
+									</p>
+									<v-treeview
+										density="compact"
+										item-value="id"
+										item-title="name"
+										class="pickMenuTree"
+										:items="pickMenuTree"
+										return-object
+										activatable
+										:activated="pickMenuTreeActivated"
+										@update:activated="
+											activatedChangedPickedMenu as menuTreeNode
+										"
+										:disabled="indexMenuActivated"
+									>
+									</v-treeview>
+								</v-card>
+							</v-tabs-window-item>
+							<v-tabs-window-item :value="'tab-menu'">
+								<v-card v-if="menudata" class="pa-5">
 									<v-switch
-										id="menuActive"
+										id="menuFreeMenu"
 										color="green"
 										density="compact"
 										hide-details
-										:label="translate('Active')"
-										name="menuActive"
-										v-model="menudata.active"
+										:label="translate('Free menu')"
+										name="menuFreeMenu"
+										v-model="menudata.freeMenu"
+									/>
+									<v-divider class="my-3"></v-divider>
+									<v-text-field
+										variant="underlined"
+										:label="translate('Name')"
+										counter="64"
+										prepend-inner-icon="mdi-alpha-n"
+										v-model="menudata.name"
+										validate-on="blur"
+										:rules="validationMenuNameRules"
+									/>
+									<p
+										class="text-grey text-caption px-1 pb-5 font-italic"
+									>
+										{{ currentSlug }}
+									</p>
+									<customFormPickFiles
+										:object="menudata"
+										property="otherUrl"
+										icon="mdi-alpha-u"
+										icon-button="mdi-file"
+										:rules="validationMenuOtherUrl"
+										name="Other URL"
+										:translation="translations"
 										:disabled="indexMenuActivated"
 									/>
-									<v-divider class="mb-4"></v-divider>
-									<CustomDate
-										:date="menudata.createdAt"
-										title="Created"
-										icon="mdi-calendar-clock"
-										variant="outlined"
-										class="mb-2"
+									<v-text-field
+										variant="underlined"
+										label="Title"
+										counter="128"
+										prepend-inner-icon="mdi-text-short"
+										v-model="menudata.title"
 									/>
-									<CustomDate
-										:date="menudata.updatedAt"
-										title="Updated"
-										icon="mdi-calendar-edit"
-										variant="outlined"
-										class="mb-2"
+									<v-text-field
+										variant="underlined"
+										label="Description"
+										counter="256"
+										prepend-inner-icon="mdi-text"
+										v-model="menudata.description"
 									/>
-								</div>
-							</div>
-						</div>
-						<v-fab
-							@click="saveCurrentMenu()"
-							color="green"
-							icon="mdi-check"
-							v-tooltip:bottom="translate('Save') + ' menu'"
-							style="left: 10px"
-						></v-fab>
-						<v-fab
-							@click="deleteCurrentMenu()"
-							color="red"
-							icon="mdi-trash-can-outline"
-							v-tooltip:bottom="translate('Delete') + ' menu'"
-							style="left: 70px"
-							size="small"
-							:disabled="indexMenuActivated"
-						></v-fab>
-					</v-card>
-
-					<v-tabs-window v-model="tab">
-						<v-tabs-window-item :value="'tab-assignment'">
-							<v-card class="pa-5">
-								<p class="text-overline">
-									{{ translate("Order") }}
-								</p>
-								<v-select
-									:items="pickMenuOrder"
-									return-object
-									item-value="order"
-									v-model="selectedOrder"
-								>
-									<template
-										v-slot:item="{ props, item, index }"
+									<v-text-field
+										variant="underlined"
+										:label="translate('Icon')"
+										counter="64"
+										:prepend-inner-icon="
+											(menudata.icon &&
+												'mdi-' + menudata.icon) ||
+											'mdi-close'
+										"
+										v-model="menudata.icon"
 									>
-										<v-list-item v-bind="props" title=""
-											><i>{{ index + 1 }}.</i>
-											{{
-												index === 0
-													? ""
-													: translate("After")
-											}}
-											<strong>
-												{{ item.raw.name }}
-											</strong>
-										</v-list-item>
-									</template>
-								</v-select>
-								<p class="text-overline mt-5">
-									{{ translate("MenuLocation") }}
-									<v-tooltip location="bottom">
-										<template v-slot:activator="{ props }">
-											<v-icon
-												icon="mdi-help-circle"
-												class="cursor-help"
-												v-bind="props"
-											/>
+										<template v-slot:append>
+											<CustomFormPickIcon
+												:currentIcon="menudata.icon"
+												@changedIcon="changedIcon"
+											></CustomFormPickIcon>
 										</template>
-										<span
-											v-html="
-												translate('MenuParentTooltip')
-											"
-										></span>
-									</v-tooltip>
-								</p>
-								<v-treeview
-									density="compact"
-									item-value="id"
-									item-title="name"
-									class="pickMenuTree"
-									:items="pickMenuTree"
-									return-object
-									activatable
-									:activated="pickMenuTreeActivated"
-									@update:activated="
-										activatedChangedPickedMenu as menuTreeNode
-									"
-									:disabled="indexMenuActivated"
-								>
-								</v-treeview>
-							</v-card>
-						</v-tabs-window-item>
-						<v-tabs-window-item :value="'tab-menu'">
-							<v-card v-if="menudata" class="pa-5">
-								<v-switch
-									id="menuFreeMenu"
-									color="green"
-									density="compact"
-									hide-details
-									:label="translate('Free menu')"
-									name="menuFreeMenu"
-									v-model="menudata.freeMenu"
-								/>
-								<v-divider class="my-3"></v-divider>
-								<v-text-field
-									variant="underlined"
-									:label="translate('Name')"
-									counter="64"
-									prepend-inner-icon="mdi-alpha-n"
-									v-model="menudata.name"
-									validate-on="blur"
-									:rules="validationMenuNameRules"
-								/>
-								<p
-									class="text-grey text-caption px-1 pb-5 font-italic"
-								>
-									{{ currentSlug }}
-								</p>
-								<customFormPickFiles
-									:object="menudata"
-									property="otherUrl"
-									icon="mdi-alpha-u"
-									icon-button="mdi-file"
-									:rules="validationMenuOtherUrl"
-									name="Other URL"
-									:translation="translations"
-									:disabled="indexMenuActivated"
-								/>
-								<v-text-field
-									variant="underlined"
-									label="Title"
-									counter="128"
-									prepend-inner-icon="mdi-text-short"
-									v-model="menudata.title"
-								/>
-								<v-text-field
-									variant="underlined"
-									label="Description"
-									counter="256"
-									prepend-inner-icon="mdi-text"
-									v-model="menudata.description"
-								/>
-								<v-text-field
-									variant="underlined"
-									:label="translate('Icon')"
-									counter="64"
-									:prepend-inner-icon="
-										(menudata.icon &&
-											'mdi-' + menudata.icon) ||
-										'mdi-close'
-									"
-									v-model="menudata.icon"
-								>
-									<template v-slot:append>
-										<CustomFormPickIcon
-											:currentIcon="menudata.icon"
-											@changedIcon="changedIcon"
-										></CustomFormPickIcon>
-									</template>
-								</v-text-field>
-								<customFormPickFiles
-									:object="menudata"
-									property="image"
-								/>
-							</v-card>
-						</v-tabs-window-item>
-						<v-tabs-window-item :value="'tab-article'">
-							<v-card v-if="widgetsdata" class="pa-5">
-								<v-alert
-									icon="mdi-help-circle-outline"
-									border="start"
-									class="mb-3"
-									density="compact"
-								>
-									{{ translate("Use mouse to drag") }}
-								</v-alert>
-								<draggable
-									v-model="widgetsdata"
-									@change="changePositionDragged"
-									item-key="id"
-								>
-									<template
-										#item="{
-											element: widgetContent,
-											index: i,
-										}: {
-											element: WidgetContent,
-											index: number,
-										}"
+									</v-text-field>
+									<customFormPickFiles
+										:object="menudata"
+										property="image"
+									/>
+								</v-card>
+							</v-tabs-window-item>
+							<v-tabs-window-item :value="'tab-article'">
+								<v-card v-if="widgetsdata" class="pa-5">
+									<v-alert
+										icon="mdi-help-circle-outline"
+										border="start"
+										class="mb-3"
+										density="compact"
 									>
-										<v-list-item
-											variant="elevated"
-											class="mb-1"
+										{{ translate("Use mouse to drag") }}
+									</v-alert>
+									<draggable
+										v-model="widgetsdata"
+										@change="changePositionDragged"
+										item-key="id"
+									>
+										<template
+											#item="{
+												element: widgetContent,
+												index: i,
+											}: {
+												element: WidgetContent,
+												index: number,
+											}"
 										>
-											<template v-slot:prepend>
-												<!-- <v-icon
-												icon="mdi-swap-vertical"
-											></v-icon> -->
-												<v-switch
-													class="mr-1"
-													v-model="
-														widgetContent.active
-													"
-													color="green"
-													:hide-details="true"
-													@change="
-														changeArticleWidgetProperty(
-															$event,
-															'active',
-															widgetContent
-														)
-													"
-												></v-switch>
-												<v-icon>
-													{{
-														getWidget(
-															widgetContent.widgetId
-														)?.icon || "mdi-cube"
-													}}
-												</v-icon>
-											</template>
-											<template v-slot:default>
-												<!-- <v-list-item-subtitle
-													class="text--primary"
-													v-text="
-														getWidget(
-															widgetContent.widgetId
-														)?.name || ''
-													"
-												></v-list-item-subtitle> -->
-												<v-list-item-title
-													v-text="
-														translate(
-															widgetContent.name
-														)
-													"
-												></v-list-item-title>
-											</template>
-											<template v-slot:append>
-												<v-list-item-action>
-													<v-btn
-														icon="mdi-chevron-up"
-														size="x-small"
-														:disabled="i === 0"
-														@click="
-															changeWidgetPosition(
-																'up',
-																i,
-																widgetContent
-															)
-														"
-													/>
-													<v-btn
+											<v-list-item
+												variant="elevated"
+												class="mb-1"
+											>
+												<template v-slot:prepend>
+													<v-switch
 														class="mr-1"
-														icon="mdi-chevron-down"
-														size="x-small"
-														:disabled="
-															i ===
-															widgetsdata.length -
-																1
+														v-model="
+															widgetContent.active
 														"
-														@click="
-															changeWidgetPosition(
-																'down',
-																i,
+														color="green"
+														:hide-details="true"
+														@change="
+															changeArticleWidgetProperty(
+																$event,
+																'active',
 																widgetContent
 															)
 														"
-													/>
-													<v-btn
-														class="mr-1"
-														size="x-small"
-														color="blue-lighten-5"
-														icon="mdi-pencil"
-														@click="
-															editWidgetContent(
-																widgetContent
+													></v-switch>
+													<v-icon
+														:icon="
+															getWidget(
+																widgetContent.widgetId
+															)?.icon ||
+															'mdi-cube'
+														"
+													>
+													</v-icon>
+												</template>
+												<template v-slot:default>
+													<v-list-item-title
+														v-text="
+															translate(
+																widgetContent.name
 															)
 														"
-													/>
-													<v-btn
-														size="x-small"
-														color="red"
-														icon="mdi-delete-outline"
-														@click="deleteWidget(i)"
-													/>
-												</v-list-item-action>
-											</template>
-										</v-list-item>
-									</template>
-								</draggable>
-								<v-btn
-									prepend-icon="mdi-plus"
-									:text="translate('Add widget')"
-									color="green"
-									block
-									class="my-5"
-									@click="openChooseWidget"
-								></v-btn>
-							</v-card>
-						</v-tabs-window-item>
-					</v-tabs-window>
-				</v-card>
+													></v-list-item-title>
+												</template>
+												<template v-slot:append>
+													<v-list-item-action>
+														<v-btn
+															icon="mdi-chevron-up"
+															size="x-small"
+															:disabled="i === 0"
+															@click="
+																changeWidgetPosition(
+																	'up',
+																	i,
+																	widgetContent
+																)
+															"
+														/>
+														<v-btn
+															class="mr-1"
+															icon="mdi-chevron-down"
+															size="x-small"
+															:disabled="
+																i ===
+																widgetsdata.length -
+																	1
+															"
+															@click="
+																changeWidgetPosition(
+																	'down',
+																	i,
+																	widgetContent
+																)
+															"
+														/>
+														<v-btn
+															class="mr-1"
+															size="x-small"
+															color="blue-lighten-5"
+															icon="mdi-pencil"
+															@click="
+																editWidgetContent(
+																	widgetContent
+																)
+															"
+														/>
+														<v-btn
+															size="x-small"
+															color="red"
+															icon="mdi-delete-outline"
+															@click="
+																deleteWidget(i)
+															"
+														/>
+													</v-list-item-action>
+												</template>
+											</v-list-item>
+										</template>
+									</draggable>
+									<v-btn
+										prepend-icon="mdi-plus"
+										:text="translate('Add widget')"
+										color="green"
+										block
+										class="my-5"
+										@click="openChooseWidget"
+									></v-btn>
+								</v-card>
+							</v-tabs-window-item>
+						</v-tabs-window>
+					</v-card>
+				</v-form>
 			</v-scroll-x-transition>
 		</v-col>
 	</v-row>
@@ -479,6 +481,15 @@
 		},
 		"Edit menu": {
 			cs: "Upravit menu",
+		},
+		"Menu was successfully saved": {
+			cs: "Menu bylo úspěšně uloženo",
+		},
+		"Menu was edited": {
+			cs: "Menu bylo upraveno",
+		},
+		"Menu was deleted": {
+			cs: "Menu bylo smazáno",
 		},
 		Article: {
 			cs: "Článek",
@@ -528,8 +539,8 @@
 			cs: "Volné menu",
 		},
 		"Use mouse to drag": {
-			en: "To change order of widgets you can drag and drop individual widgets using mouse.",
-			cs: "Ke změně pořadí widgetů můžete kliknou a přetáhnout jednotlivé widgety pomocí myši.",
+			en: "To change order of widgets you can drag and drop individual widgets using mouse. Or use arrow icons.",
+			cs: "Ke změně pořadí widgetů můžete kliknou a přetáhnout jednotlivé widgety pomocí myši. Nebo použijte ikonky šipek.",
 		},
 		"New menu": {
 			cs: "Nové menu",
@@ -573,9 +584,6 @@
 	import { useCurrentPageStore } from "../../../../store/currentPage";
 	const currentPage = useCurrentPageStore();
 
-	import { useWebsiteStore } from "~/store/website";
-	const websiteStore = useWebsiteStore();
-
 	const menuSlugValidation = () => {
 		let children =
 			pickMenuTreeActivated.value[0].id !== -1
@@ -588,32 +596,37 @@
 	};
 
 	const createSlug = (string: string | null | undefined) => {
-		let slug = "/";
-		if (!string) return slug;
-		slug += slugify(string, { lower: true, strict: true });
-		return slug;
+		if (!string) return "";
+		let slug = slugify(string, { lower: true, strict: true });
+		if (slug === "") return "";
+		return "/" + slug;
 	};
 
 	// for assigning menu to root
-	const rootObject = {
+	const pickMenuRootObject = {
 		id: -1,
 		name: translate("Main menu"),
 		order: -1,
 		url: "/",
 	};
 
+	// import { useWebsiteStore } from "~/store/website";
+	// const websiteStore = useWebsiteStore();
+	const newMenuString = ref(translate("New menu"));
 	const newMenuDefault = {
-		name: translate("New menu"),
+		name: newMenuString.value,
 		id: 0,
-		title: "",
+		parentId: null,
+		title: newMenuString.value,
 		description: "",
 		active: true,
 		languageId: currentPage.language?.id,
 		otherUrl: "",
 		freeMenu: false,
-		websiteId: websiteStore.$state.data?.id,
-		websitesMsId: websiteStore.$state.data?.websitesMsId,
-		url: createSlug(translate("New menu")),
+		// use API injected values instead
+		// websiteId: websiteStore.$state.data?.id,
+		// websitesMsId: websiteStore.$state.data?.websitesMsId, // this doesn't work anyways
+		url: createSlug(newMenuString.value),
 	} as Partial<InferAttributes<Article>>;
 
 	const chooseWidgetDialog = ref(false);
@@ -645,7 +658,7 @@
 
 	const pickMenuTreeActivated = ref<menuTreeNode[]>([]);
 
-	const selectedOrder = ref({});
+	const selectedOrder = ref<menuTreeNode | null>(null);
 
 	const menuTreeActivated = ref<menuTreeNode[]>([]);
 
@@ -686,7 +699,7 @@
 		}
 		pickedWidget.value = getWidget(pickedWidget.value.id) ?? null;
 
-		if (!("id" in newInfoWidgetContent)) {
+		if (!pickedWidgetContent.value) {
 			let newWidgetContent = {
 				...newInfoWidgetContent,
 				order: widgetsdata.value?.length || 0,
@@ -730,13 +743,16 @@
 	const newMenuActive = ref(false);
 	const createNewMenu = () => {
 		newMenuActive.value = true;
-		let newMenu = structuredClone(newMenuDefault);
+		let newMenu = formDataFunctions.cloneData(newMenuDefault);
 		newMenu.order = menus.value?.length ?? 0;
 		menus.value?.push(newMenu);
 		menuTreeActivated.value = [newMenu];
 
-		pickMenuTreeActivated.value = [rootObject];
+		pickMenuTreeActivated.value = [pickMenuRootObject];
 		menudata.value = newMenu as InferAttributes<Article>;
+
+		formdataOriginalWidgetContent.value = [];
+		widgetsdata.value = [];
 		createMenuOrder();
 	};
 
@@ -749,7 +765,7 @@
 		let orderOptions = [firstOrder] as menuTreeNode[];
 		if (selectFirst) selectedOrder.value = firstOrder;
 
-		let children = [] as menuTreeNode[];
+		let menuOrderOptions = [] as menuTreeNode[];
 
 		let pickedLevelMenus = [] as menuTreeNode[];
 		if (pickMenuTreeActivated.value[0]?.id === -1) {
@@ -766,84 +782,559 @@
 				order: (el?.order ?? 0) + 1,
 			};
 
+			if (i > (menuTreeActivated.value[0].order ?? 0))
+				currentOrderOption.title = (
+					parseInt(currentOrderOption.title) - 1
+				).toString();
+
 			if (i === menuTreeActivated.value[0].order) {
 				if (i === 0) {
 					selectedOrder.value = orderOptions[0];
 				} else {
-					selectedOrder.value = children[i - 1];
+					selectedOrder.value = menuOrderOptions[i - 1];
 				}
 				return;
 			}
-			children.push(currentOrderOption);
+			menuOrderOptions.push(currentOrderOption);
 		});
 
-		orderOptions.push(...children);
+		orderOptions.push(...menuOrderOptions);
 
 		pickMenuOrder.value = orderOptions;
 	};
 
-	const deleteCurrentMenu = () => {
-		console.log(menuTreeActivated.value[0]);
+	const deleteCurrentMenu = async () => {
+		if (!menuTreeActivated.value[0]) return;
+		if (!menus.value) return;
+		if (menuTreeActivated.value[0].id === 0) {
+			// new menu
+			let response = await confirmStore.open(
+				translate("DiscardChanges"),
+				"",
+				{
+					width: 400,
+					type: "yesNo",
+				}
+			);
+			if (!response) return;
+
+			menus.value?.pop();
+			newMenuActive.value = false;
+			menuTreeActivated.value.pop();
+			return;
+		}
+
+		let response = await confirmStore.open(translate("Delete?"), "", {
+			width: 400,
+			type: "yesNo",
+		});
+		if (!response) return;
+
+		let menuLocation = [] as menuTreeNode[];
+		let newMenuOrders: orderDataObject[] = [];
+
+		if (menuTreeActivated.value[0].parentId === null)
+			menuLocation = menus.value;
+		else {
+			let foundMenu = getObjectFromArray<menuTreeNode>(
+				menuTreeActivated.value[0].parentId,
+				menus.value
+			);
+			if (foundMenu && foundMenu.children)
+				menuLocation = foundMenu.children;
+		}
+		if (!menuLocation === undefined) {
+			snackBars.setSnackBar({
+				color: "error",
+				text: translate("Something went wrong"),
+			});
+			return false;
+		}
+
+		let ids = getchangedOrdersIds(
+			menuLocation as orderDataObject[],
+			menuTreeActivated.value[0].order!,
+			menuTreeActivated.value[0].id,
+			true
+		);
+		newMenuOrders.push(...ids);
+
+		let menuDeleted = await fetchData<moduleResponse<Article> | false>(
+			"/api/content/admin/article",
+			{
+				method: "DELETE",
+				body: {
+					id: menuTreeActivated.value[0].id,
+					newMenuOrders,
+				} as deleteArticleRequestBody,
+			}
+		);
+		if (!menuDeleted) {
+			snackBars.setSnackBar({
+				color: "error",
+				text: translate("Something went wrong"),
+			});
+			return false;
+		}
+
+		snackBars.setSnackBar({
+			color: "success",
+			text: translate("Menu was deleted"),
+		});
+
+		menuLocation.splice(menuTreeActivated.value[0].order!, 1);
+
+		changeObjectsOrderFrom(
+			menuTreeActivated.value[0].order!,
+			menuLocation as []
+		);
+
+		menus.value?.pop();
+		menuTreeActivated.value.pop();
+		formdataOriginalWidgetContent.value = [];
+		widgetsdata.value = [];
+		menudata.value = null;
+		// createMenuOrder();
 	};
 
-	const saveCurrentMenu = () => {
-		// menu
-		console.log(menuTreeActivated.value[0]);
-
-		//  menu's WidgetContent - create new / edited / deleted
-		let deletedWCs = [] as number[];
-		let newWCs = [] as WidgetContentCreate[];
-		let editedWCs = [] as Partial<InferAttributes<WidgetContent>>[];
-
-		let newWidgetContentData = [] as (
-			| InferAttributes<WidgetContent>
-			| WidgetContentCreate
-		)[];
-		if (widgetsdata.value) newWidgetContentData = [...widgetsdata.value];
-
-		formdataOriginalWidgetContent.value.forEach((wc) => {
-			let indexWC = newWidgetContentData.findIndex((el) => {
-				if ("id" in el && wc.id === el?.id) return true;
+	/**
+	 *
+	 * @param array
+	 * @param indexFrom
+	 * @param changedId
+	 * @param includingFrom
+	 */
+	const getchangedOrdersIds = <T extends orderDataObject>(
+		array: T[],
+		indexFrom: number,
+		changedId: number = -1,
+		includingFrom: boolean = false
+	): orderDataObject[] => {
+		let result = [] as orderDataObject[];
+		let newOrder = indexFrom;
+		if (includingFrom === false) newOrder += 1;
+		for (let index = indexFrom; index < array.length; index++) {
+			let current = array[index];
+			if (current.id === changedId) continue;
+			result.push({
+				id: current.id,
+				order: newOrder,
+				parentId: current.parentId,
 			});
-			if (indexWC === -1) {
-				deletedWCs.push(wc.id);
-				return;
+			newOrder++;
+		}
+		return result;
+	};
+
+	import { VForm } from "vuetify/components";
+	const form = ref<VForm | null>(null);
+
+	const saveCurrentMenu = async () => {
+		// menu
+		//validate changes
+		if (!form.value) return;
+		if (!menus.value?.length) return;
+		if (!menuTreeActivated.value[0] || !menudata.value) return;
+
+		let validate = await form.value?.validate();
+		if (validate.errors.length > 0) {
+			snackBars.setSnackBar({
+				color: "warning",
+				text: translate("FormValidationError"),
+			});
+			return;
+		}
+
+		let menuIsNew = false;
+		let menuIsNewRoot = false; // new menu inside root or inside other menu
+
+		let menuChangedLocation = false; // existing menu changed order on same location
+		let menuChangedLocationToOtherMenu = false; // existing menu changed location (and therefor order as well)
+
+		// check if orders are needed to change
+		// add data to change orders of previous menus if needed
+		let newMenuOrders: orderDataObject[] = [];
+		let newMenuUrls: urlDataObject[] = [];
+		if (menudata.value?.id === 0) {
+			// new menu
+			menuIsNew = true;
+			if (pickMenuTreeActivated.value[0].id === -1) {
+				// main menu (root)
+				menuIsNewRoot = true;
+				let ids = getchangedOrdersIds(
+					menus.value as orderDataObject[],
+					selectedOrder.value?.order ?? 0,
+					menuTreeActivated.value[0].id
+				);
+				newMenuOrders.push(...ids);
+			} else {
+				// inserted into any menu
+				let ids = getchangedOrdersIds(
+					pickMenuTreeActivated.value[0]
+						.children as orderDataObject[],
+					selectedOrder.value?.order ?? 0,
+					menuTreeActivated.value[0].id
+				);
+				newMenuOrders.push(...ids);
+			}
+		} else {
+			// already existing menu
+			let originalParentId = menuTreeActivated.value[0].parentId;
+			let originalMenuLocation = [] as menuTreeNode[];
+
+			let newParentId = menudata.value.parentId;
+			let newMenuLocation = [] as menuTreeNode[];
+			if (
+				menuTreeActivated.value[0].parentId === menudata.value.parentId
+			) {
+				// only order was changed on same level
+				if (menuTreeActivated.value[0].order !== menudata.value.order)
+					menuChangedLocation = true;
+			} else {
+				// menu was put inside another one
+				menuChangedLocationToOtherMenu = true;
+
+				if (originalParentId === null)
+					originalMenuLocation = menus.value;
+				else {
+					let foundMenu = getObjectFromArray<menuTreeNode>(
+						originalParentId,
+						menus.value
+					);
+					if (foundMenu && foundMenu.children)
+						originalMenuLocation = foundMenu.children;
+				}
+				if (originalMenuLocation === undefined) {
+					snackBars.setSnackBar({
+						color: "error",
+						text: translate("Something went wrong"),
+					});
+					return false;
+				}
+
+				if (newParentId === null) newMenuLocation = menus.value;
+				else {
+					let foundMenu = getObjectFromArray<menuTreeNode>(
+						newParentId,
+						menus.value
+					);
+					if (foundMenu && foundMenu.children)
+						newMenuLocation = foundMenu.children;
+				}
+				if (newMenuLocation === undefined) {
+					snackBars.setSnackBar({
+						color: "error",
+						text: translate("Something went wrong"),
+					});
+					return false;
+				}
+
+				let ids = getchangedOrdersIds(
+					originalMenuLocation as orderDataObject[],
+					menudata.value.order,
+					menudata.value.id,
+					true
+				);
+				newMenuOrders.push(...ids);
+
+				ids = getchangedOrdersIds(
+					newMenuLocation as orderDataObject[],
+					selectedOrder.value?.order ?? 0,
+					menuTreeActivated.value[0].id
+				);
+				newMenuOrders.push(...ids);
 			}
 
-			let editCandidateWC = newWidgetContentData[
-				indexWC
-			] as InferAttributes<WidgetContent>;
-			let diff = formDataFunctions.dataDifference(wc, editCandidateWC);
-			if (Object.keys(diff).length > 0) {
-				editedWCs.push({
-					...diff,
-					moduleId: currentModule?.id,
-					id: editCandidateWC.id,
+			// change urls of children if location was changed
+			if (menudata.value.url !== menuTreeActivated.value[0].url)
+				newMenuUrls = updateChildrenUrls(
+					menuTreeActivated.value[0],
+					menudata.value.url
+				);
+		}
+
+		if (menuIsNew) {
+			let newWCs = [] as WidgetContentCreate[];
+			newWCs = widgetsdata.value || [];
+
+			let menudataSave: Partial<InferAttributes<Article>>;
+			menudataSave = { ...menudata.value };
+			delete menudataSave.id;
+
+			let newMenuCreated = await fetchData<
+				moduleResponse<Article> | false
+			>("/api/content/admin/article", {
+				method: "PUT",
+				body: {
+					menu: { data: menudataSave, newMenuOrders },
+					widgetContent: {
+						newWCs,
+					},
+				} as saveNewArticleRequestBody,
+			});
+			if (!newMenuCreated) {
+				snackBars.setSnackBar({
+					color: "error",
+					text: translate("Something went wrong"),
 				});
+				return false;
 			}
-			newWidgetContentData.splice(indexWC, 1);
-		});
-		newWCs = newWidgetContentData;
-		console.log(deletedWCs, newWCs, editedWCs);
 
-		// console.log(
-		// 	formDataFunctions.dataDifference(formdataOriginalWidgetContent, formdataOriginalWidgetContent)
-		// );
+			if (menuIsNewRoot) {
+				menus.value?.splice(
+					newMenuCreated.moduleInfo.order,
+					0,
+					newMenuCreated.moduleInfo
+				);
+				changeObjectsOrderFrom(
+					newMenuCreated.moduleInfo.order,
+					menus.value as buildTreeType<InferAttributes<Article>>
+				);
+			} else {
+				let parentMenuArray = getObjectFromArray<menuTreeNode>(
+					newMenuCreated.moduleInfo.parentId,
+					menus.value ?? []
+				);
+				if (parentMenuArray) {
+					if (!parentMenuArray.children)
+						parentMenuArray.children = [];
+
+					parentMenuArray.children.splice(
+						newMenuCreated.moduleInfo.order,
+						0,
+						newMenuCreated.moduleInfo
+					);
+
+					changeObjectsOrderFrom(
+						newMenuCreated.moduleInfo.order,
+						parentMenuArray.children as buildTreeType<
+							InferAttributes<Article>
+						>
+					);
+				}
+			}
+
+			menuTreeActivated.value.pop();
+			newMenuActive.value = false;
+
+			if (newMenuCreated.widgetContents) {
+				formdataOriginalWidgetContent.value =
+					newMenuCreated.widgetContents;
+				widgetsdata.value = formDataFunctions.cloneData(
+					newMenuCreated.widgetContents
+				);
+			}
+
+			if (newMenuCreated.moduleInfo) {
+				menudata.value = formDataFunctions.cloneData(
+					newMenuCreated.moduleInfo
+				);
+				menuTreeActivated.value.push(newMenuCreated.moduleInfo);
+			}
+			createMenuOrder();
+
+			snackBars.setSnackBar({
+				color: "success",
+				text: translate("Menu was successfully saved"),
+			});
+		} else {
+			// edit menu
+
+			//  menu's WidgetContent - create new / edited / deleted
+			let deletedWCs = [] as number[];
+			let newWCs = [] as WidgetContentCreate[];
+			let editedWCs = [] as Partial<InferAttributes<WidgetContent>>[];
+
+			let newWidgetContentData = [] as (
+				| InferAttributes<WidgetContent>
+				| WidgetContentCreate
+			)[];
+			if (widgetsdata.value)
+				newWidgetContentData = [...widgetsdata.value];
+
+			formdataOriginalWidgetContent.value.forEach((wc) => {
+				let indexWC = newWidgetContentData.findIndex((el) => {
+					if ("id" in el && wc.id === el?.id) return true;
+				});
+				if (indexWC === -1) {
+					deletedWCs.push(wc.id);
+					return;
+				}
+
+				let editCandidateWC = newWidgetContentData[
+					indexWC
+				] as InferAttributes<WidgetContent>;
+				console.log(wc, editCandidateWC);
+
+				let diff = formDataFunctions.dataDifference(
+					wc,
+					editCandidateWC
+				);
+
+				if (Object.keys(diff).length > 0) {
+					editedWCs.push({
+						...diff,
+						moduleId: currentModule?.id,
+						id: editCandidateWC.id,
+					});
+				}
+				newWidgetContentData.splice(indexWC, 1);
+			});
+			newWCs = newWidgetContentData;
+
+			let menudataSave: Partial<InferAttributes<Article>>;
+			menudataSave = formDataFunctions.dataDifference(
+				menuTreeActivated.value[0],
+				menudata.value
+			);
+			let id = menudata.value.id;
+			let menuUpdated = await fetchData<moduleResponse<Article> | false>(
+				"/api/content/admin/article",
+				{
+					method: "PATCH",
+					body: {
+						menu: {
+							id,
+							data: menudataSave,
+							previousLocation: {
+								id,
+								order: menuTreeActivated.value[0].order,
+								parentId: menuTreeActivated.value[0].parentId,
+							},
+							newMenuUrls,
+						},
+						widgetContent: {
+							deletedWCs,
+							newWCs,
+							editedWCs,
+						},
+					} as editArticleRequestBody,
+				}
+			);
+			if (!menuUpdated) {
+				snackBars.setSnackBar({
+					color: "error",
+					text: translate("Something went wrong"),
+				});
+				return false;
+			}
+
+			let key: keyof typeof menudataSave;
+			for (key in menudataSave) {
+				if (Object.prototype.hasOwnProperty.call(menudataSave, key)) {
+					if (menuUpdated.moduleInfo[key] !== undefined) {
+						// @ts-ignore
+						menuTreeActivated.value[0][key] =
+							menuUpdated.moduleInfo[key];
+					}
+				}
+			}
+
+			if (menuChangedLocation) {
+				let parentMenuArray = getObjectFromArray<menuTreeNode>(
+					menuUpdated.moduleInfo.parentId,
+					menus.value ?? []
+				);
+
+				if (!parentMenuArray || !parentMenuArray.children) {
+					snackBars.setSnackBar({
+						color: "error",
+						text: translate("Something went wrong"),
+					});
+					return false;
+				}
+				changeArrayOrder(
+					menuTreeActivated.value[0].order!,
+					menuUpdated.moduleInfo.order,
+					parentMenuArray.children
+				);
+				createMenuOrder();
+			} else if (menuChangedLocationToOtherMenu) {
+				createMenuOrder();
+			}
+
+			if (menuUpdated.widgetContents) {
+				formdataOriginalWidgetContent.value =
+					menuUpdated.widgetContents;
+				widgetsdata.value = formDataFunctions.cloneData(
+					menuUpdated.widgetContents
+				);
+			}
+
+			if (menuUpdated.moduleInfo) {
+				menudata.value = formDataFunctions.cloneData(
+					menuUpdated.moduleInfo
+				);
+				menuTreeActivated.value.push(menuUpdated.moduleInfo);
+			}
+			createMenuOrder();
+
+			snackBars.setSnackBar({
+				color: "success",
+				text: translate("Menu was edited"),
+			});
+		}
+	};
+
+	/**
+	 *
+	 * @param parent
+	 * @param parentUrl
+	 * @param mutate if true mutates `parent` otherwise just return new children's urls
+	 */
+	const updateChildrenUrls = (
+		parent: menuTreeNode,
+		parentUrl: string,
+		mutate: boolean = false
+	): urlDataObject[] => {
+		if (!parent.children) return [];
+		let updatedUrls: urlDataObject[] = [];
+		parent.children.forEach((child) => {
+			if (!child.id) return;
+			const newUrl = `${parentUrl}${createSlug(child.name)}`;
+			if (mutate) {
+				child.url = newUrl;
+			}
+			updatedUrls.push({ id: child.id, url: newUrl });
+			updatedUrls = updatedUrls.concat(
+				updateChildrenUrls(child, newUrl, mutate)
+			);
+		});
+		return updatedUrls;
+	};
+
+	type orderType = {
+		name: string;
+		order: number;
+		url: string;
+	};
+	const orderChanged = (el: orderType) => {
+		if (menudata.value) menudata.value.order = el.order;
 	};
 
 	const activatedChanged = async (e: menuTreeNode[]) => {
 		// even though it returns array it can contain only 1 activated menu
 		if (e.length === 0) return;
 
-		if (newMenuActive) {
+		if (newMenuActive.value) {
 			// assure user he wants to cancel his "new menu creation"
-			return;
+			let response = await confirmStore.open(
+				translate("DiscardChanges"),
+				"",
+				{
+					width: 400,
+					type: "yesNo",
+				}
+			);
+			if (!response) return;
+			if (menus.value?.[menus.value.length - 1].id === 0)
+				menus.value?.splice(menus.value.length - 1, 1);
 			newMenuActive.value = false;
 		}
 
 		menuTreeActivated.value = e;
 		if (e[0].parentId == null) {
-			pickMenuTreeActivated.value = [rootObject];
+			pickMenuTreeActivated.value = [pickMenuRootObject];
 		} else if (menus.value) {
 			let parentObj = getObjectFromArray<menuTreeNode>(
 				e[0].parentId,
@@ -870,6 +1361,7 @@
 				data?.widgetContents
 			);
 		}
+
 		createMenuOrder();
 	};
 
@@ -890,7 +1382,10 @@
 			return;
 		}
 
-		let child = findById(menuTreeActivated.value[0], clickedPickMenuId);
+		let child = findMenuTreeNodeById(
+			menuTreeActivated.value[0],
+			clickedPickMenuId
+		);
 		if (child) {
 			snackBars.setSnackBar({
 				color: "warning",
@@ -899,17 +1394,25 @@
 			return;
 		}
 
+		if (menudata.value)
+			menudata.value.parentId = e[0].id === -1 ? null : e[0].id || null;
 		pickMenuTreeActivated.value = e;
 		createMenuOrder(true);
+
+		// trigger computed currentSlug
+		currentSlug.value;
 	};
 
-	const findById = (obj: menuTreeNode, id: number): menuTreeNode | null => {
+	const findMenuTreeNodeById = (
+		obj: menuTreeNode,
+		id: number
+	): menuTreeNode | null => {
 		if (obj.id === id) {
 			return obj;
 		}
 		if (obj.children) {
 			for (let child of obj.children) {
-				let result = findById(child, id);
+				let result = findMenuTreeNodeById(child, id);
 				if (result) {
 					return result;
 				}
@@ -920,7 +1423,7 @@
 
 	const pickMenuTree = computed(() => {
 		return [
-			rootObject,
+			pickMenuRootObject,
 			...(menus.value?.filter((e) => e.url !== "/") ?? []),
 		];
 	});
@@ -931,6 +1434,9 @@
 
 	const validationMenuNameRules = computed(() => [
 		() => !!menudata.value?.name || translate("Fill in this field"),
+		() =>
+			createSlug(menudata.value?.name) !== "" ||
+			translate("Fill in this field"),
 		() =>
 			menuSlugValidation() ||
 			"Menu se shodným URL již existuje! Změňte prosím název.",
@@ -952,11 +1458,12 @@
 	const currentNameSlug = computed(() => createSlug(menudata.value?.name));
 	const currentSlug = computed(() => {
 		if (menudata.value?.url === "/") return "/";
-		return (
+		let slug =
 			(pickMenuTreeActivated.value[0].id !== -1
 				? pickMenuTreeActivated.value[0].url
-				: "") + currentNameSlug.value
-		);
+				: "") + currentNameSlug.value;
+		if (menudata.value) menudata.value.url = slug;
+		return slug;
 	});
 
 	const changeArticleWidgetProperty = (a: any, b: any, c: any) => {};
@@ -973,6 +1480,7 @@
 			},
 		};
 		changeDraggablePositionProgramatically(changed.moved.newIndex, index);
+		changeWidgetsOrder(changed);
 	};
 
 	const deleteWidget = async (index: number) => {
@@ -998,10 +1506,6 @@
 	const changePositionDragged = (
 		changed: draggablePositionChanged<WidgetContent>
 	) => {
-		console.log(changed);
-
-		console.log(changed.moved.element.content);
-
 		if (!changeWidgetsOrder(changed)) {
 			revertDraggable(changed);
 		}
@@ -1025,7 +1529,13 @@
 
 	import { useWidgetsStore } from "~/store/widgets";
 	import { Widget } from "../../../../digitalniweb-types/models/globalData";
-	import { cs } from "vuetify/locale";
+	import {
+		deleteArticleRequestBody,
+		editArticleRequestBody,
+		orderDataObject,
+		saveNewArticleRequestBody,
+		urlDataObject,
+	} from "../../../../digitalniweb-types/apps/communication/modules/articles";
 
 	const widgets = useWidgetsStore();
 	const getWidget = (widgetId: number) => {
@@ -1035,24 +1545,18 @@
 	const changeWidgetsOrder = (
 		changed: draggablePositionChanged<WidgetContent>
 	) => {
-		//create custom function
 		if (widgetsdata.value)
 			changeObjectsOrderRange(
 				changed.moved.oldIndex,
 				changed.moved.newIndex,
 				widgetsdata.value
 			);
-		console.log(widgetsdata.value);
-
-		// also add:
-		// - reindex when deleted
-		// - reindex after adding to whatever place
-
 		return true;
 	};
 
 	/**
 	 * Mutates array
+	 * Changes element's index from fromIndex to toIndex
 	 * @param {number} fromIndex - The index of the element to move.
 	 * @param {number} toIndex - The target index to move the element to.
 	 * @param {any[]} array - The array containing the elements to move.
