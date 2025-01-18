@@ -313,7 +313,7 @@
 		if (Object.getOwnPropertyNames(dataDifference).length === 0) {
 			disabled.value = false;
 			snackBarStore.setSnackBar({
-				text: "Nebyly zaregistrovány žádné změny.",
+				text: translate("NoChangeMade"),
 				color: "orange",
 			});
 			return;

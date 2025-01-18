@@ -760,7 +760,12 @@
 
 	// currently picked Menu's order
 	const pickMenuOrder = ref<menuTreeNode[]>([]);
-	const firstOrder = { title: "1", name: translate("As first"), order: 0 };
+	const firstOrder = {
+		title: "1",
+		name: translate("As first"),
+		order: 0,
+		id: -1,
+	};
 	const createMenuOrder = (selectFirst = false) => {
 		let orderOptions = [firstOrder] as menuTreeNode[];
 		if (selectFirst) selectedOrder.value = firstOrder;
@@ -775,27 +780,43 @@
 			pickedLevelMenus = pickMenuTreeActivated.value[0]?.children ?? [];
 		}
 
+		// pickedLevelMenus[n] -> all have the same parentId so take first
+		let pickedMenuParentId = pickedLevelMenus[0].parentId;
 		pickedLevelMenus.forEach((el, i) => {
 			let currentOrderOption = {
 				title: (i + 2).toString(),
 				name: el.name,
 				order: (el?.order ?? 0) + 1,
+				id: el.id,
 			};
 
-			if (i > (menuTreeActivated.value[0].order ?? 0))
-				currentOrderOption.title = (
-					parseInt(currentOrderOption.title) - 1
-				).toString();
-
-			if (i === menuTreeActivated.value[0].order) {
-				if (i === 0) {
-					selectedOrder.value = orderOptions[0];
-				} else {
-					selectedOrder.value = menuOrderOptions[i - 1];
+			// if changing order inside same menu
+			if (menuTreeActivated.value[0]?.parentId === pickedMenuParentId) {
+				if (i > (menuTreeActivated.value[0].order ?? 0)) {
+					currentOrderOption.title = (
+						parseInt(currentOrderOption.title) - 1
+					).toString();
+					currentOrderOption.order--;
 				}
-				return;
+
+				if (i === menuTreeActivated.value[0].order) {
+					if (i === 0) {
+						selectedOrder.value = orderOptions[0];
+					} else {
+						selectedOrder.value = menuOrderOptions[i - 1];
+					}
+					return;
+				}
 			}
 			menuOrderOptions.push(currentOrderOption);
+
+			// if putting menu inside other menu then put it to the end
+			if (
+				menuTreeActivated.value[0]?.parentId !== pickedMenuParentId &&
+				i == pickedLevelMenus.length - 1
+			) {
+				selectedOrder.value = menuOrderOptions[i];
+			}
 		});
 
 		orderOptions.push(...menuOrderOptions);
@@ -831,7 +852,6 @@
 		if (!response) return;
 
 		let menuLocation = [] as menuTreeNode[];
-		let newMenuOrders: orderDataObject[] = [];
 
 		if (menuTreeActivated.value[0].parentId === null)
 			menuLocation = menus.value;
@@ -851,21 +871,12 @@
 			return false;
 		}
 
-		let ids = getchangedOrdersIds(
-			menuLocation as orderDataObject[],
-			menuTreeActivated.value[0].order!,
-			menuTreeActivated.value[0].id,
-			true
-		);
-		newMenuOrders.push(...ids);
-
 		let menuDeleted = await fetchData<moduleResponse<Article> | false>(
 			"/api/content/admin/article",
 			{
 				method: "DELETE",
 				body: {
 					id: menuTreeActivated.value[0].id,
-					newMenuOrders,
 				} as deleteArticleRequestBody,
 			}
 		);
@@ -889,7 +900,6 @@
 			menuLocation as []
 		);
 
-		menus.value?.pop();
 		menuTreeActivated.value.pop();
 		formdataOriginalWidgetContent.value = [];
 		widgetsdata.value = [];
@@ -951,9 +961,6 @@
 		let menuChangedLocation = false; // existing menu changed order on same location
 		let menuChangedLocationToOtherMenu = false; // existing menu changed location (and therefor order as well)
 
-		// check if orders are needed to change
-		// add data to change orders of previous menus if needed
-		let newMenuOrders: orderDataObject[] = [];
 		let newMenuUrls: urlDataObject[] = [];
 		if (menudata.value?.id === 0) {
 			// new menu
@@ -961,21 +968,6 @@
 			if (pickMenuTreeActivated.value[0].id === -1) {
 				// main menu (root)
 				menuIsNewRoot = true;
-				let ids = getchangedOrdersIds(
-					menus.value as orderDataObject[],
-					selectedOrder.value?.order ?? 0,
-					menuTreeActivated.value[0].id
-				);
-				newMenuOrders.push(...ids);
-			} else {
-				// inserted into any menu
-				let ids = getchangedOrdersIds(
-					pickMenuTreeActivated.value[0]
-						.children as orderDataObject[],
-					selectedOrder.value?.order ?? 0,
-					menuTreeActivated.value[0].id
-				);
-				newMenuOrders.push(...ids);
 			}
 		} else {
 			// already existing menu
@@ -1028,21 +1020,6 @@
 					});
 					return false;
 				}
-
-				let ids = getchangedOrdersIds(
-					originalMenuLocation as orderDataObject[],
-					menudata.value.order,
-					menudata.value.id,
-					true
-				);
-				newMenuOrders.push(...ids);
-
-				ids = getchangedOrdersIds(
-					newMenuLocation as orderDataObject[],
-					selectedOrder.value?.order ?? 0,
-					menuTreeActivated.value[0].id
-				);
-				newMenuOrders.push(...ids);
 			}
 
 			// change urls of children if location was changed
@@ -1066,7 +1043,7 @@
 			>("/api/content/admin/article", {
 				method: "PUT",
 				body: {
-					menu: { data: menudataSave, newMenuOrders },
+					menu: { data: menudataSave },
 					widgetContent: {
 						newWCs,
 					},
@@ -1164,7 +1141,6 @@
 				let editCandidateWC = newWidgetContentData[
 					indexWC
 				] as InferAttributes<WidgetContent>;
-				console.log(wc, editCandidateWC);
 
 				let diff = formDataFunctions.dataDifference(
 					wc,
@@ -1182,11 +1158,28 @@
 			});
 			newWCs = newWidgetContentData;
 
-			let menudataSave: Partial<InferAttributes<Article>>;
+			let menudataSave: menuTreeNode;
 			menudataSave = formDataFunctions.dataDifference(
 				menuTreeActivated.value[0],
 				menudata.value
 			);
+
+			delete menudataSave.children;
+
+			// check if any change was made
+			if (
+				!Object.keys(menudataSave).length &&
+				!deletedWCs.length &&
+				!editedWCs.length &&
+				!newWCs.length
+			) {
+				snackBars.setSnackBar({
+					color: "orange",
+					text: translate("NoChangeMade"),
+				});
+				return false;
+			}
+
 			let id = menudata.value.id;
 			let menuUpdated = await fetchData<moduleResponse<Article> | false>(
 				"/api/content/admin/article",
@@ -1196,11 +1189,6 @@
 						menu: {
 							id,
 							data: menudataSave,
-							previousLocation: {
-								id,
-								order: menuTreeActivated.value[0].order,
-								parentId: menuTreeActivated.value[0].parentId,
-							},
 							newMenuUrls,
 						},
 						widgetContent: {
@@ -1211,6 +1199,7 @@
 					} as editArticleRequestBody,
 				}
 			);
+
 			if (!menuUpdated) {
 				snackBars.setSnackBar({
 					color: "error",
@@ -1219,38 +1208,126 @@
 				return false;
 			}
 
+			if (menuChangedLocation) {
+				let parentMenuArray = menus.value;
+
+				if (menuUpdated.moduleInfo.parentId !== null) {
+					let parentMenuArrayCandidate =
+						getObjectFromArray<menuTreeNode>(
+							menuUpdated.moduleInfo.parentId,
+							menus.value ?? []
+						);
+
+					if (
+						!parentMenuArrayCandidate ||
+						!parentMenuArrayCandidate.children
+					) {
+						snackBars.setSnackBar({
+							color: "error",
+							text: translate("Something went wrong"),
+						});
+						return false;
+					}
+					parentMenuArray = parentMenuArrayCandidate.children;
+				}
+				let tmpList = parentMenuArray?.splice(
+					menuTreeActivated.value[0].order!,
+					1
+				);
+
+				if (tmpList)
+					parentMenuArray?.splice(
+						menuUpdated.moduleInfo.order,
+						0,
+						tmpList[0]
+					);
+
+				changeObjectsOrderRange(
+					menuTreeActivated.value[0].order!,
+					menuUpdated.moduleInfo.order,
+					parentMenuArray as []
+				);
+			} else if (menuChangedLocationToOtherMenu) {
+				// ! this is wrong
+				let previousParentMenuArray = menus.value;
+
+				if (menuTreeActivated.value[0].parentId !== null) {
+					let previousParentMenuArrayCandidate =
+						getObjectFromArray<menuTreeNode>(
+							menuTreeActivated.value[0].parentId,
+							menus.value ?? []
+						);
+
+					if (
+						!previousParentMenuArrayCandidate ||
+						!previousParentMenuArrayCandidate.children
+					) {
+						snackBars.setSnackBar({
+							color: "error",
+							text: translate("Something went wrong"),
+						});
+						return false;
+					}
+					previousParentMenuArray =
+						previousParentMenuArrayCandidate.children;
+				}
+
+				changeObjectsOrderFrom(
+					menuTreeActivated.value[0].order! + 1,
+					previousParentMenuArray as [],
+					"order",
+					menuTreeActivated.value[0].order
+				);
+
+				let tmpList = previousParentMenuArray?.splice(
+					menuTreeActivated.value[0].order!,
+					1
+				);
+
+				let parentMenuArray = menus.value;
+
+				if (menuUpdated.moduleInfo.parentId !== null) {
+					let parentMenuArrayCandidate =
+						getObjectFromArray<menuTreeNode>(
+							menuUpdated.moduleInfo.parentId,
+							menus.value ?? []
+						);
+
+					if (
+						!parentMenuArrayCandidate ||
+						!parentMenuArrayCandidate.children
+					) {
+						snackBars.setSnackBar({
+							color: "error",
+							text: translate("Something went wrong"),
+						});
+						return false;
+					}
+					parentMenuArray = parentMenuArrayCandidate.children;
+				}
+
+				changeObjectsOrderFrom(
+					menuUpdated.moduleInfo.order,
+					parentMenuArray as []
+				);
+
+				parentMenuArray?.splice(
+					menuUpdated.moduleInfo.order,
+					0,
+					tmpList[0]
+				);
+			}
+
 			let key: keyof typeof menudataSave;
 			for (key in menudataSave) {
 				if (Object.prototype.hasOwnProperty.call(menudataSave, key)) {
+					if (key === "children") continue;
 					if (menuUpdated.moduleInfo[key] !== undefined) {
 						// @ts-ignore
 						menuTreeActivated.value[0][key] =
 							menuUpdated.moduleInfo[key];
 					}
 				}
-			}
-
-			if (menuChangedLocation) {
-				let parentMenuArray = getObjectFromArray<menuTreeNode>(
-					menuUpdated.moduleInfo.parentId,
-					menus.value ?? []
-				);
-
-				if (!parentMenuArray || !parentMenuArray.children) {
-					snackBars.setSnackBar({
-						color: "error",
-						text: translate("Something went wrong"),
-					});
-					return false;
-				}
-				changeArrayOrder(
-					menuTreeActivated.value[0].order!,
-					menuUpdated.moduleInfo.order,
-					parentMenuArray.children
-				);
-				createMenuOrder();
-			} else if (menuChangedLocationToOtherMenu) {
-				createMenuOrder();
 			}
 
 			if (menuUpdated.widgetContents) {
@@ -1267,6 +1344,7 @@
 				);
 				menuTreeActivated.value.push(menuUpdated.moduleInfo);
 			}
+
 			createMenuOrder();
 
 			snackBars.setSnackBar({
@@ -1536,6 +1614,7 @@
 		saveNewArticleRequestBody,
 		urlDataObject,
 	} from "../../../../digitalniweb-types/apps/communication/modules/articles";
+	import { id } from "vuetify/locale";
 
 	const widgets = useWidgetsStore();
 	const getWidget = (widgetId: number) => {
@@ -1566,7 +1645,7 @@
 		fromIndex: number,
 		toIndex: number,
 		array: any[]
-	) {
+	): boolean {
 		if (
 			fromIndex < 0 ||
 			toIndex < 0 ||
@@ -1589,9 +1668,17 @@
 	function changeObjectsOrderFrom<
 		T extends Record<string, any> & { [key in P]: number },
 		P extends string = "order"
-	>(fromIndex: number, array: T[], property: P = "order" as P) {
+	>(
+		fromIndex: number,
+		array: T[],
+		property: P = "order" as P,
+		startingNumber: number | false = false
+	) {
+		if (startingNumber === false) startingNumber = fromIndex;
+		let addition = 0;
 		for (let index = fromIndex; index < array.length; index++) {
-			array[index][property] = index as T[P];
+			array[index][property] = (startingNumber + addition) as T[P];
+			addition++;
 		}
 	}
 
