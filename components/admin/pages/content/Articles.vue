@@ -822,6 +822,7 @@
 		orderOptions.push(...menuOrderOptions);
 
 		pickMenuOrder.value = orderOptions;
+		orderChanged(selectedOrder.value as orderType);
 	};
 
 	const deleteCurrentMenu = async () => {
@@ -1248,7 +1249,6 @@
 					parentMenuArray as []
 				);
 			} else if (menuChangedLocationToOtherMenu) {
-				// ! this is wrong
 				let previousParentMenuArray = menus.value;
 
 				if (menuTreeActivated.value[0].parentId !== null) {
@@ -1308,7 +1308,9 @@
 
 				changeObjectsOrderFrom(
 					menuUpdated.moduleInfo.order,
-					parentMenuArray as []
+					parentMenuArray as [],
+					"order",
+					menuUpdated.moduleInfo.order + 1
 				);
 
 				parentMenuArray?.splice(
@@ -1340,9 +1342,8 @@
 
 			if (menuUpdated.moduleInfo) {
 				menudata.value = formDataFunctions.cloneData(
-					menuUpdated.moduleInfo
+					menuTreeActivated.value[0] as Article
 				);
-				menuTreeActivated.value.push(menuUpdated.moduleInfo);
 			}
 
 			createMenuOrder();
