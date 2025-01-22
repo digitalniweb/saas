@@ -175,7 +175,7 @@
 									<v-select
 										:items="pickMenuOrder"
 										return-object
-										item-value="order"
+										item-value="id"
 										@update:model-value="(el)=>orderChanged(el as orderType)"
 										v-model="selectedOrder"
 									>
@@ -957,70 +957,63 @@
 		}
 
 		let menuIsNew = false;
-		let menuIsNewRoot = false; // new menu inside root or inside other menu
 
 		let menuChangedLocation = false; // existing menu changed order on same location
 		let menuChangedLocationToOtherMenu = false; // existing menu changed location (and therefor order as well)
+
+		let originalMenuLocation = [] as menuTreeNode[];
+		let newMenuLocation = [] as menuTreeNode[];
+		let originalParentId = menuTreeActivated.value[0].parentId;
+		let newParentId = menudata.value.parentId;
+		if (originalParentId === null) originalMenuLocation = menus.value;
+		else {
+			let foundMenu = getObjectFromArray<menuTreeNode>(
+				originalParentId,
+				menus.value
+			);
+			if (foundMenu && foundMenu.children)
+				originalMenuLocation = foundMenu.children;
+		}
+		if (originalMenuLocation === undefined) {
+			snackBars.setSnackBar({
+				color: "error",
+				text: translate("Something went wrong"),
+			});
+			return false;
+		}
+
+		if (newParentId === null) newMenuLocation = menus.value;
+		else if (originalParentId === newParentId)
+			newMenuLocation = originalMenuLocation;
+		else {
+			let foundMenu = getObjectFromArray<menuTreeNode>(
+				newParentId,
+				menus.value
+			);
+			if (foundMenu && foundMenu.children)
+				newMenuLocation = foundMenu.children;
+		}
+		if (newMenuLocation.length == 0) {
+			snackBars.setSnackBar({
+				color: "error",
+				text: translate("Something went wrong"),
+			});
+			return false;
+		}
 
 		let newMenuUrls: urlDataObject[] = [];
 		if (menudata.value?.id === 0) {
 			// new menu
 			menuIsNew = true;
-			if (pickMenuTreeActivated.value[0].id === -1) {
-				// main menu (root)
-				menuIsNewRoot = true;
-			}
 		} else {
 			// already existing menu
-			let originalParentId = menuTreeActivated.value[0].parentId;
-			let originalMenuLocation = [] as menuTreeNode[];
-
-			let newParentId = menudata.value.parentId;
-			let newMenuLocation = [] as menuTreeNode[];
-			if (
-				menuTreeActivated.value[0].parentId === menudata.value.parentId
-			) {
+			if (originalParentId === newParentId) {
 				// only order was changed on same level
 				if (menuTreeActivated.value[0].order !== menudata.value.order)
 					menuChangedLocation = true;
 			} else {
 				// menu was put inside another one
 				menuChangedLocationToOtherMenu = true;
-
-				if (originalParentId === null)
-					originalMenuLocation = menus.value;
-				else {
-					let foundMenu = getObjectFromArray<menuTreeNode>(
-						originalParentId,
-						menus.value
-					);
-					if (foundMenu && foundMenu.children)
-						originalMenuLocation = foundMenu.children;
-				}
-				if (originalMenuLocation === undefined) {
-					snackBars.setSnackBar({
-						color: "error",
-						text: translate("Something went wrong"),
-					});
-					return false;
-				}
-
-				if (newParentId === null) newMenuLocation = menus.value;
-				else {
-					let foundMenu = getObjectFromArray<menuTreeNode>(
-						newParentId,
-						menus.value
-					);
-					if (foundMenu && foundMenu.children)
-						newMenuLocation = foundMenu.children;
-				}
-				if (newMenuLocation === undefined) {
-					snackBars.setSnackBar({
-						color: "error",
-						text: translate("Something went wrong"),
-					});
-					return false;
-				}
 			}
 
 			// change urls of children if location was changed
@@ -1058,39 +1051,16 @@
 				return false;
 			}
 
-			if (menuIsNewRoot) {
-				menus.value?.splice(
-					newMenuCreated.moduleInfo.order,
-					0,
-					newMenuCreated.moduleInfo
-				);
-				changeObjectsOrderFrom(
-					newMenuCreated.moduleInfo.order,
-					menus.value as buildTreeType<InferAttributes<Article>>
-				);
-			} else {
-				let parentMenuArray = getObjectFromArray<menuTreeNode>(
-					newMenuCreated.moduleInfo.parentId,
-					menus.value ?? []
-				);
-				if (parentMenuArray) {
-					if (!parentMenuArray.children)
-						parentMenuArray.children = [];
+			newMenuLocation.splice(
+				newMenuCreated.moduleInfo.order,
+				0,
+				newMenuCreated.moduleInfo
+			);
 
-					parentMenuArray.children.splice(
-						newMenuCreated.moduleInfo.order,
-						0,
-						newMenuCreated.moduleInfo
-					);
-
-					changeObjectsOrderFrom(
-						newMenuCreated.moduleInfo.order,
-						parentMenuArray.children as buildTreeType<
-							InferAttributes<Article>
-						>
-					);
-				}
-			}
+			changeObjectsOrderFrom(
+				newMenuCreated.moduleInfo.order,
+				newMenuLocation as buildTreeType<InferAttributes<Article>>
+			);
 
 			menuTreeActivated.value.pop();
 			newMenuActive.value = false;
@@ -1209,124 +1179,46 @@
 				return false;
 			}
 
-			if (menuChangedLocation) {
-				let parentMenuArray = menus.value;
+			if (menuChangedLocation || menuChangedLocationToOtherMenu) {
+				let originalOrder = menuTreeActivated.value[0].order!;
+				let newOrder = menuUpdated.moduleInfo.order;
 
-				if (menuUpdated.moduleInfo.parentId !== null) {
-					let parentMenuArrayCandidate =
-						getObjectFromArray<menuTreeNode>(
-							menuUpdated.moduleInfo.parentId,
-							menus.value ?? []
-						);
+				let tmpList = originalMenuLocation?.splice(originalOrder, 1);
+				tmpList[0].parentId = menuUpdated.moduleInfo.parentId;
+				tmpList[0].order = newOrder;
 
-					if (
-						!parentMenuArrayCandidate ||
-						!parentMenuArrayCandidate.children
-					) {
-						snackBars.setSnackBar({
-							color: "error",
-							text: translate("Something went wrong"),
-						});
-						return false;
-					}
-					parentMenuArray = parentMenuArrayCandidate.children;
-				}
-				let tmpList = parentMenuArray?.splice(
-					menuTreeActivated.value[0].order!,
-					1
-				);
-
-				if (tmpList)
-					parentMenuArray?.splice(
-						menuUpdated.moduleInfo.order,
-						0,
-						tmpList[0]
+				newMenuLocation?.splice(newOrder, 0, tmpList[0]);
+				if (menuChangedLocation) {
+					changeObjectsOrderRange(
+						originalOrder,
+						newOrder,
+						newMenuLocation as []
+					);
+				} else if (menuChangedLocationToOtherMenu) {
+					changeObjectsOrderFrom(
+						originalOrder,
+						originalMenuLocation as []
 					);
 
-				changeObjectsOrderRange(
-					menuTreeActivated.value[0].order!,
-					menuUpdated.moduleInfo.order,
-					parentMenuArray as []
-				);
-			} else if (menuChangedLocationToOtherMenu) {
-				let previousParentMenuArray = menus.value;
-
-				if (menuTreeActivated.value[0].parentId !== null) {
-					let previousParentMenuArrayCandidate =
-						getObjectFromArray<menuTreeNode>(
-							menuTreeActivated.value[0].parentId,
-							menus.value ?? []
-						);
-
-					if (
-						!previousParentMenuArrayCandidate ||
-						!previousParentMenuArrayCandidate.children
-					) {
-						snackBars.setSnackBar({
-							color: "error",
-							text: translate("Something went wrong"),
-						});
-						return false;
-					}
-					previousParentMenuArray =
-						previousParentMenuArrayCandidate.children;
+					changeObjectsOrderFrom(newOrder + 1, newMenuLocation as []);
 				}
-
-				changeObjectsOrderFrom(
-					menuTreeActivated.value[0].order! + 1,
-					previousParentMenuArray as [],
-					"order",
-					menuTreeActivated.value[0].order
-				);
-
-				let tmpList = previousParentMenuArray?.splice(
-					menuTreeActivated.value[0].order!,
-					1
-				);
-
-				let parentMenuArray = menus.value;
-
-				if (menuUpdated.moduleInfo.parentId !== null) {
-					let parentMenuArrayCandidate =
-						getObjectFromArray<menuTreeNode>(
-							menuUpdated.moduleInfo.parentId,
-							menus.value ?? []
-						);
-
-					if (
-						!parentMenuArrayCandidate ||
-						!parentMenuArrayCandidate.children
-					) {
-						snackBars.setSnackBar({
-							color: "error",
-							text: translate("Something went wrong"),
-						});
-						return false;
-					}
-					parentMenuArray = parentMenuArrayCandidate.children;
-				}
-
-				changeObjectsOrderFrom(
-					menuUpdated.moduleInfo.order,
-					parentMenuArray as [],
-					"order",
-					menuUpdated.moduleInfo.order + 1
-				);
-
-				parentMenuArray?.splice(
-					menuUpdated.moduleInfo.order,
-					0,
-					tmpList[0]
-				);
+				menuTreeActivated.value.pop();
+				menuTreeActivated.value.push(tmpList[0]);
 			}
 
-			let key: keyof typeof menudataSave;
-			for (key in menudataSave) {
-				if (Object.prototype.hasOwnProperty.call(menudataSave, key)) {
-					if (key === "children") continue;
-					if (menuUpdated.moduleInfo[key] !== undefined) {
-						// @ts-ignore
-						menuTreeActivated.value[0][key] =
+			let key: keyof Partial<Article>;
+			for (key in menuUpdated.moduleInfo) {
+				if (
+					Object.prototype.hasOwnProperty.call(
+						menuUpdated.moduleInfo,
+						key
+					)
+				) {
+					if (
+						menuUpdated.moduleInfo[key] !== undefined &&
+						key in menuTreeActivated.value[0]
+					) {
+						(menuTreeActivated.value[0] as any)[key] =
 							menuUpdated.moduleInfo[key];
 					}
 				}
