@@ -42,6 +42,7 @@
 						</v-tooltip>
 					</v-alert>
 					<v-treeview
+						:key="treeViewKey"
 						:items="menus ?? []"
 						density="compact"
 						activatable
@@ -49,6 +50,7 @@
 						item-title="name"
 						return-object
 						:activated="menuTreeActivated"
+						v-model:opened="menuTreeOpened"
 						@update:activated="
 							activatedChanged as Partial<
 								InferAttributes<Article>
@@ -217,6 +219,7 @@
 										</v-tooltip>
 									</p>
 									<v-treeview
+										:key="treeViewKey"
 										density="compact"
 										item-value="id"
 										item-title="name"
@@ -224,6 +227,7 @@
 										:items="pickMenuTree"
 										return-object
 										activatable
+										v-model:opened="pickMenuTreeOpened"
 										:activated="pickMenuTreeActivated"
 										@update:activated="
 											activatedChangedPickedMenu as menuTreeNode
@@ -602,6 +606,13 @@
 		return "/" + slug;
 	};
 
+	// when saving menu with location change there are errors when not using :key
+	const treeViewKey = ref(0);
+
+	// this assure opened tree after saving menu (incrementing treeViewKey)
+	const menuTreeOpened = ref([]);
+	const pickMenuTreeOpened = ref([]);
+
 	// for assigning menu to root
 	const pickMenuRootObject = {
 		id: -1,
@@ -777,11 +788,10 @@
 			// top level menus
 			pickedLevelMenus = menus.value ?? [];
 		} else if (pickMenuTreeActivated.value[0]?.children) {
-			pickedLevelMenus = pickMenuTreeActivated.value[0]?.children ?? [];
-		}
+			pickedLevelMenus = pickMenuTreeActivated.value[0].children;
+		} else pickedLevelMenus = [];
 
-		// pickedLevelMenus[n] -> all have the same parentId so take first
-		let pickedMenuParentId = pickedLevelMenus[0].parentId;
+		let pickedMenuParentId = pickMenuTreeActivated.value[0].id;
 		pickedLevelMenus.forEach((el, i) => {
 			let currentOrderOption = {
 				title: (i + 2).toString(),
@@ -990,15 +1000,16 @@
 				newParentId,
 				menus.value
 			);
-			if (foundMenu && foundMenu.children)
-				newMenuLocation = foundMenu.children;
-		}
-		if (newMenuLocation.length == 0) {
-			snackBars.setSnackBar({
-				color: "error",
-				text: translate("Something went wrong"),
-			});
-			return false;
+			if (foundMenu === false) {
+				snackBars.setSnackBar({
+					color: "error",
+					text: translate("Something went wrong"),
+				});
+				return false;
+			}
+
+			if (foundMenu.children === undefined) foundMenu.children = [];
+			newMenuLocation = foundMenu.children;
 		}
 
 		let newMenuUrls: urlDataObject[] = [];
@@ -1245,6 +1256,7 @@
 				text: translate("Menu was edited"),
 			});
 		}
+		treeViewKey.value++;
 	};
 
 	/**
@@ -1507,7 +1519,6 @@
 		saveNewArticleRequestBody,
 		urlDataObject,
 	} from "../../../../digitalniweb-types/apps/communication/modules/articles";
-	import { id } from "vuetify/locale";
 
 	const widgets = useWidgetsStore();
 	const getWidget = (widgetId: number) => {
