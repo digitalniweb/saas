@@ -780,6 +780,7 @@
 	const createMenuOrder = (selectFirst = false) => {
 		let orderOptions = [firstOrder] as menuTreeNode[];
 		if (selectFirst) selectedOrder.value = firstOrder;
+		let currentParentId = menuTreeActivated.value[0]?.parentId ?? -1;
 
 		let menuOrderOptions = [] as menuTreeNode[];
 
@@ -801,7 +802,7 @@
 			};
 
 			// if changing order inside same menu
-			if (menuTreeActivated.value[0]?.parentId === pickedMenuParentId) {
+			if (currentParentId === pickedMenuParentId) {
 				if (i > (menuTreeActivated.value[0].order ?? 0)) {
 					currentOrderOption.title = (
 						parseInt(currentOrderOption.title) - 1
@@ -822,7 +823,7 @@
 
 			// if putting menu inside other menu then put it to the end
 			if (
-				menuTreeActivated.value[0]?.parentId !== pickedMenuParentId &&
+				currentParentId !== pickedMenuParentId &&
 				i == pickedLevelMenus.length - 1
 			) {
 				selectedOrder.value = menuOrderOptions[i];
@@ -833,6 +834,31 @@
 
 		pickMenuOrder.value = orderOptions;
 		orderChanged(selectedOrder.value as orderType);
+	};
+
+	import { useMenusStore } from "~/store/menus";
+	const menusStore = useMenusStore();
+
+	const createWebMenus = (array?: menuTreeNode[]) => {
+		let root = false;
+		if (!array) {
+			array = structuredClone(toRaw(menus.value)) ?? [];
+			root = true;
+		}
+
+		for (let index = 0; index < array.length; index++) {
+			const el = array[index];
+			if (el.deletedAt || !el.active) {
+				array.splice(index, 1);
+				continue;
+			}
+			if (el.children && el.children.length > 0)
+				createWebMenus(el.children);
+		}
+
+		if (!root) return array;
+
+		menusStore.articles = array as buildTreeType<InferAttributes<Article>>;
 	};
 
 	const deleteCurrentMenu = async () => {
@@ -915,7 +941,8 @@
 		formdataOriginalWidgetContent.value = [];
 		widgetsdata.value = [];
 		menudata.value = null;
-		// createMenuOrder();
+
+		createWebMenus();
 	};
 
 	/**
@@ -952,11 +979,11 @@
 
 	const saveCurrentMenu = async () => {
 		// menu
-		//validate changes
 		if (!form.value) return;
 		if (!menus.value?.length) return;
 		if (!menuTreeActivated.value[0] || !menudata.value) return;
 
+		//validate changes
 		let validate = await form.value?.validate();
 		if (validate.errors.length > 0) {
 			snackBars.setSnackBar({
