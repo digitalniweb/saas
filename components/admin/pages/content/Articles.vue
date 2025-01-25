@@ -889,6 +889,7 @@
 		if (!response) return;
 
 		let menuLocation = [] as menuTreeNode[];
+		let menuLocationParent = null as menuTreeNode | null; // null = root
 
 		if (menuTreeActivated.value[0].parentId === null)
 			menuLocation = menus.value;
@@ -897,10 +898,12 @@
 				menuTreeActivated.value[0].parentId,
 				menus.value
 			);
-			if (foundMenu && foundMenu.children)
+			if (foundMenu && foundMenu.children) {
 				menuLocation = foundMenu.children;
+				menuLocationParent = foundMenu;
+			}
 		}
-		if (!menuLocation === undefined) {
+		if (menuLocation === undefined) {
 			snackBars.setSnackBar({
 				color: "error",
 				text: translate("Something went wrong"),
@@ -932,10 +935,12 @@
 
 		menuLocation.splice(menuTreeActivated.value[0].order!, 1);
 
-		changeObjectsOrderFrom(
-			menuTreeActivated.value[0].order!,
-			menuLocation as []
-		);
+		if (menuLocation.length > 0)
+			changeObjectsOrderFrom(
+				menuTreeActivated.value[0].order!,
+				menuLocation as []
+			);
+		else delete menuLocationParent?.children;
 
 		menuTreeActivated.value.pop();
 		formdataOriginalWidgetContent.value = [];
@@ -1000,6 +1005,8 @@
 
 		let originalMenuLocation = [] as menuTreeNode[];
 		let newMenuLocation = [] as menuTreeNode[];
+		let originalMenuLocationParent = null as null | menuTreeNode;
+		let newMenuLocationParent = null as null | menuTreeNode;
 		let originalParentId = menuTreeActivated.value[0].parentId;
 		let newParentId = menudata.value.parentId;
 		if (originalParentId === null) originalMenuLocation = menus.value;
@@ -1008,8 +1015,11 @@
 				originalParentId,
 				menus.value
 			);
-			if (foundMenu && foundMenu.children)
-				originalMenuLocation = foundMenu.children;
+			if (foundMenu) {
+				originalMenuLocationParent = foundMenu;
+				if (foundMenu.children)
+					originalMenuLocation = foundMenu.children;
+			}
 		}
 		if (originalMenuLocation === undefined) {
 			snackBars.setSnackBar({
@@ -1034,7 +1044,7 @@
 				});
 				return false;
 			}
-
+			newMenuLocationParent = foundMenu;
 			if (foundMenu.children === undefined) foundMenu.children = [];
 			newMenuLocation = foundMenu.children;
 		}
@@ -1283,6 +1293,10 @@
 				text: translate("Menu was edited"),
 			});
 		}
+		if (newMenuLocation.length === 0)
+			delete newMenuLocationParent?.children;
+		if (originalMenuLocation.length === 0)
+			delete originalMenuLocationParent?.children;
 		treeViewKey.value++;
 	};
 
