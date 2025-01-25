@@ -10,15 +10,12 @@ export default eventHandler(async (event) => {
 	// let userVerified = event.context.verifiedUser;
 	// console.log(userVerified);
 
-	let { data, id } = (await readBody(event)) as {
+	let { data, id, resourceIds } = (await readBody(event)) as {
 		data: InferAttributes<WebInformation>;
 		id: number;
+		resourceIds: resourceIdsType;
 	};
-	let {
-		resourceIds,
-	}: {
-		resourceIds: string | resourceIdsType;
-	} = getQuery(event);
+
 	try {
 		if (typeof resourceIds === "string")
 			resourceIds = JSON.parse(resourceIds) as resourceIdsType;
