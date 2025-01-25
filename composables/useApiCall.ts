@@ -18,12 +18,16 @@ import { tokensJWT, userLoginResponse } from "~/digitalniweb-types/users";
 export const useApiCall = () => {
 	const fetchData = async <T>(
 		request: Parameters<typeof $fetch<T>>[0],
-		opts?: Parameters<typeof $fetch<T>>[1]
+		opts?: Parameters<typeof $fetch<T>>[1] & { disableBody?: boolean }
 	) => {
 		const userStore = useUserStore();
 		const webInformationStore = useWebInformationStore();
 		const website = useWebsiteStore();
 		const currentPage = useCurrentPageStore();
+		if (opts?.disableBody === true) {
+			currentPage.disabled = true;
+			delete opts.disableBody;
+		}
 		let headers = {
 			...opts?.headers,
 		} as any;
@@ -121,12 +125,16 @@ export const useApiCall = () => {
 	 */
 	const fetchRef = async <T>(
 		request: Parameters<typeof useFetch<T>>[0],
-		opts?: Parameters<typeof useFetch<T>>[1]
+		opts?: Parameters<typeof useFetch<T>>[1] & { disableBody?: boolean }
 	) => {
 		const userStore = useUserStore();
 		const webInformationStore = useWebInformationStore();
 		const website = useWebsiteStore();
 		const currentPage = useCurrentPageStore();
+		if (opts?.disableBody === true) {
+			currentPage.disabled = true;
+			delete opts.disableBody;
+		}
 		let headers = {
 			...opts?.headers,
 		} as any;

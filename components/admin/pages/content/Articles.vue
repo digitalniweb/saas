@@ -914,6 +914,7 @@
 		let menuDeleted = await fetchData<moduleResponse<Article> | false>(
 			"/api/content/admin/article",
 			{
+				disableBody: true,
 				method: "DELETE",
 				body: {
 					id: menuTreeActivated.value[0].id,
@@ -1083,6 +1084,7 @@
 			let newMenuCreated = await fetchData<
 				moduleResponse<Article> | false
 			>("/api/content/admin/article", {
+				disableBody: true,
 				method: "PUT",
 				body: {
 					menu: { data: menudataSave },
@@ -1203,6 +1205,7 @@
 			let menuUpdated = await fetchData<moduleResponse<Article> | false>(
 				"/api/content/admin/article",
 				{
+					disableBody: true,
 					method: "PATCH",
 					body: {
 						menu: {

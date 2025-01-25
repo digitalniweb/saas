@@ -5,7 +5,9 @@ export type snackBar = {
 	timeout: number;
 	text: string;
 	icon: string;
+	enableBody?: boolean; // defaultly remove 'disabled' class from <body>
 };
+import { useCurrentPageStore } from "./currentPage";
 export const useSnackBarsStore = defineStore("snackBars", {
 	state: () => ({
 		snackBars: [] as snackBar[],
@@ -17,6 +19,7 @@ export const useSnackBarsStore = defineStore("snackBars", {
 			return this.snackBars;
 		},
 		setSnackBar(options: Partial<snackBar>) {
+			const currentPage = useCurrentPageStore();
 			this.idCounter++;
 			this.snackBars.push({
 				id: this.idCounter,
@@ -26,6 +29,18 @@ export const useSnackBarsStore = defineStore("snackBars", {
 				icon: options.icon || "information-outline",
 				timeout: options.timeout || 4000,
 			});
+			console.log(
+				1,
+				currentPage.disabled,
+				options.enableBody === undefined || options?.enableBody === true
+			);
+
+			if (
+				currentPage.disabled &&
+				(options.enableBody === undefined ||
+					options?.enableBody === true)
+			)
+				currentPage.disabled = false;
 		},
 		removeSnackBar(snackBar: snackBar) {
 			this.snackBars.splice(this.snackBars.indexOf(snackBar), 1);
