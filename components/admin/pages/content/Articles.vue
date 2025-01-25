@@ -318,8 +318,18 @@
 										border="start"
 										class="mb-3"
 										density="compact"
+										v-if="widgetsdata.length === 0"
 									>
-										{{ translate("Use mouse to drag") }}
+										{{ translate("AddWidgetInfo") }}
+									</v-alert>
+									<v-alert
+										icon="mdi-help-circle-outline"
+										border="start"
+										class="mb-3"
+										density="compact"
+										v-else-if="widgetsdata.length > 1"
+									>
+										{{ translate("UseMouseToDragWidgets") }}
 									</v-alert>
 									<draggable
 										v-model="widgetsdata"
@@ -541,10 +551,6 @@
 		},
 		"Free menu": {
 			cs: "Volné menu",
-		},
-		"Use mouse to drag": {
-			en: "To change order of widgets you can drag and drop individual widgets using mouse. Or use arrow icons.",
-			cs: "Ke změně pořadí widgetů můžete kliknou a přetáhnout jednotlivé widgety pomocí myši. Nebo použijte ikonky šipek.",
 		},
 		"New menu": {
 			cs: "Nové menu",

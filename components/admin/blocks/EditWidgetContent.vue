@@ -12,11 +12,13 @@
 				</v-toolbar-title>
 			</v-toolbar>
 			<v-card-text>
-				<component
-					v-if="props.widget && widgetContentCopy"
-					:is="createWidgetPickerComponentString(props.widget)"
-					v-model="widgetContentCopy"
-				/>
+				<v-form ref="form">
+					<component
+						v-if="props.widget && widgetContentCopy"
+						:is="createWidgetPickerComponentString(props.widget)"
+						v-model="widgetContentCopy"
+					/>
+				</v-form>
 			</v-card-text>
 			<v-card-actions class="pt-0">
 				<v-spacer></v-spacer>
@@ -33,6 +35,9 @@
 <script setup lang="ts">
 	import { InferAttributes } from "sequelize";
 	import { WidgetContent } from "../../../digitalniweb-types/models/content";
+
+	import { VForm } from "vuetify/components";
+	const form = ref<VForm | null>(null);
 
 	const emit = defineEmits<{
 		returnWidgetContent: [
@@ -87,7 +92,19 @@
 		open.value = false;
 	};
 
-	const agree = () => {
+	import { useSnackBarsStore } from "~/store/snackBars";
+	const snackBars = useSnackBarsStore();
+
+	const agree = async () => {
+		if (!form.value) return;
+		let validate = await form.value?.validate();
+		if (validate.errors.length > 0) {
+			snackBars.setSnackBar({
+				color: "warning",
+				text: translate("FormValidationError"),
+			});
+			return;
+		}
 		if (widgetContentCopy.value)
 			emit("returnWidgetContent", widgetContentCopy.value);
 		open.value = false;

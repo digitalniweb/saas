@@ -29,11 +29,6 @@ export const useSnackBarsStore = defineStore("snackBars", {
 				icon: options.icon || "information-outline",
 				timeout: options.timeout || 4000,
 			});
-			console.log(
-				1,
-				currentPage.disabled,
-				options.enableBody === undefined || options?.enableBody === true
-			);
 
 			if (
 				currentPage.disabled &&
