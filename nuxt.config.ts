@@ -15,6 +15,17 @@ export default defineNuxtConfig({
 			},
 		},
 	},
+	// delete this
+	// devServer: {
+	// 	cors: {
+	// 		origin: ["http://digitalniwebapp.local"],
+	// 	},
+	// },
+	vite: {
+		server: {
+			allowedHosts: ["digitalniwebapp.local"],
+		},
+	},
 	experimental: {
 		// renderJsonPayloads: false,
 	},

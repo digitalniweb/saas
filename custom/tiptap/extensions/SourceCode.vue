@@ -39,12 +39,13 @@
 	import type { Editor } from "@tiptap/vue-3";
 	import { ActionButton } from "vuetify-pro-tiptap";
 
-	import pkg from "js-beautify";
-	const { html: beautifyHtml } = pkg;
 	import { oneDark } from "@codemirror/theme-one-dark";
 
 	// must be installed separately https://github.com/codemirror/lang-html
 	import { html } from "@codemirror/lang-html";
+
+	import prettier from "prettier";
+	import * as parserHtml from "prettier/plugins/html";
 
 	interface Props {
 		editor: Editor;
@@ -62,8 +63,11 @@
 
 	const cmContent = ref();
 
-	const openDialog = () => {
-		cmContent.value = beautifyHtml(props.editor.getHTML()) + "\n";
+	const openDialog = async () => {
+		cmContent.value = await prettier.format(props.editor.getHTML(), {
+			parser: "html",
+			plugins: [parserHtml],
+		});
 	};
 
 	const closeDialog = () => {
