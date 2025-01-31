@@ -1,8 +1,8 @@
 <template>
-	<client-only>
-		<v-app id="admin">
-			<v-navigation-drawer v-model="drawer">
-				<v-list class="text-left" v-model:opened="open">
+	<v-app id="admin">
+		<v-navigation-drawer v-model="drawer">
+			<v-list class="text-left" v-model:opened="open">
+				<client-only>
 					<v-list-item
 						prepend-avatar="/img/logo.webp"
 						title="nickname"
@@ -10,20 +10,28 @@
 					>
 					</v-list-item>
 					<AdminBlocksMenu />
-				</v-list>
-			</v-navigation-drawer>
+				</client-only>
+			</v-list>
+		</v-navigation-drawer>
 
-			<v-main>
-				<v-container fluid>
-					<v-row class="border-b-sm">
-						<v-col>
-							<v-app-bar-nav-icon
-								@click="drawer = !drawer"
-							></v-app-bar-nav-icon>
-						</v-col>
-						<v-spacer></v-spacer>
-						<v-col class="text-right">
-							<CustomThemeToggle />
+		<v-main>
+			<v-container fluid>
+				<v-row class="border-b-sm">
+					<v-col>
+						<v-app-bar-nav-icon
+							@click="drawer = !drawer"
+						></v-app-bar-nav-icon>
+					</v-col>
+					<v-spacer></v-spacer>
+					<v-col class="text-right">
+						<CustomThemeToggle />
+						<v-skeleton-loader
+							v-if="loadingClient"
+							type="list-item"
+							width="100"
+							class="d-inline-flex"
+						/>
+						<client-only>
 							<v-menu>
 								<template v-slot:activator="{ props }">
 									<v-btn
@@ -70,17 +78,32 @@
 									</v-list-item>
 								</v-list>
 							</v-menu>
-						</v-col>
-					</v-row>
-					<v-row>
-						<v-col>
+						</client-only>
+					</v-col>
+				</v-row>
+				<v-row v-if="loadingClient"
+					><v-col md="6">
+						<v-skeleton-loader type="list-item" width="200px" />
+						<v-skeleton-loader type="list-item-three-line" />
+					</v-col>
+					<v-col md="6">
+						<v-skeleton-loader type="list-item" width="180px" />
+						<v-skeleton-loader type="list-item-three-line" />
+					</v-col>
+					<v-col cols="12">
+						<v-skeleton-loader type="list-item" width="250px" />
+						<v-skeleton-loader type="list-item-three-line" /></v-col
+				></v-row>
+				<v-row>
+					<v-col>
+						<client-only>
 							<slot />
-						</v-col>
-					</v-row>
-				</v-container>
-			</v-main>
-		</v-app>
-	</client-only>
+						</client-only>
+					</v-col>
+				</v-row>
+			</v-container>
+		</v-main>
+	</v-app>
 </template>
 
 <script setup>
@@ -88,6 +111,11 @@
 	const open = ref([]);
 
 	const notificationItems = ref([]);
+
+	const loadingClient = ref(true);
+	onMounted(() => {
+		loadingClient.value = false;
+	});
 
 	const avatarItems = ref([
 		{
