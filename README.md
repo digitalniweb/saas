@@ -1,5 +1,13 @@
 # Digitalni web - SaaS
 
+## Download
+
+Download with submodules (digitalniweb-custom, digitalniweb-types):
+
+git clone --recurse-submodules https://github.com/digitalniweb/saas.git .
+
+Now change all submodules git branches to MASTER
+
 ## Installation
 
 ```bash
@@ -11,7 +19,7 @@ npm run i
 Use following code to compile .ts to .js files for migrations for Sequelize
 
 ```bash
-npm run buildMigrations
+npm run migrations
 ```
 
 ## Development Server
