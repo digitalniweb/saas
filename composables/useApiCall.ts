@@ -112,7 +112,7 @@ export const useApiCall = () => {
 					throw error;
 				}
 			}
-			// throw error;
+			throw error;
 		}
 	};
 

@@ -112,15 +112,23 @@
 				</template>
 			</v-tooltip> -->
 			<CustomThemeToggle />
-			<v-btn
-				:aria-label="modulesLocale('users', 'Profile', 'name')"
-				:to="modulesLocale('users', 'Profile', 'url')"
-				icon="mdi-plus-box-multiple"
-				class="cursor-pointer"
-				variant="flat"
-				color="green-darken-2"
-				size="small"
-			></v-btn>
+			<v-tooltip
+				:text="modulesLocale('users', 'Logout', 'name')"
+				location="bottom"
+			>
+				<template v-slot:activator="{ props }">
+					<v-btn
+						:aria-label="modulesLocale('users', 'Logout', 'name')"
+						:to="modulesLocale('users', 'Profile', 'url')"
+						icon="mdi-plus"
+						class="cursor-pointer"
+						variant="flat"
+						color="green-darken-2"
+						size="small"
+						v-bind="props"
+					></v-btn>
+				</template>
+			</v-tooltip>
 		</template>
 	</v-app-bar>
 </template>

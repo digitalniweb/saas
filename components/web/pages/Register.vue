@@ -1,4 +1,6 @@
-<template>Register</template>
+<template>
+	<CustomRegistrationUser />
+</template>
 <script setup lang="ts">
 	import { useCurrentPageStore } from "@/store/currentPage";
 

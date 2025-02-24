@@ -1,37 +1,33 @@
 <template>
-	<v-row align="center" justify="center" class="my-5 pt-5">
+	<v-row align="center" justify="center" class="my-5">
 		<v-col cols="12" lg="4" xl="6">
 			<v-card class="elevation-12">
-				<v-toolbar
-					color="primary"
-					prominent
-					flat
-					image="https://images.pexels.com/photos/196655/pexels-photo-196655.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
-				>
-					<v-overlay class="absolute" z-index="0"></v-overlay>
-					<v-toolbar-title class="relative white--text">
-						{{ headline }}
+				<v-toolbar color="primary" prominent flat>
+					<template v-slot:image>
+						<v-img
+							src="https://images.pexels.com/photos/196655/pexels-photo-196655.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
+							cover
+							class="overlay-dark"
+						/>
+					</template>
+					<v-toolbar-title>
+						{{ props.headline }}
 					</v-toolbar-title>
 				</v-toolbar>
 				<v-card-text>
 					<v-form ref="form" lazy-validation :disabled="disabled">
-						<v-row v-if="formdata.Tenant">
+						<v-row v-if="userType === 'tenant'">
 							<v-col cols="12" v-if="loggedIn">
 								<v-card
 									img="https://images.pexels.com/photos/50987/money-card-business-credit-card-50987.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
 									to="/"
 									hover
 								>
-									<v-overlay
-										absolute
-										z-index="0"
-										light
-									></v-overlay>
 									<v-card-title
 										class="text-h4 white--text relative justify-center"
-										v-if="formdata.credit !== null"
+										v-if="userStore.user?.credit !== null"
 									>
-										{{ formdata.credit }}
+										{{ userStore.user?.credit }}
 										<v-icon right color="yellow" small
 											>mdi-currency-sign</v-icon
 										>
@@ -51,28 +47,13 @@
 								</v-card>
 							</v-col>
 							<v-col cols="12" v-if="loggedIn">
-								<!-- :to="
-										getModulePath({
-											module: 'tenant-websites',
-											returnString: true,
-										})
-									" -->
 								<v-card
 									img="https://images.pexels.com/photos/1029757/pexels-photo-1029757.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
 									height="100%"
 									class="d-flex justify-center align-center"
 									hover
 								>
-									<v-overlay
-										absolute
-										z-index="0"
-										light
-									></v-overlay>
-									<v-card-title
-										class="text-h4 white--text relative"
-									>
-										Moje weby
-									</v-card-title>
+									<v-card-title> Moje weby </v-card-title>
 								</v-card>
 							</v-col>
 							<v-col cols="12" class="pb-0">
@@ -86,7 +67,7 @@
 									name="academicDegree"
 									counter="10"
 									prepend-inner-icon="mdi-school"
-									v-model="formdata.Tenant.academicDegree"
+									v-model="tenantData.academicDegree"
 								/>
 							</v-col>
 							<v-col cols="12" md="5">
@@ -97,7 +78,7 @@
 									counter="30"
 									name="firstName"
 									prepend-inner-icon="mdi-account"
-									v-model="formdata.Tenant.firstName"
+									v-model="tenantData.firstName"
 									:rules="[
 										(v) =>
 											!!v || 'Vyplňte prosím toto pole',
@@ -116,7 +97,7 @@
 									name="lastName"
 									counter="30"
 									prepend-inner-icon="mdi-account"
-									v-model="formdata.Tenant.lastName"
+									v-model="tenantData.lastName"
 									:rules="[
 										(v) =>
 											!!v || 'Vyplňte prosím toto pole',
@@ -135,7 +116,7 @@
 									name="telephone"
 									counter="20"
 									prepend-inner-icon="mdi-cellphone"
-									v-model="formdata.Tenant.telephone"
+									v-model="tenantData.telephone"
 									:rules="isMobilePhone()"
 									validate-on="blur"
 							/></v-col>
@@ -157,7 +138,7 @@
 									label="Město"
 									name="city"
 									prepend-inner-icon="mdi-map-marker"
-									v-model="formdata.Tenant.city"
+									v-model="tenantData.city"
 									counter="50"
 									:rules="[
 										(v) =>
@@ -176,7 +157,7 @@
 									name="zip"
 									counter="10"
 									prepend-inner-icon="mdi-map-marker"
-									v-model="formdata.Tenant.zip"
+									v-model="tenantData.zip"
 									:rules="isPostalCode()"
 									validate-on="blur"
 							/></v-col>
@@ -188,7 +169,7 @@
 									name="streetAddress"
 									counter="50"
 									prepend-inner-icon="mdi-map-marker"
-									v-model="formdata.Tenant.streetAddress"
+									v-model="tenantData.streetAddress"
 									:rules="[
 										(v) =>
 											!!v || 'Vyplňte prosím toto pole',
@@ -205,17 +186,18 @@
 									label="Číslo orientační"
 									name="houseNumber"
 									prepend-inner-icon="mdi-map-marker"
-									v-model="formdata.Tenant.houseNumber"
+									v-model="tenantData.houseNumber"
 									:rules="[
-										(v) =>
+										(v: number) =>
 											!!v || 'Vyplňte prosím toto pole',
-										(v) =>
+										(v: any | null) =>
 											/^\d*$/.test(v || '') ||
 											'Vyplňte prosím orientační číslo',
 									]"
 									validate-on="blur"
 									counter="6"
-							/></v-col>
+								></v-text-field>
+							</v-col>
 							<v-col cols="12" md="3">
 								<v-text-field
 									variant="underlined"
@@ -223,119 +205,108 @@
 									label="Číslo popisné"
 									name="landRegistryNumber"
 									prepend-inner-icon="mdi-map-marker"
-									v-model="formdata.Tenant.landRegistryNumber"
+									v-model="tenantData.landRegistryNumber"
 									:rules="[
-										(v) =>
+										(v: any) =>
 											/^\d*$/.test(v || '') ||
 											'Vyplňte prosím číslo popisné',
 									]"
 									validate-on="blur"
 									counter="6"
-							/></v-col>
-							<v-col cols="12" class="pb-0">
-								<h2 class="overline mb-3">
-									<v-btn
-										tile
-										:color="
-											formdata.Tenant.company === true
-												? 'default'
-												: 'green'
-										"
-										@click="
-											changeTenantProperty(
-												'company',
-												false
-											)
-										"
-									>
-										<v-icon left>mdi-account</v-icon>
-										Osoba
-									</v-btn>
-									/
-									<v-btn
-										tile
-										:color="
-											formdata.Tenant.company === false
-												? 'default'
-												: 'green'
-										"
-										@click="
-											changeTenantProperty(
-												'company',
-												true
-											)
-										"
-									>
-										<v-icon left>mdi-domain</v-icon>
-										Firma
-									</v-btn>
-								</h2>
+								></v-text-field>
 							</v-col>
-							<v-card
-								elevation="0"
-								class="col-12 py-0"
-								:disabled="!formdata.Tenant.company"
-							>
-								<v-row>
-									<v-col cols="12">
-										<v-text-field
-											variant="underlined"
-											label="Název firmy"
-											prepend-inner-icon="mdi-domain"
-											type="text"
-											v-model="
-												formdata.Tenant.companyName
-											"
-											:rules="[
-												(v) =>
-													!formdata?.Tenant
-														?.company ||
-													!!formdata.Tenant
-														.companyName ||
-													'Vyplňte název firmy.',
-											]"
-											validate-on="blur"
-											counter="200"
-										/>
-									</v-col>
-									<v-col cols="6">
-										<v-text-field
-											variant="underlined"
-											label="IČO"
-											prepend-inner-icon="mdi-card-account-details-outline"
-											type="text"
-											v-model="formdata.Tenant.tin"
-											:rules="[
-												(v) =>
-													!formdata?.Tenant
-														?.company ||
-													!!formdata.Tenant.tin ||
-													'Vyplňte IČO',
-											]"
-											validate-on="blur"
-											counter="15"
-										/>
-									</v-col>
-									<v-col cols="6">
-										<v-text-field
-											variant="underlined"
-											label="DIČ"
-											prepend-inner-icon="mdi-card-account-details-outline"
-											type="text"
-											v-model="formdata.Tenant.vatId"
-											:rules="[
-												(v) =>
-													!formdata?.Tenant
-														?.company ||
-													!!formdata.Tenant.vatId ||
-													'Vyplňte DIČ',
-											]"
-											validate-on="blur"
-											counter="15"
-										/>
-									</v-col>
-								</v-row>
-							</v-card>
+							<v-col cols="12" class="pb-0">
+								<h2 class="overline mb-3">Registrovat jako</h2>
+								<v-btn
+									tile
+									:color="
+										tenantData.company === true
+											? 'default'
+											: 'green'
+									"
+									@click="
+										changeTenantProperty('company', false)
+									"
+								>
+									<v-icon left>mdi-account</v-icon>
+									Osoba
+								</v-btn>
+								/
+								<v-btn
+									tile
+									:color="
+										tenantData.company === false
+											? 'default'
+											: 'green'
+									"
+									@click="
+										changeTenantProperty('company', true)
+									"
+								>
+									<v-icon left>mdi-domain</v-icon>
+									Firma
+								</v-btn>
+							</v-col>
+							<v-col cols="12">
+								<v-card
+									elevation="0"
+									class="py-0"
+									:disabled="!tenantData.company"
+								>
+									<v-row>
+										<v-col cols="12">
+											<v-text-field
+												variant="underlined"
+												label="Název firmy"
+												prepend-inner-icon="mdi-domain"
+												type="text"
+												v-model="tenantData.companyName"
+												:rules="[
+													(v) =>
+														!tenantData?.company ||
+														!!tenantData.companyName ||
+														'Vyplňte název firmy.',
+												]"
+												validate-on="blur"
+												counter="200"
+											/>
+										</v-col>
+										<v-col cols="6">
+											<v-text-field
+												variant="underlined"
+												label="IČO"
+												prepend-inner-icon="mdi-card-account-details-outline"
+												type="text"
+												v-model="tenantData.tin"
+												:rules="[
+													(v) =>
+														!tenantData?.company ||
+														!!tenantData.tin ||
+														'Vyplňte IČO',
+												]"
+												validate-on="blur"
+												counter="15"
+											/>
+										</v-col>
+										<v-col cols="6">
+											<v-text-field
+												variant="underlined"
+												label="DIČ"
+												prepend-inner-icon="mdi-card-account-details-outline"
+												type="text"
+												v-model="tenantData.vatId"
+												:rules="[
+													(v) =>
+														!tenantData?.company ||
+														!!tenantData.vatId ||
+														'Vyplňte DIČ',
+												]"
+												validate-on="blur"
+												counter="15"
+											/>
+										</v-col>
+									</v-row> </v-card
+							></v-col>
 						</v-row>
 						<v-row>
 							<v-col cols="12" class="pb-0 mt-10">
@@ -349,7 +320,7 @@
 									label="Email (bude sloužit jako přihlašovací údaj)"
 									prepend-inner-icon="mdi-email"
 									type="text"
-									v-model="formdata.email"
+									v-model="userData.email"
 									:rules="emailRules()"
 									validate-on="blur"
 									counter="100"
@@ -363,7 +334,7 @@
 									label="Heslo"
 									name="password"
 									prepend-inner-icon="mdi-lock"
-									v-model="formdata.password"
+									v-model="userData.password"
 									:rules="
 										type === 'registration'
 											? passwordRules()
@@ -384,7 +355,7 @@
 									:type="showPassword ? 'text' : 'password'"
 								/>
 								<CustomPasswordScore
-									:password="formdata.password"
+									:password="userData.password"
 								/>
 							</v-col>
 							<v-col cols="12" md="6">
@@ -394,10 +365,10 @@
 									label="Ověření hesla"
 									name="passwordCheck"
 									prepend-inner-icon="mdi-lock"
-									v-model="formdata.passwordCheck"
+									v-model="aditionalData.passwordCheck"
 									:rules="[
-										formdata.passwordCheck ===
-											formdata.password ||
+										aditionalData.passwordCheck ===
+											userData.password ||
 											'Musí se shodovat s Vámi zadaným heslem!',
 									]"
 									validate-on="input lazy"
@@ -418,14 +389,12 @@
 							</v-col>
 							<v-col cols="12">
 								<v-checkbox
-									v-model="
-										formdata.Tenant.subscribeNewsletters
-									"
+									v-model="tenantData.subscribeNewsletters"
 									label="Chci dostávat novinky formou newsletteru"
-									v-if="formdata.Tenant"
+									v-if="userType === 'tenant'"
 								/>
 								<v-checkbox
-									v-model="formdata.agreement"
+									v-model="aditionalData.agreement"
 									:rules="[
 										(v) =>
 											!!v ||
@@ -433,14 +402,16 @@
 									]"
 									:disabled="type === 'profile'"
 								>
-									<template v-slot:label
-										>Souhlasím s
+									<template v-slot:label>
+										Souhlasím s
 										<a
 											href="/obchodni-podminky"
 											target="_blank"
 											@click.stop
-											>obchodními podmínkami</a
+											class="ml-1"
 										>
+											obchodními podmínkami
+										</a>
 									</template>
 								</v-checkbox>
 							</v-col>
@@ -482,12 +453,21 @@
 		Tenant as TenantType,
 		User as UserType,
 	} from "~/digitalniweb-types/models/users";
-	import { InferAttributes } from "sequelize";
 	import isMobilePhoneVal from "validator/es/lib/isMobilePhone";
 	import isPostalCodeVal from "validator/es/lib/isPostalCode";
+	import { useUserStore } from "../../../store/user";
+	import { InferAttributes } from "sequelize";
+
+	const userStore = useUserStore();
 
 	const { isStrongPassword, generatePassword, passwordRegisterRules } =
 		useStrongPassword();
+
+	const props = defineProps<{
+		headline: string;
+		type: "register" | "edit";
+		userType: "user" | "tenant";
+	}>();
 
 	type additionalFormdataOptions = {
 		agreement: boolean;
@@ -498,8 +478,42 @@
 
 	const disabled = ref(false);
 
-	const headline = ref("headline");
-	const formdata = ref({
+	const userData = ref<Pick<UserType, "email" | "password">>({
+		email: "",
+		password: "",
+	});
+	type tenantRegisterType = Omit<
+		InferAttributes<TenantType>,
+		"id" | "UserId"
+	>;
+	const tenantData = ref<
+		Omit<tenantRegisterType, "houseNumber" | "landRegistryNumber"> & {
+			houseNumber: null | number;
+			landRegistryNumber: null | number;
+		}
+	>({
+		academicDegree: "",
+		firstName: "",
+		lastName: "",
+		telephone: "",
+		city: "",
+		zip: "",
+		streetAddress: "",
+		countryId: 1,
+		houseNumber: null,
+		landRegistryNumber: null,
+		company: false,
+		companyName: "",
+		tin: "",
+		vatId: "",
+		subscribeNewsletters: false,
+	});
+	const aditionalData = ref({
+		agreement: false,
+		passwordCheck: "",
+	}) as Ref<additionalFormdataOptions>;
+
+	/* const formdata = ref({
 		Tenant: {
 			academicDegree: "Ing.",
 			firstName: "John",
@@ -521,12 +535,12 @@
 		password: "",
 		passwordCheck: "",
 		agreement: false,
-	} as InferAttributes<UserType> & additionalFormdataOptions);
+	} as InferAttributes<UserType> & additionalFormdataOptions); */
 
 	const countries = ref([{ id: 1, text: "Česká republika" }]);
 	const selectedCountry = ref(
 		countries.value.find(
-			(country) => country.id === formdata.value?.Tenant?.countryId
+			(country) => country.id === tenantData.value?.countryId
 		)
 	);
 
@@ -555,16 +569,18 @@
 	];
 	const generateStrongPassword = async () => {
 		let generatedPassword = await generatePassword();
-		formdata.value.password = generatedPassword;
-		formdata.value.passwordCheck = generatedPassword;
+		userData.value.password = generatedPassword;
+		aditionalData.value.passwordCheck = generatedPassword;
 	};
 	const saveUser = () => {};
 	const registerUser = () => {};
 
 	const emailRules = () => useEmailRules();
 
-	const changeTenantProperty = (property: keyof Tenant, value: any) => {
-		if (formdata.value.Tenant && formdata.value.Tenant[property])
-			(formdata.value.Tenant[property] as any) = value;
+	const changeTenantProperty = (
+		property: keyof tenantRegisterType,
+		value: any
+	) => {
+		(tenantData.value[property] as any) = value;
 	};
 </script>

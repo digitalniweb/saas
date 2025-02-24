@@ -177,6 +177,10 @@ export const useCurrentPageStore = defineStore("currentPage", {
 			let routeArray = this.route.pathname.split("/");
 			routeArray.shift(); // first value is always "", remove it
 			let currentRoute = routeArray.shift();
+
+			const { $vuetify } = useNuxtApp();
+			$vuetify.locale.current.value = this.language?.code ?? "en";
+
 			if (languages.$state.languages.length !== 1) {
 				let currentLang = currentRoute as languages;
 				let newLang: languages | null;
@@ -198,7 +202,6 @@ export const useCurrentPageStore = defineStore("currentPage", {
 							languages.$state.main
 						] ?? null;
 
-				const { $vuetify } = useNuxtApp();
 				$vuetify.locale.current.value = newLang ?? "en";
 			} else {
 				this.language =

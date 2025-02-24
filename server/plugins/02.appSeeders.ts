@@ -20,6 +20,7 @@ export default defineNitroPlugin(async (nitroApp) => {
 					"invoices",
 					"users",
 					"tenants",
+					"saasHost",
 				];
 				if (process.env.APP_NAME === "webs-host") {
 					moduleNames.push("superadmin");

@@ -9,7 +9,7 @@
 		"generate": "nuxt generate",
 		"preview": "nuxt preview",
 		"postinstall": "nuxt prepare",
-		"buildSequelize": "npx tsc --project tsconfig.sequelize.json && echo {\"type\":\"commonjs\"} > ./sequelize/package.json",
+		"buildSequelize": "npx rimraf --glob sequelize/server/ && npx tsc --project tsconfig.sequelize.json && node -e \"require('fs').writeFileSync('./sequelize/package.json', JSON.stringify({type: 'commonjs'}))\"",
 		"migrations": "npm run buildSequelize && npx sequelize-cli db:migrate",
 		"migrationsUndoAll": "npm run buildSequelize && npx sequelize-cli db:migrate:undo:all",
 		"seeders": "npm run buildSequelize && npx sequelize-cli db:seed:all"
@@ -18,10 +18,10 @@
 		"@nuxt/types": "^2.18.1",
 		"@types/codemirror": "^5.60.15",
 		"@types/jsonwebtoken": "^9.0.7",
-		"@types/node": "^22.12.0",
+		"@types/node": "^22.13.5",
 		"@types/sequelize": "^4.28.20",
 		"@types/validator": "^13.12.2",
-		"vue-tsc": "^2.2.0"
+		"vue-tsc": "^2.2.4"
 	},
 	"dependencies": {
 		"@codemirror/lang-html": "^6.4.9",
@@ -31,17 +31,17 @@
 		"axios": "^1.7.9",
 		"deep-object-diff": "^1.1.9",
 		"dotenv": "^16.4.7",
-		"ioredis": "^5.4.2",
+		"ioredis": "^5.5.0",
 		"jsonwebtoken": "^9.0.2",
 		"mariadb": "^3.4.0",
 		"mysql2": "^3.12.0",
 		"node-cache": "^5.1.2",
-		"nuxi": "^3.20.0",
-		"nuxt": "^3.15.3",
+		"nuxi": "^3.22.2",
+		"nuxt": "^3.15.4",
 		"pinia": "^2.3.1",
-		"prettier": "^3.4.2",
+		"prettier": "^3.5.2",
 		"rimraf": "^6.0.1",
-		"sass": "^1.83.4",
+		"sass": "^1.85.0",
 		"sequelize": "^6.37.5",
 		"sequelize-cli": "^6.6.2",
 		"sharp": "^0.33.5",
@@ -49,7 +49,7 @@
 		"validator": "^13.12.0",
 		"vue-codemirror": "^6.1.1",
 		"vuedraggable": "^4.1.0",
-		"vuetify": "^3.7.8",
+		"vuetify": "^3.7.13",
 		"vuetify-pro-tiptap": "^2.5.7"
 	}
 }
