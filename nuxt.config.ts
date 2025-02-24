@@ -23,7 +23,7 @@ export default defineNuxtConfig({
 	// },
 	vite: {
 		server: {
-			allowedHosts: ["digitalniwebapp.local"],
+			allowedHosts: [process.env.APP_HOSTNAME as string],
 		},
 	},
 	experimental: {
