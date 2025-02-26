@@ -113,13 +113,27 @@
 			</v-tooltip> -->
 			<CustomThemeToggle />
 			<v-tooltip
-				:text="modulesLocale('users', 'Logout', 'name')"
+				:text="
+					modulesLocale('saasHost', `Create tenant's website`, 'name')
+				"
 				location="bottom"
 			>
 				<template v-slot:activator="{ props }">
 					<v-btn
-						:aria-label="modulesLocale('users', 'Logout', 'name')"
-						:to="modulesLocale('users', 'Profile', 'url')"
+						:aria-label="
+							modulesLocale(
+								'saasHost',
+								`Create tenant's website`,
+								'name'
+							)
+						"
+						:to="
+							modulesLocale(
+								'saasHost',
+								`Create tenant's website`,
+								'url'
+							)
+						"
 						icon="mdi-plus"
 						class="cursor-pointer"
 						variant="flat"

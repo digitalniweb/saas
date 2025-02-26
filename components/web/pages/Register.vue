@@ -1,5 +1,5 @@
 <template>
-	<CustomRegistrationUser />
+	<WebPagesSaasHostTenantsCreateWebsiteLogin />
 </template>
 <script setup lang="ts">
 	import { useCurrentPageStore } from "@/store/currentPage";

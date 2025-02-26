@@ -1,131 +1,123 @@
 <template>
-	<v-row align="center" justify="center" class="my-5">
-		<v-col cols="12" sm="8" md="6" xl="4">
-			<v-card class="elevation-12">
-				<v-toolbar color="primary" class="py-5">
-					<template v-slot:image>
-						<v-img
-							src="https://images.pexels.com/photos/6964507/pexels-photo-6964507.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
-							cover
-							class="overlay-dark"
-						/>
-					</template>
-					<v-toolbar-title>
-						<v-icon>mdi-account-arrow-left</v-icon>
-						Přihlásit se
-					</v-toolbar-title>
-				</v-toolbar>
-				<v-card-text>
-					<v-form ref="form" lazy-validation :disabled="disabled">
-						<v-text-field
-							variant="underlined"
-							id="email"
-							type="email"
-							label="Přihlašovací údaje (email)"
-							prepend-icon="mdi-email"
-							v-model="formdata.email"
-							:rules="emailRules()"
-							validate-on-blur
-							required
-							@keyup.enter="loginUser"
-							:disabled="disabled"
-						/>
+	<v-card class="elevation-12">
+		<v-toolbar color="primary" class="py-5">
+			<template v-slot:image>
+				<v-img
+					src="https://images.pexels.com/photos/6964507/pexels-photo-6964507.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
+					cover
+					class="overlay-dark"
+				/>
+			</template>
+			<v-toolbar-title>
+				<v-icon>mdi-account-arrow-left</v-icon>
+				Přihlásit se
+			</v-toolbar-title>
+		</v-toolbar>
+		<v-card-text>
+			<v-form ref="form" lazy-validation :disabled="disabled">
+				<v-text-field
+					variant="underlined"
+					id="email"
+					type="email"
+					label="Přihlašovací údaje (email)"
+					prepend-icon="mdi-email"
+					v-model="formdata.email"
+					:rules="emailRules()"
+					validate-on-blur
+					required
+					@keyup.enter="loginUser"
+					:disabled="disabled"
+				/>
 
-						<v-text-field
-							variant="underlined"
-							id="password"
-							label="Heslo"
-							name="password"
-							prepend-icon="mdi-lock"
-							type="password"
-							v-model="formdata.password"
-							:rules="passwordRules"
-							validate-on-blur
-							required
-							@keyup.enter="loginUser"
-							:disabled="disabled"
-						/>
-					</v-form>
-				</v-card-text>
-				<v-chip
-					variant="flat"
-					color="red"
-					v-if="notValidLogin"
-					class="mx-5"
-					v-html="notValidLogin"
-				></v-chip>
-				<v-card-actions>
-					<v-btn
-						color="primary"
-						@click="loginUser"
-						:disabled="disabled"
-						:loading="disabled"
-						variant="flat"
-					>
-						<v-icon class="mr-2">mdi-login</v-icon>
-						Přihlásit se
-					</v-btn>
-					<v-spacer></v-spacer>
-					<v-btn
-						@click="showReset = !showReset"
-						class="mt-5"
-						x-small
-						variant="text"
-						>Zapomněli jste heslo?</v-btn
-					>
-				</v-card-actions>
-			</v-card>
-		</v-col>
-	</v-row>
+				<v-text-field
+					variant="underlined"
+					id="password"
+					label="Heslo"
+					name="password"
+					prepend-icon="mdi-lock"
+					type="password"
+					v-model="formdata.password"
+					:rules="passwordRules"
+					validate-on-blur
+					required
+					@keyup.enter="loginUser"
+					:disabled="disabled"
+				/>
+			</v-form>
+		</v-card-text>
+		<v-chip
+			variant="flat"
+			color="red"
+			v-if="notValidLogin"
+			class="mx-5"
+			v-html="notValidLogin"
+		></v-chip>
+		<v-card-actions>
+			<v-btn
+				color="primary"
+				@click="loginUser"
+				:disabled="disabled"
+				:loading="disabled"
+				variant="flat"
+			>
+				<v-icon class="mr-2">mdi-login</v-icon>
+				Přihlásit se
+			</v-btn>
+			<v-spacer></v-spacer>
+			<v-btn
+				@click="showReset = !showReset"
+				class="mt-5"
+				x-small
+				variant="text"
+				>Zapomněli jste heslo?</v-btn
+			>
+		</v-card-actions>
+	</v-card>
 	<v-expand-transition>
-		<v-row align="center" justify="center" class="my-0" v-show="showReset">
-			<v-col cols="12" sm="8" md="6" xl="4">
-				<v-card class="elevation-12 mb-5">
-					<v-toolbar>
-						<v-toolbar-title>
-							<v-icon size="x-small">mdi-lock</v-icon>
-							Zaslat nové heslo
-						</v-toolbar-title>
-						<v-spacer />
-					</v-toolbar>
-					<v-card-text>
-						<v-form ref="resetForm" lazy-validation>
-							<v-text-field
-								variant="underlined"
-								label="Přihlašovací údaje (email)"
-								prepend-icon="mdi-email"
-								type="email"
-								v-model="formdata.emailReset"
-								:rules="emailRules()"
-								:disabled="disabled"
-								validate-on-blur
-								required
-								@keyup.enter="resetPassword"
-							/>
-						</v-form>
-					</v-card-text>
-					<p v-if="resetSent" class="px-5">
-						Pokud jste zde měli účet, pak na Vaši emailovou adresu
-						byly zaslány nové přihlašovací údaje.<br />
-						Pokud email nevidíte, zkontrolujte prosím
-						<strong>spam</strong>
-						složku.
-					</p>
-					<v-card-actions>
-						<v-btn
-							color="primary"
-							@click="resetPassword"
-							:disabled="disabled"
-							:loading="disabled"
-							variant="flat"
-						>
-							<v-icon class="mr-2">mdi-send</v-icon>
-							Odeslat nové heslo
-						</v-btn>
-					</v-card-actions>
-				</v-card>
-			</v-col>
-		</v-row>
+		<v-card class="elevation-12 my-5" v-show="showReset">
+			<v-toolbar>
+				<v-toolbar-title>
+					<v-icon size="x-small">mdi-lock</v-icon>
+					Zaslat nové heslo
+				</v-toolbar-title>
+				<v-spacer />
+			</v-toolbar>
+			<v-card-text>
+				<v-form ref="resetForm" lazy-validation>
+					<v-text-field
+						variant="underlined"
+						label="Přihlašovací údaje (email)"
+						prepend-icon="mdi-email"
+						type="email"
+						v-model="formdata.emailReset"
+						:rules="emailRules()"
+						:disabled="disabled"
+						validate-on-blur
+						required
+						@keyup.enter="resetPassword"
+					/>
+				</v-form>
+			</v-card-text>
+			<p v-if="resetSent" class="px-5">
+				Pokud jste zde měli účet, pak na Vaši emailovou adresu byly
+				zaslány nové přihlašovací údaje.<br />
+				Pokud email nevidíte, zkontrolujte prosím
+				<strong>spam</strong>
+				složku.
+			</p>
+			<v-card-actions>
+				<v-btn
+					color="primary"
+					@click="resetPassword"
+					:disabled="disabled"
+					:loading="disabled"
+					variant="flat"
+				>
+					<v-icon class="mr-2">mdi-send</v-icon>
+					Odeslat nové heslo
+				</v-btn>
+			</v-card-actions>
+		</v-card>
 	</v-expand-transition>
 </template>
 <script setup lang="ts">
