@@ -324,7 +324,7 @@
 							prepend-inner-icon="mdi-lock"
 							v-model="userData.password"
 							:rules="
-								type === 'registration'
+								props.type === 'register'
 									? passwordRules()
 									: passwordRulesNotMandatory()
 							"
@@ -386,7 +386,7 @@
 									!!v ||
 									'Musíte souhlasit s obchodními podmínkami',
 							]"
-							:disabled="type === 'profile'"
+							:disabled="props.type === 'edit'"
 						>
 							<template v-slot:label>
 								Souhlasím s
@@ -407,7 +407,8 @@
 		<v-card-actions>
 			<v-btn
 				v-if="!loggedIn"
-				color="primary"
+				color="success"
+				variant="elevated"
 				block
 				@click="registerUser"
 				:disabled="disabled"
@@ -418,8 +419,8 @@
 			</v-btn>
 			<v-btn
 				v-else
-				color="primary"
-				x-large
+				color="success"
+				variant="elevated"
 				block
 				@click="saveUser"
 				:disabled="disabled"
@@ -433,7 +434,6 @@
 </template>
 <script setup lang="ts">
 	import {
-		Tenant,
 		Tenant as TenantType,
 		User as UserType,
 	} from "~/digitalniweb-types/models/users";
@@ -497,30 +497,6 @@
 		passwordCheck: "",
 	}) as Ref<additionalFormdataOptions>;
 
-	/* const formdata = ref({
-		Tenant: {
-			academicDegree: "Ing.",
-			firstName: "John",
-			lastName: "Doe",
-			telephone: "123-456-7890",
-			city: "Sample City",
-			zip: "12345",
-			streetAddress: "123 Main Street",
-			countryId: 1,
-			houseNumber: 123,
-			landRegistryNumber: 456,
-			company: true,
-			companyName: "ABC Inc.",
-			tin: "123456789",
-			vatId: "VAT123",
-			subscribeNewsletters: true,
-		} as TenantType,
-		email: "",
-		password: "",
-		passwordCheck: "",
-		agreement: false,
-	} as InferAttributes<UserType> & additionalFormdataOptions); */
-
 	const countries = ref([{ id: 1, text: "Česká republika" }]);
 	const selectedCountry = ref(
 		countries.value.find(
@@ -529,8 +505,6 @@
 	);
 
 	const showPassword = ref(false);
-
-	const type = ref("registration");
 
 	const isMobilePhone = () => [
 		(v: string) => !!v || "Vyplňte prosím toto pole",
