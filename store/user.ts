@@ -81,34 +81,27 @@ export const useUserStore = defineStore("user", {
 			this.deleteToken("access");
 			this.deleteToken("refresh");
 		},
-		async login(data: loginInformation) {
-			let loginResponse = await useFetch<userLoginResponse, commonError>(
+		async login(
+			data: loginInformation
+		): Promise<commonError | true | null> {
+			let { fetchData } = useApiCall();
+			let loginResponse = await fetchData<userLoginResponse>(
 				"/api/user/login",
 				{
-					method: "POST",
 					body: data,
-					// this shouldn't be here but in calls which need authorization/authentication
-					// headers: {
-					// 	...useAddJWTAuthHeader(),
-					// },
+					method: "POST",
 				}
 			);
 
-			// if error
-			if (loginResponse?.error?.value?.data) return loginResponse;
+			if (loginResponse?.access_token)
+				this.setToken(loginResponse.access_token, "access");
 
-			if (loginResponse.data?.value?.access_token)
-				this.setToken(loginResponse.data.value.access_token, "access");
-
-			if (loginResponse.data?.value?.refresh_token)
-				this.setToken(
-					loginResponse.data.value.refresh_token,
-					"refresh"
-				);
+			if (loginResponse?.refresh_token)
+				this.setToken(loginResponse.refresh_token, "refresh");
 
 			if (!this.user) this.user = {} as userStore;
-			if (!loginResponse?.data?.value) return null;
-			this.user = await filterStoreparams(loginResponse.data.value);
+			if (!loginResponse) return null;
+			this.user = await filterStoreparams(loginResponse);
 
 			return true;
 		},

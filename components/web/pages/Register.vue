@@ -1,5 +1,5 @@
 <template>
-	<WebPagesSaasHostTenantsCreateWebsiteLogin />
+	<WebPagesSaasHostTenantsCreateWebsiteLogin currentTab="fullRegister" />
 </template>
 <script setup lang="ts">
 	import { useCurrentPageStore } from "@/store/currentPage";

@@ -45,13 +45,6 @@
 				/>
 			</v-form>
 		</v-card-text>
-		<v-chip
-			variant="flat"
-			color="red"
-			v-if="notValidLogin"
-			class="mx-5"
-			v-html="notValidLogin"
-		></v-chip>
 		<v-card-actions>
 			<v-btn
 				color="primary"
@@ -127,6 +120,10 @@
 	import { useRouter } from "vue-router";
 
 	import { loginInformation } from "~/digitalniweb-types";
+	import { commonError } from "../../digitalniweb-types/customHelpers/logger";
+
+	import { useSnackBarsStore } from "~/store/snackBars";
+	let snackBarStore = useSnackBarsStore();
 
 	const router = useRouter();
 
@@ -136,7 +133,6 @@
 	const { strongPasswordOptions } = useStrongPassword();
 	const disabled = ref(false);
 	const showReset = ref(false);
-	const notValidLogin = ref("");
 	const resetSent = ref(false);
 	const formdata = ref({
 		email: "",
@@ -145,48 +141,74 @@
 	});
 	const form = ref<InstanceType<typeof VForm>>();
 	const resetForm = ref<InstanceType<typeof VForm>>();
+
+	const { prettyDateTime } = useDateTime();
+	import { FetchError } from "ofetch";
 	const loginUser = async () => {
 		let blockedLoginTill =
 			localStorage.getItem("blockedLoginTill") ?? undefined;
 		if (blockedLoginTill) {
-			if (new Date() > new Date(blockedLoginTill)) {
+			if (Date.now() < new Date(blockedLoginTill).getTime()) {
 				// Warning + time
-				let formatter = new Intl.DateTimeFormat(
-					currentPage.language?.code || "en",
-					{
-						weekday: "long",
-						year: "numeric",
-						month: "long",
-						day: "numeric",
-						hour: "numeric",
-						minute: "numeric",
-						second: "numeric",
-					}
-				);
-
-				notValidLogin.value =
-					"Před dalšími pokusy vyčkejte prosím do " +
-					formatter.format(new Date(blockedLoginTill));
+				snackBarStore.setSnackBar({
+					text:
+						"Před dalšími pokusy vyčkejte prosím do " +
+						prettyDateTime(blockedLoginTill),
+					color: "orange",
+				});
 				return false;
 			}
 			localStorage.removeItem("blockedLoginTill");
 		}
 		let validate = await form?.value?.validate();
 		if (!validate?.valid) return;
-		let loginData: loginInformation = {
-			email: formdata.value.email,
-			password: formdata.value.password,
-		};
+
 		try {
+			let loginData: loginInformation = {
+				email: formdata.value.email,
+				password: formdata.value.password,
+			};
+
 			let userInfo = await userStore.login(loginData);
-			if (userInfo !== true && userInfo?.error?.value?.data) {
-				notValidLogin.value = userInfo.error.value?.data?.message || "";
+
+			redirectAfterLogin();
+		} catch (error: unknown) {
+			if (
+				typeof error === "object" &&
+				error !== null &&
+				"data" in error
+			) {
+				const err = error as FetchError;
+				if ((err.data as commonError).error.blockedTill)
+					localStorage.setItem(
+						"blockedLoginTill",
+						err.data.error.blockedTill
+					);
+				snackBarStore.setSnackBar({
+					text: err.data.message,
+					color: "orange",
+				});
 				return;
 			}
-			notValidLogin.value = "";
-			redirectAfterLogin();
-		} catch (error) {
-			notValidLogin.value = "Něco se pokazilo.";
+			snackBarStore.setSnackBar({
+				text: "Něco se pokazilo. Problém nemusí být na vaší straně.",
+				color: "red",
+			});
+
+			// if ((userInfo as commonError)?.code ?? 0 >= 500) {
+			// 	snackBarStore.setSnackBar({
+			// 		text: "Něco se pokazilo. Problém nemusí být na vaší straně.",
+			// 		color: "red",
+			// 	});
+			// }
+
+			// if (userInfo !== true && userInfo?.error?.error.message) {
+			// 	snackBarStore.setSnackBar({
+			// 		text: userInfo?.error?.error.message,
+			// 		color: "orange",
+			// 	});
+			// 	return;
+			// }
 		}
 	};
 	const resetPassword = async () => {

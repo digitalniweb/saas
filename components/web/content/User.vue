@@ -14,7 +14,7 @@
 		</v-toolbar>
 		<v-card-text>
 			<v-form ref="form" lazy-validation :disabled="disabled">
-				<v-row v-if="userType === 'tenant'">
+				<v-row v-if="props.userType === 'tenant'">
 					<v-col cols="12" v-if="loggedIn">
 						<v-card
 							img="https://images.pexels.com/photos/50987/money-card-business-credit-card-50987.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
@@ -376,9 +376,15 @@
 					<v-col cols="12">
 						<v-checkbox
 							v-model="tenantData.subscribeNewsletters"
-							label="Chci dostávat novinky formou newsletteru"
-							v-if="userType === 'tenant'"
-						/>
+							v-if="props.userType === 'tenant'"
+						>
+							<template v-slot:label>
+								<v-icon class="mr-3"
+									>mdi-email-newsletter</v-icon
+								>
+								Chci dostávat novinky formou newsletteru
+							</template>
+						</v-checkbox>
 						<v-checkbox
 							v-model="aditionalData.agreement"
 							:rules="[
@@ -389,6 +395,7 @@
 							:disabled="props.type === 'edit'"
 						>
 							<template v-slot:label>
+								<v-icon class="mr-3">mdi-handshake</v-icon>
 								Souhlasím s
 								<a
 									href="/obchodni-podminky"
@@ -435,12 +442,19 @@
 <script setup lang="ts">
 	import {
 		Tenant as TenantType,
+		User,
 		User as UserType,
 	} from "~/digitalniweb-types/models/users";
 	import isMobilePhoneVal from "validator/es/lib/isMobilePhone";
 	import isPostalCodeVal from "validator/es/lib/isPostalCode";
 	import { useUserStore } from "../../../store/user";
-	import { InferAttributes } from "sequelize";
+	import { InferAttributes, InferCreationAttributes } from "sequelize";
+
+	const translations = {};
+	const { translate } = useTranslations(translations);
+
+	import { useSnackBarsStore } from "~/store/snackBars";
+	const snackBars = useSnackBarsStore();
 
 	const userStore = useUserStore();
 
@@ -462,20 +476,18 @@
 
 	const disabled = ref(false);
 
-	const userData = ref<Pick<UserType, "email" | "password">>({
+	let formDataFunctions = useFormData();
+
+	const defaultUserData = {
 		email: "",
 		password: "",
-	});
+	} as Pick<UserType, "email" | "password">;
+	const userData = ref(formDataFunctions.cloneData(defaultUserData));
 	type tenantRegisterType = Omit<
 		InferAttributes<TenantType>,
 		"id" | "UserId"
 	>;
-	const tenantData = ref<
-		Omit<tenantRegisterType, "houseNumber" | "landRegistryNumber"> & {
-			houseNumber: null | number;
-			landRegistryNumber: null | number;
-		}
-	>({
+	const defaultTenantData = {
 		academicDegree: "",
 		firstName: "",
 		lastName: "",
@@ -491,7 +503,24 @@
 		tin: "",
 		vatId: "",
 		subscribeNewsletters: false,
+	} as Omit<tenantRegisterType, "houseNumber" | "landRegistryNumber"> & {
+		houseNumber: null | number;
+		landRegistryNumber: null | number;
+	};
+	const tenantData = ref(formDataFunctions.cloneData(defaultTenantData));
+
+	onMounted(() => {
+		if (!userStore.logged) return;
+		loggedIn.value = true;
+		userData.value.email = userStore.user?.email ?? "";
+		if (!userStore.user?.Tenant) return;
+		if (userStore.user?.Tenant) {
+			tenantData.value = formDataFunctions.cloneData(
+				userStore.user.Tenant
+			);
+		}
 	});
+
 	const aditionalData = ref({
 		agreement: false,
 		passwordCheck: "",
@@ -530,8 +559,47 @@
 		userData.value.password = generatedPassword;
 		aditionalData.value.passwordCheck = generatedPassword;
 	};
-	const saveUser = () => {};
-	const registerUser = () => {};
+
+	const { fetchData } = useApiCall();
+
+	import { VForm } from "vuetify/components";
+	const form = ref<VForm | null>(null);
+
+	const saveUser = async () => {
+		let validate = await form.value?.validate();
+		if (!validate || validate.errors.length > 0) {
+			snackBars.setSnackBar({
+				color: "warning",
+				text: translate("FormValidationError"),
+			});
+			return;
+		}
+	};
+	const registerUser = async () => {
+		let validate = await form.value?.validate();
+		if (!validate || validate.errors.length > 0) {
+			snackBars.setSnackBar({
+				color: "warning",
+				text: translate("FormValidationError"),
+			});
+			return;
+		}
+		let data = {
+			...userData.value,
+		} as InferCreationAttributes<UserType>;
+		if (props.userType === "tenant")
+			data.Tenant = { ...tenantData.value } as TenantType;
+
+		let userRegistered = await fetchData<boolean>("/api/user/register", {
+			method: "POST",
+			body: data,
+		});
+
+		snackBars.setSnackBar({
+			color: "success",
+			text: translate("RegistrationSuccessfulPersonal"),
+		});
+	};
 
 	const emailRules = () => useEmailRules();
 

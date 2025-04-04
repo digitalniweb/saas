@@ -9,6 +9,8 @@ import {
 } from "~/digitalniweb-types/customHelpers/logger";
 import { userLoginData } from "../../../custom/helpers/usersAuth";
 import { InferAttributes } from "sequelize";
+import { resourceIdsType } from "~/digitalniweb-types/apps/communication";
+import { msCallOptions } from "~/digitalniweb-types/custom/helpers/remoteProcedureCall";
 
 export default eventHandler(async (event) => {
 	try {
@@ -20,28 +22,58 @@ export default eventHandler(async (event) => {
 				error: "User-agent not defined while logging in.",
 			} as customLogObject;
 
-		let body = (await readBody(event)) as loginInformation;
+		let body = (await readBody(event)) as loginInformation &
+			resourceIdsType;
 		body.ua = ua;
-		let data = await microserviceCall<InferAttributes<User>>({
+
+		let callOptions = {
 			name: "users",
 			method: "POST",
 			path: "/api/users/authenticate",
 			data: body,
-			scope: "all",
-		});
+		} as msCallOptions;
 
-		if (data?.status >= 400) event.node.res.statusCode = data.status;
+		if (body.usersMsId) callOptions.id = body.usersMsId;
+		else callOptions.scope = "all";
 
-		let responseData = data.data; // if data.status >= 400 -> commonError
+		let data = await microserviceCall<InferAttributes<User>>(callOptions);
+		console.log(data);
+		console.log(data.data);
 
-		if (!responseData || typeof data.headers === "undefined") return;
-		if ("code" in responseData && responseData.code) return responseData;
+		if (data?.status >= 400) {
+			event.node.res.statusCode = data.status;
+			return data.data;
+		}
+
+		if (!data.data) return;
 		return await userLoginData(
-			responseData,
+			data.data,
 			Number(data?.headers?.["x-ms-id"]),
 			true
 		);
+
+		// if (data?.status >= 400) event.node.res.statusCode = data.status;
+
+		// let responseData = data.data; // if data.status >= 400 -> commonError
+
+		// if (!responseData || typeof data.headers === "undefined")
+		// 	throw {
+		// 		type: "routing",
+		// 		status: "warning",
+		// 		error: "No response data while logging in.",
+		// 		code: 500,
+		// 	} as customLogObject;
+		// if ("code" in responseData && responseData.code) return responseData;
 	} catch (error: any) {
+		if (error?.status >= 400 && error?.status < 500) {
+			event.node.res.statusCode = error.status;
+			return {
+				code: error.status,
+				message: "Unauthorized behaviour while logging in",
+				...error.response.data,
+			} as commonError;
+		}
+
 		if (error?.status >= 500)
 			log({
 				type: "routing",
@@ -50,6 +82,7 @@ export default eventHandler(async (event) => {
 		return {
 			code: 500,
 			message: "Something went wrong while logging in!",
+			...error.response.data,
 		} as commonError;
 	}
 });

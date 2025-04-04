@@ -45,13 +45,15 @@ export const useApiCall = () => {
 		if (website.data?.contentMsId)
 			resourceIds.contentMsId = website.data?.contentMsId;
 
-		if (website.data?.appId) resourceIds.appId = website.data?.appId;
+		if (website.data?.appId) resourceIds.appId = website.data.appId;
+		if (website.data?.usersMsId)
+			resourceIds.usersMsId = website.data.usersMsId;
 
 		if (currentPage.module.current?.id)
-			resourceIds.moduleId = currentPage.module.current?.id;
+			resourceIds.moduleId = currentPage.module.current.id;
 
 		if (currentPage.language?.id)
-			resourceIds.languageId = currentPage.language?.id;
+			resourceIds.languageId = currentPage.language.id;
 
 		if (!isObjectEmpty(resourceIds)) {
 			if (!opts) opts = {};
