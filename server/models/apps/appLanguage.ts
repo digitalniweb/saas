@@ -4,9 +4,9 @@ import { DataTypes } from "sequelize";
 
 import db from "../index";
 
-import type { AppLanguage } from "../../../digitalniweb-types/models/apps";
+import type { AppLanguage as AppLanguageType } from "../../../digitalniweb-types/models/apps";
 
-const AppLanguage = db.define<AppLanguage>(
+const AppLanguage = db.define<AppLanguageType>(
 	"AppLanguage",
 	{
 		id: {
