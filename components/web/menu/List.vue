@@ -17,8 +17,8 @@
 
 <script setup lang="ts">
 	import type { InferAttributes } from "sequelize";
-	import { buildTreeType } from "../../../digitalniweb-custom/helpers/buildTree";
-	import { Article } from "../../../digitalniweb-types/models/content";
+	import type { buildTreeType } from "../../../digitalniweb-custom/helpers/buildTree";
+	import type { Article } from "../../../digitalniweb-types/models/content";
 
 	const props = defineProps<{
 		ulclass?: string;

@@ -1,5 +1,5 @@
 import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureCall";
-import {
+import type {
 	resourceIdsType,
 	useApiCallQuery,
 } from "~/digitalniweb-types/apps/communication";

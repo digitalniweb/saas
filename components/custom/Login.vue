@@ -119,7 +119,7 @@
 	import { useRouter } from "vue-router";
 
 	import type { loginInformation } from "~/digitalniweb-types";
-	import { commonError } from "../../digitalniweb-types/customHelpers/logger";
+	import type { commonError } from "../../digitalniweb-types/customHelpers/logger";
 
 	import { useSnackBarsStore } from "~/store/snackBars";
 	let snackBarStore = useSnackBarsStore();

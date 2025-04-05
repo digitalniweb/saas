@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 	const { translate } = useTranslations();
-	import { WidgetContent } from "../../../digitalniweb-types/models/content";
+	import type { WidgetContent } from "../../../digitalniweb-types/models/content";
 
 	const widgetContent = defineModel<WidgetContent>({ default: {} });
 </script>

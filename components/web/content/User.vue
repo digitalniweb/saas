@@ -440,15 +440,14 @@
 	</v-card>
 </template>
 <script setup lang="ts">
-	import {
+	import type {
 		Tenant as TenantType,
-		User,
 		User as UserType,
 	} from "~/digitalniweb-types/models/users";
 	import isMobilePhoneVal from "validator/es/lib/isMobilePhone";
 	import isPostalCodeVal from "validator/es/lib/isPostalCode";
 	import { useUserStore } from "../../../store/user";
-	import { InferAttributes, InferCreationAttributes } from "sequelize";
+	import type { InferAttributes, InferCreationAttributes } from "sequelize";
 
 	const translations = {};
 	const { translate } = useTranslations(translations);

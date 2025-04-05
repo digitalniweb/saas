@@ -3,10 +3,10 @@ import {
 	requestServiceRegistryInfo,
 	registerCurrentApp,
 } from "../../digitalniweb-custom/helpers/serviceRegistryCache.js";
-import { Website } from "~/digitalniweb-types/models/websites.js";
-import { CreationAttributes } from "sequelize";
+import type { Website } from "~/digitalniweb-types/models/websites.js";
+import type { CreationAttributes } from "sequelize";
 import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureCall.js";
-import { customLogObject } from "~/digitalniweb-types/customHelpers/logger.js";
+import type { customLogObject } from "~/digitalniweb-types/customHelpers/logger.js";
 import { log } from "~/digitalniweb-custom/helpers/logger.js";
 export default defineNitroPlugin(async () => {
 	try {

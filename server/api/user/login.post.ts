@@ -1,16 +1,16 @@
 import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureCall";
-import { User } from "~/digitalniweb-types/models/users";
+import type { User } from "~/digitalniweb-types/models/users";
 import { readBody, getHeader } from "h3";
 import { log } from "~/digitalniweb-custom/helpers/logger";
 import type { loginInformation } from "~/digitalniweb-types";
-import {
+import type {
 	commonError,
 	customLogObject,
 } from "~/digitalniweb-types/customHelpers/logger";
 import { userLoginData } from "../../../custom/helpers/usersAuth";
 import type { InferAttributes } from "sequelize";
-import { resourceIdsType } from "~/digitalniweb-types/apps/communication";
-import { msCallOptions } from "~/digitalniweb-types/custom/helpers/remoteProcedureCall";
+import type { resourceIdsType } from "~/digitalniweb-types/apps/communication";
+import type { msCallOptions } from "~/digitalniweb-types/custom/helpers/remoteProcedureCall";
 
 export default eventHandler(async (event) => {
 	try {

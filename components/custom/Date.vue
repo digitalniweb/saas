@@ -13,7 +13,7 @@
 	</v-chip>
 </template>
 <script setup lang="ts">
-	import { dateTitle, dateType } from "../../digitalniweb-types/date";
+	import type { dateTitle, dateType } from "../../digitalniweb-types/date";
 
 	const { prettyDateTime } = useDateTime();
 

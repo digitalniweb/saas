@@ -1,7 +1,7 @@
 import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureCall";
 import AppLanguage from "../../models/apps/appLanguage";
-import { appLanguages } from "~/digitalniweb-types";
-import { Language } from "~/digitalniweb-types/models/globalData";
+import type { appLanguages } from "~/digitalniweb-types";
+import type { Language } from "~/digitalniweb-types/models/globalData";
 import { log } from "~/digitalniweb-custom/helpers/logger";
 import type { InferAttributes } from "sequelize";
 

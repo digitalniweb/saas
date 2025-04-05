@@ -27,7 +27,7 @@
 	</v-row>
 </template>
 <script setup lang="ts">
-	import { formHeader } from "~/types/components/form";
+	import type { formHeader } from "~/types/components/form";
 	const props = defineProps<{
 		formHeader?: formHeader;
 		disabled?: boolean;

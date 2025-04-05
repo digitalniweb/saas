@@ -4,8 +4,8 @@ import { getGlobalDataModelArray } from "~/digitalniweb-custom/helpers/getGlobal
 import AppLanguage from "../models/apps/appLanguage";
 import type { languages } from "~/digitalniweb-types";
 import AppWidget from "../models/apps/appWidget";
-import { widgets } from "~/digitalniweb-types/functionality/widgets";
-import { modules } from "~/digitalniweb-types/functionality/modules";
+import type { widgets } from "~/digitalniweb-types/functionality/widgets";
+import type { modules } from "~/digitalniweb-types/functionality/modules";
 export default defineNitroPlugin(async (nitroApp) => {
 	try {
 		let appModules = await AppModule.findAll();

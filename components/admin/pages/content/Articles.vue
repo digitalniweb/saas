@@ -570,17 +570,17 @@
 	import slugify from "slugify";
 	import draggable from "vuedraggable";
 
-	import {
+	import type {
 		WidgetContentNew,
 		WidgetContentCreate,
 	} from "../../../../digitalniweb-types";
 
-	import {
+	import type {
 		buildTreeType,
 		TreeNode,
 	} from "~/digitalniweb-custom/helpers/buildTree";
 	import type { InferAttributes } from "sequelize";
-	import {
+	import type {
 		Article,
 		WidgetContent,
 	} from "~/digitalniweb-types/models/content";
@@ -588,7 +588,7 @@
 	import { useSnackBarsStore } from "~/store/snackBars";
 	const snackBars = useSnackBarsStore();
 
-	import { moduleResponse } from "~/digitalniweb-types/apps/communication/modules";
+	import type { moduleResponse } from "~/digitalniweb-types/apps/communication/modules";
 	import validator from "validator";
 
 	import { useConfirmStore } from "~/store/confirm";
@@ -1564,8 +1564,8 @@
 	};
 
 	import { useWidgetsStore } from "~/store/widgets";
-	import { Widget } from "../../../../digitalniweb-types/models/globalData";
-	import {
+	import type { Widget } from "../../../../digitalniweb-types/models/globalData";
+	import type {
 		deleteArticleRequestBody,
 		editArticleRequestBody,
 		orderDataObject,

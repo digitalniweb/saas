@@ -175,7 +175,7 @@
 
 	import { watch } from "vue";
 	import { formatBytes } from "~/digitalniweb-custom/functions/formatBytes";
-	import { fileSystemFile } from "../../../digitalniweb-types/filesystem";
+	import type { fileSystemFile } from "../../../digitalniweb-types/filesystem";
 
 	const props = defineProps({
 		icons: Object,

@@ -4,9 +4,9 @@ import { DataTypes } from "sequelize";
 
 import db from "../index.js";
 
-import { AppModule } from "../../../digitalniweb-types/models/apps.js";
+import type { AppModule as AppModuleType } from "../../../digitalniweb-types/models/apps.js";
 
-const AppModule = db.define<AppModule>(
+const AppModule = db.define<AppModuleType>(
 	"AppModule",
 	{
 		id: {

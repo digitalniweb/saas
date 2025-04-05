@@ -1,5 +1,5 @@
 import { userStoreParams } from "~/digitalniweb-custom/variables/user";
-import { userStore, userLoginResponse } from "~/digitalniweb-types/users";
+import type { userStore, userLoginResponse } from "~/digitalniweb-types/users";
 
 const filterStoreparams = async function (loginResponse: userLoginResponse) {
 	let userStore = {} as userStore;

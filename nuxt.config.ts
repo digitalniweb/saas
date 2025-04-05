@@ -9,8 +9,7 @@ export default defineNuxtConfig({
 		strict: true,
 		tsConfig: {
 			compilerOptions: {
-				verbatimModuleSyntax: false,
-				// importsNotUsedAsValues: "error",
+				verbatimModuleSyntax: true,
 				moduleResolution: "bundler",
 				isolatedModules: false,
 			},

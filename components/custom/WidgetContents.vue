@@ -16,7 +16,7 @@
 <script setup lang="ts">
 	import { useWidgetsStore } from "@/store/widgets";
 	import type { InferAttributes } from "sequelize";
-	import { WidgetContent } from "~/digitalniweb-types/models/content";
+	import type { WidgetContent } from "~/digitalniweb-types/models/content";
 	const props = defineProps({
 		widgetContents: Array as PropType<InferAttributes<WidgetContent>[]>,
 	});

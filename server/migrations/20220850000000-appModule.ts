@@ -1,7 +1,7 @@
 import { QueryInterface, DataTypes } from "sequelize";
 
 import AppModule from "../models/apps/appModule.js";
-import { AppModule as AppModuleType } from "../../digitalniweb-types/models/apps.js";
+import type { AppModule as AppModuleType } from "../../digitalniweb-types/models/apps.js";
 
 export default {
 	up: async (queryInterface: QueryInterface): Promise<void> => {

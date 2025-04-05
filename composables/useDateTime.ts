@@ -1,7 +1,7 @@
 import type { languages } from "~/digitalniweb-types";
 import { useCurrentPageStore } from "~/store/currentPage";
 import { isISO8601, isDate } from "validator";
-import { dateType } from "~/digitalniweb-types/date";
+import type { dateType } from "~/digitalniweb-types/date";
 const currentPage = useCurrentPageStore();
 const { translate } = useTranslations();
 export const useDateTime = () => {

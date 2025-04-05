@@ -1,8 +1,8 @@
 import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureCall";
-import { User } from "~/digitalniweb-types/models/users";
+import type { User } from "~/digitalniweb-types/models/users";
 import { readBody, getHeader } from "h3";
 import { log } from "~/digitalniweb-custom/helpers/logger";
-import {
+import type {
 	commonError,
 	customLogObject,
 } from "~/digitalniweb-types/customHelpers/logger";

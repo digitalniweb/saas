@@ -26,11 +26,11 @@
 
 <script setup lang="ts">
 	import type { InferAttributes } from "sequelize";
-	import {
+	import type {
 		buildTreeType,
 		TreeNode,
 	} from "../../../digitalniweb-custom/helpers/buildTree";
-	import {
+	import type {
 		AdminMenu,
 		AdminMenuLanguage,
 	} from "../../../digitalniweb-types/models/globalData";

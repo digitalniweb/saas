@@ -2,8 +2,8 @@
 	<CustomWidgetContents :widgetContents="article?.widgetContents" />
 </template>
 <script setup lang="ts">
-	import { moduleResponse } from "../../../digitalniweb-types/apps/communication/modules";
-	import { Article } from "../../../digitalniweb-types/models/content";
+	import type { moduleResponse } from "../../../digitalniweb-types/apps/communication/modules";
+	import type { Article } from "../../../digitalniweb-types/models/content";
 	import { useCurrentPageStore } from "../../../store/currentPage";
 
 	const currentPage = useCurrentPageStore();
@@ -16,7 +16,7 @@
 					...currentPage.route.query,
 					url: currentPage.route.pathname,
 				},
-		  })
+			})
 		: { data: null });
 
 	currentPage.page.title =

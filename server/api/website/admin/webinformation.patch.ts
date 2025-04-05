@@ -3,7 +3,7 @@ import { log } from "~/digitalniweb-custom/helpers/logger";
 import type { WebInformation } from "~/digitalniweb-types/models/content";
 import type { InferAttributes } from "sequelize";
 import { verifyUser } from "~/custom/helpers/usersAuth";
-import { resourceIdsType } from "~/digitalniweb-types/apps/communication";
+import type { resourceIdsType } from "~/digitalniweb-types/apps/communication";
 
 export default eventHandler(async (event) => {
 	verifyUser(event);

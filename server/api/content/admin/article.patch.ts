@@ -1,7 +1,7 @@
 import { verifyUser } from "~/custom/helpers/usersAuth";
 import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureCall";
-import { resourceIdsType } from "~/digitalniweb-types/apps/communication";
-import {
+import type { resourceIdsType } from "~/digitalniweb-types/apps/communication";
+import type {
 	getEditArticleRequestBody,
 	editArticleRequestBody,
 } from "~/digitalniweb-types/apps/communication/modules/articles";

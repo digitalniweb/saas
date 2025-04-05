@@ -1,5 +1,9 @@
 <template>
-	<ActionButton tooltip="source code" :disabled="disabled">
+	<ActionButton
+		:editor="props.editor"
+		tooltip="source code"
+		:disabled="disabled"
+	>
 		<VIcon>mdi-code-tags</VIcon>
 		<v-dialog
 			v-model="dialog"

@@ -1,12 +1,12 @@
 import { useCurrentPageStore } from "../store/currentPage";
 import { useModulesStore } from "../store/modules";
 import { useWebInformationStore } from "../store/webInformation";
-import { modules } from "../digitalniweb-types/functionality/modules";
+import type { modules } from "../digitalniweb-types/functionality/modules";
 
 import type { InferAttributes } from "sequelize";
 
-import { ModulePageLanguage } from "../digitalniweb-types/models/globalData";
-import {
+import type { ModulePageLanguage } from "../digitalniweb-types/models/globalData";
+import type {
 	WebInformation,
 	WebInformationLanguage,
 } from "../digitalniweb-types/models/content";

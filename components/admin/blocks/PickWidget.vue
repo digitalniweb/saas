@@ -41,9 +41,9 @@
 </template>
 <script setup lang="ts">
 	import { useWidgetsStore } from "~/store/widgets";
-	import { Widget } from "../../../digitalniweb-types/models/globalData";
+	import type { Widget } from "../../../digitalniweb-types/models/globalData";
 	import type { InferAttributes } from "sequelize";
-	import { modules } from "../../../digitalniweb-types/functionality/modules";
+	import type { modules } from "../../../digitalniweb-types/functionality/modules";
 
 	const { translate } = useTranslations();
 

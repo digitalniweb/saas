@@ -287,7 +287,7 @@
 	const { translate } = useTranslations(translations);
 
 	import { useWebInformationStore } from "~/store/webInformation";
-	import { formHeader } from "~/types/components/form";
+	import type { formHeader } from "~/types/components/form";
 	const formHeader = ref<formHeader>({
 		image: "https://images.pexels.com/photos/196655/pexels-photo-196655.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
 		headline: "Informace o webu",
@@ -319,9 +319,8 @@
 			return;
 		}
 		try {
-			let saveDataResponse = await webInformationStore.saveData(
-				dataDifference
-			);
+			let saveDataResponse =
+				await webInformationStore.saveData(dataDifference);
 			console.log(saveDataResponse);
 			if (!saveDataResponse || !saveDataResponse[0]) throw "err";
 

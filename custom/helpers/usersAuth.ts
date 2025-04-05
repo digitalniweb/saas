@@ -5,18 +5,18 @@ import {
 	userLoginResponseParams,
 	userRefreshTokenParams,
 } from "../../digitalniweb-custom/variables/user";
-import { User } from "../../digitalniweb-types/models/users";
-import {
+import type { User } from "../../digitalniweb-types/models/users";
+import type {
 	userJWT,
 	userLoginResponse,
 	userRefreshToken,
 } from "../../digitalniweb-types/users";
-import { commonError } from "../../digitalniweb-types/customHelpers/logger";
+import type { commonError } from "../../digitalniweb-types/customHelpers/logger";
 import type { InferAttributes } from "sequelize";
-import { modules } from "~/digitalniweb-types/functionality/modules";
+import type { modules } from "~/digitalniweb-types/functionality/modules";
 import { getGlobalDataList } from "~/digitalniweb-custom/helpers/getGlobalData";
 import AppModule from "~/server/models/apps/appModule";
-import { resourceIdsType } from "~/digitalniweb-types/apps/communication";
+import type { resourceIdsType } from "~/digitalniweb-types/apps/communication";
 
 interface Options {
 	type?: string;

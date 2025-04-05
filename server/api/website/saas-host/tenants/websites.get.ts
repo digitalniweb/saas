@@ -4,7 +4,7 @@ import { log } from "~/digitalniweb-custom/helpers/logger";
 import type { Website } from "~/digitalniweb-types/models/websites";
 import type { InferAttributes } from "sequelize";
 import { verifyUser } from "~/custom/helpers/usersAuth";
-import {
+import type {
 	resourceIdsType,
 	useApiCallQuery,
 } from "~/digitalniweb-types/apps/communication";

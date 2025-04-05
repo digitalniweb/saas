@@ -5,8 +5,8 @@ import { useCurrentPageStore } from "~/store/currentPage";
 import isObjectEmpty from "~/digitalniweb-custom/functions/isObjectEmpty";
 import { filterStoreparams } from "~/custom/users";
 
-import { resourceIdsType } from "~/digitalniweb-types/apps/communication";
-import { tokensJWT, userLoginResponse } from "~/digitalniweb-types/users";
+import type { resourceIdsType } from "~/digitalniweb-types/apps/communication";
+import type { tokensJWT, userLoginResponse } from "~/digitalniweb-types/users";
 
 /**
  * Uses '$fetch' - returns requested data immediately in response

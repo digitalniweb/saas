@@ -1,7 +1,7 @@
 import { QueryInterface, DataTypes } from "sequelize";
 
 import AppLanguage from "../models/apps/appLanguage.js";
-import { AppLanguage as AppLanguageType } from "../../digitalniweb-types/models/apps.js";
+import type { AppLanguage as AppLanguageType } from "../../digitalniweb-types/models/apps.js";
 
 export default {
 	up: async (queryInterface: QueryInterface): Promise<void> => {

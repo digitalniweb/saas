@@ -1,5 +1,5 @@
 import isStrongPasswordValidator from "validator/es/lib/isStrongPassword";
-import { StrongPasswordOptions } from "validator";
+import type { StrongPasswordOptions } from "validator";
 import { generatePassword as generateStrongPassword } from "~/digitalniweb-custom/functions/randomGenerator";
 
 import { useSnackBarsStore } from "@/store/snackBars";

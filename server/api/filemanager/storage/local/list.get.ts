@@ -3,7 +3,7 @@ import { existsSync, promises as fsPromises } from "fs";
 import { verifyUser } from "~/custom/helpers/usersAuth";
 const { readdir, mkdir, stat } = fsPromises;
 
-import {
+import type {
 	fileSystemFile,
 	fileSystemDirectory,
 	fileSystemItems,

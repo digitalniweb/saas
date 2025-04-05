@@ -64,7 +64,7 @@
 </template>
 <script setup lang="ts">
 	import type { InferAttributes } from "sequelize";
-	import { Website } from "../../../../../digitalniweb-types/models/websites";
+	import type { Website } from "../../../../../digitalniweb-types/models/websites";
 
 	const search = ref("");
 	const paginationOptions = ref({

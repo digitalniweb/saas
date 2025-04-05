@@ -1,7 +1,7 @@
 import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureCall";
 import { getQuery } from "h3";
 import { log } from "~/digitalniweb-custom/helpers/logger";
-import { Widget } from "~/digitalniweb-types/models/globalData";
+import type { Widget } from "~/digitalniweb-types/models/globalData";
 
 export default eventHandler(async (event): Promise<Widget[] | null | false> => {
 	// `ids` is array. But if array has only 1 value then h3 converts it to string

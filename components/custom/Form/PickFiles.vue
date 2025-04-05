@@ -43,9 +43,9 @@
 </template>
 <script setup lang="ts" generic="T">
 	import { useFileManagerStore } from "@/store/fileManager";
-	import { translations } from "~/digitalniweb-types/translations";
+	import type { translations } from "~/digitalniweb-types/translations";
 	import { validImages } from "~/digitalniweb-custom/variables/validImages";
-	import { validImages as validImagesType } from "~/digitalniweb-types/validImages";
+	import type { validImages as validImagesType } from "~/digitalniweb-types/validImages";
 
 	// this will get us vuetify's ValidationRule type = ValidationRule$1[]
 	import type { VTextField } from "vuetify/components";
@@ -86,7 +86,7 @@
 	const textField = ref<InstanceType<typeof VTextField>>();
 
 	const { translate } = useTranslations(props.translation);
-	const chooseFile = async <T>(
+	const chooseFile = async <T,>(
 		property: keyof T,
 		object: T,
 		multipleSelect: boolean = false

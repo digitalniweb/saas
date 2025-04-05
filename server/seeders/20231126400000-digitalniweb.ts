@@ -1,6 +1,6 @@
 import { QueryInterface } from "sequelize";
 
-import { apps } from "../../digitalniweb-types/index.js";
+import type { apps } from "../../digitalniweb-types/index.js";
 // import { microserviceCall } from "../../digitalniweb-custom/helpers/remoteProcedureCall.js";
 const app: Array<apps> = ["webs-host"];
 

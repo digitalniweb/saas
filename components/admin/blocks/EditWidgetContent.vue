@@ -34,7 +34,7 @@
 </template>
 <script setup lang="ts">
 	import type { InferAttributes } from "sequelize";
-	import { WidgetContent } from "../../../digitalniweb-types/models/content";
+	import type { WidgetContent } from "../../../digitalniweb-types/models/content";
 
 	import { VForm } from "vuetify/components";
 	const form = ref<VForm | null>(null);
@@ -84,8 +84,8 @@
 		}
 	);
 
-	import { Widget } from "../../../digitalniweb-types/models/globalData";
-	import { WidgetContentNew } from "../../../digitalniweb-types";
+	import type { Widget } from "../../../digitalniweb-types/models/globalData";
+	import type { WidgetContentNew } from "../../../digitalniweb-types";
 
 	const cancel = () => {
 		emit("returnWidgetContent", null);

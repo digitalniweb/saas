@@ -38,7 +38,7 @@ import LinkDialog from "~/custom/tiptap/extensions/LinkDialog.vue";
 import SelectImage from "~/custom/tiptap/extensions/SelectImage.vue";
 
 import sourceCode from "~/custom/tiptap/extensions/sourceCode";
-import { extendedLinkKeys } from "~/custom/tiptap/types";
+import type { extendedLinkKeys } from "~/custom/tiptap/types";
 
 const ExtendedLink = Link.extend({
 	addAttributes() {

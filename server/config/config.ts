@@ -1,4 +1,4 @@
-import { Options } from "sequelize";
+import type { Options } from "sequelize";
 import dotenv from "dotenv";
 dotenv.config();
 
