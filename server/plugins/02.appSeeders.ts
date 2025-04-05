@@ -2,7 +2,7 @@ import { log } from "~/digitalniweb-custom/helpers/logger.js";
 import AppModule from "../models/apps/appModule";
 import { getGlobalDataModelArray } from "~/digitalniweb-custom/helpers/getGlobalData";
 import AppLanguage from "../models/apps/appLanguage";
-import { languages } from "~/digitalniweb-types";
+import type { languages } from "~/digitalniweb-types";
 import AppWidget from "../models/apps/appWidget";
 import { widgets } from "~/digitalniweb-types/functionality/widgets";
 import { modules } from "~/digitalniweb-types/functionality/modules";

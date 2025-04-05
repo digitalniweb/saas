@@ -1,8 +1,8 @@
-import { buildTreeType } from "~/digitalniweb-custom/helpers/buildTree";
+import type { buildTreeType } from "~/digitalniweb-custom/helpers/buildTree";
 import { useUserStore } from "./user";
-import { InferAttributes } from "sequelize";
-import { AdminMenu } from "~/digitalniweb-types/models/globalData";
-import { Article } from "~/digitalniweb-types/models/content";
+import type { InferAttributes } from "sequelize";
+import type { AdminMenu } from "~/digitalniweb-types/models/globalData";
+import type { Article } from "~/digitalniweb-types/models/content";
 
 export const useMenusStore = defineStore("menus", {
 	state: () => ({
@@ -14,9 +14,10 @@ export const useMenusStore = defineStore("menus", {
 		async loadData() {
 			// change the type here as well
 			const { fetchRef } = useApiCall();
-			let articlesMenu = await fetchRef<
-				buildTreeType<InferAttributes<Article>>
-			>("/api/website/menu");
+			let articlesMenu =
+				await fetchRef<buildTreeType<InferAttributes<Article>>>(
+					"/api/website/menu"
+				);
 			this.articles = articlesMenu.data.value ?? [];
 		},
 		async loadAdminData() {

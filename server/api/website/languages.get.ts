@@ -1,7 +1,7 @@
-import { InferAttributes } from "sequelize";
+import type { InferAttributes } from "sequelize";
 import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureCall";
 import { Language } from "~/digitalniweb-types/models/globalData";
-// import { languages } from "~/digitalniweb-types";
+// import type { languages } from "~/digitalniweb-types";
 import { log } from "~/digitalniweb-custom/helpers/logger";
 
 export default eventHandler(async (event) => {

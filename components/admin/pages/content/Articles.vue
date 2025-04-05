@@ -178,7 +178,10 @@
 										:items="pickMenuOrder"
 										return-object
 										item-value="id"
-										@update:model-value="(el)=>orderChanged(el as orderType)"
+										@update:model-value="
+											(el) =>
+												orderChanged(el as orderType)
+										"
 										v-model="selectedOrder"
 									>
 										<template
@@ -341,8 +344,8 @@
 												element: widgetContent,
 												index: i,
 											}: {
-												element: WidgetContent,
-												index: number,
+												element: WidgetContent;
+												index: number;
 											}"
 										>
 											<v-list-item
@@ -576,7 +579,7 @@
 		buildTreeType,
 		TreeNode,
 	} from "~/digitalniweb-custom/helpers/buildTree";
-	import { InferAttributes } from "sequelize";
+	import type { InferAttributes } from "sequelize";
 	import {
 		Article,
 		WidgetContent,
@@ -1621,7 +1624,7 @@
 	 */
 	function changeObjectsOrderFrom<
 		T extends Record<string, any> & { [key in P]: number },
-		P extends string = "order"
+		P extends string = "order",
 	>(
 		fromIndex: number,
 		array: T[],
@@ -1651,7 +1654,7 @@
 	 */
 	function changeObjectsOrderRange<
 		T extends Record<string, any> & { [key in P]: number },
-		P extends string = "order"
+		P extends string = "order",
 	>(
 		fromIndex: number,
 		toIndex: number,
@@ -1689,7 +1692,7 @@
 	 */
 	function resetObjectsOrderPropertyInArray<
 		T extends Record<string, any> & { [key in P]: number },
-		P extends string = "order"
+		P extends string = "order",
 	>(array: T[], property: P = "order" as P): boolean {
 		if (!array[0] || !array[0][property]) return false;
 		array.forEach((el, i) => {

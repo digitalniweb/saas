@@ -3,7 +3,7 @@ import { StrongPasswordOptions } from "validator";
 import { generatePassword as generateStrongPassword } from "~/digitalniweb-custom/functions/randomGenerator";
 
 import { useSnackBarsStore } from "@/store/snackBars";
-import { languages } from "~/digitalniweb-types";
+import type { languages } from "~/digitalniweb-types";
 
 type strongPasswordOptions = StrongPasswordOptions & {
 	returnScore?: false | undefined;

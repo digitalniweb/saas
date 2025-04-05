@@ -1,4 +1,4 @@
-import {
+import type {
 	AdminMenu,
 	AdminMenuLanguage,
 	Language,
@@ -9,10 +9,13 @@ import {
 import { useLanguagesStore } from "~/store/languages";
 import { useModulesStore } from "~/store/modules";
 import { useMenusStore } from "~/store/menus";
-import { languages } from "~/digitalniweb-types";
-import { InferAttributes, InferCreationAttributes, Optional } from "sequelize";
-import {
-	buildTree,
+import type { languages } from "~/digitalniweb-types";
+import type {
+	InferAttributes,
+	InferCreationAttributes,
+	Optional,
+} from "sequelize";
+import type {
 	buildTreeType,
 	TreeNode,
 } from "~/digitalniweb-custom/helpers/buildTree";

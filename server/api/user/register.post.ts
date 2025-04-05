@@ -7,7 +7,7 @@ import {
 	customLogObject,
 } from "~/digitalniweb-types/customHelpers/logger";
 import { userLoginData } from "../../../custom/helpers/usersAuth";
-import { InferAttributes } from "sequelize";
+import type { InferAttributes } from "sequelize";
 
 export default eventHandler(async (event) => {
 	try {

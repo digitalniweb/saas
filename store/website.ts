@@ -1,5 +1,5 @@
-import { InferAttributes } from "sequelize";
-import { Website } from "~/digitalniweb-types/models/websites";
+import type { InferAttributes } from "sequelize";
+import type { Website } from "~/digitalniweb-types/models/websites";
 
 export const useWebsiteStore = defineStore("website", {
 	state: () => ({

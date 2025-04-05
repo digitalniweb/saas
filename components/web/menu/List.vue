@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-	import { InferAttributes } from "sequelize";
+	import type { InferAttributes } from "sequelize";
 	import { buildTreeType } from "../../../digitalniweb-custom/helpers/buildTree";
 	import { Article } from "../../../digitalniweb-types/models/content";
 

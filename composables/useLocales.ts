@@ -3,7 +3,7 @@ import { useModulesStore } from "../store/modules";
 import { useWebInformationStore } from "../store/webInformation";
 import { modules } from "../digitalniweb-types/functionality/modules";
 
-import { InferAttributes } from "sequelize";
+import type { InferAttributes } from "sequelize";
 
 import { ModulePageLanguage } from "../digitalniweb-types/models/globalData";
 import {

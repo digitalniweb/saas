@@ -1,5 +1,5 @@
-import { InferAttributes } from "sequelize";
-import { WebInformation } from "~/digitalniweb-types/models/content";
+import type { InferAttributes } from "sequelize";
+import type { WebInformation } from "~/digitalniweb-types/models/content";
 import { useWebsiteStore } from "~/store/website";
 // import { useLanguagesStore } from "./languages";
 export const useWebInformationStore = defineStore("webInformation", {

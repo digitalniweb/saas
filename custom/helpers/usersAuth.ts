@@ -12,7 +12,7 @@ import {
 	userRefreshToken,
 } from "../../digitalniweb-types/users";
 import { commonError } from "../../digitalniweb-types/customHelpers/logger";
-import { InferAttributes } from "sequelize";
+import type { InferAttributes } from "sequelize";
 import { modules } from "~/digitalniweb-types/functionality/modules";
 import { getGlobalDataList } from "~/digitalniweb-custom/helpers/getGlobalData";
 import AppModule from "~/server/models/apps/appModule";

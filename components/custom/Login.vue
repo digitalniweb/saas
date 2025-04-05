@@ -116,10 +116,9 @@
 <script setup lang="ts">
 	import { VForm } from "vuetify/components";
 	import { useUserStore } from "@/store/user";
-	import { useCurrentPageStore } from "@/store/currentPage";
 	import { useRouter } from "vue-router";
 
-	import { loginInformation } from "~/digitalniweb-types";
+	import type { loginInformation } from "~/digitalniweb-types";
 	import { commonError } from "../../digitalniweb-types/customHelpers/logger";
 
 	import { useSnackBarsStore } from "~/store/snackBars";
@@ -128,7 +127,6 @@
 	const router = useRouter();
 
 	const userStore = useUserStore();
-	const currentPage = useCurrentPageStore();
 
 	const { strongPasswordOptions } = useStrongPassword();
 	const disabled = ref(false);

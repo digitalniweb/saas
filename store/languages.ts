@@ -1,4 +1,4 @@
-import { appLanguages, languages } from "~/digitalniweb-types";
+import type { appLanguages, languages } from "~/digitalniweb-types";
 import { useWebsiteStore } from "~/store/website";
 import { useWebInformationStore } from "./webInformation";
 
@@ -12,9 +12,8 @@ export const useLanguagesStore = defineStore("languages", {
 	getters: {},
 	actions: {
 		async loadData() {
-			let appLanguagesFetch = await useFetch<appLanguages>(
-				"/api/app/languages"
-			);
+			let appLanguagesFetch =
+				await useFetch<appLanguages>("/api/app/languages");
 
 			if (appLanguagesFetch.error.value) {
 				// ! need to use useFetch('/api/log',{customLogObject}) to call log from backend, this is wrong, otherwise ioredis Publisher complains with 'process.version' error

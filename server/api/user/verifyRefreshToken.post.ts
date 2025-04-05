@@ -1,6 +1,6 @@
 import { verifyRefreshToken } from "~/custom/verifyTokens";
 import { log } from "~/digitalniweb-custom/helpers/logger";
-import { commonError } from "~/digitalniweb-types/customHelpers/logger";
+import type { commonError } from "~/digitalniweb-types/customHelpers/logger";
 import { tokensJWT } from "~/digitalniweb-types/users";
 
 export default eventHandler(async (event) => {

@@ -1,13 +1,13 @@
-import { loginInformation } from "~/digitalniweb-types";
-import {
+import type { loginInformation } from "~/digitalniweb-types";
+import type {
 	tokenType,
 	tokensJWT,
 	userLoginResponse,
 	userStore,
 } from "~/digitalniweb-types/users";
-import { commonError } from "~/digitalniweb-types/customHelpers/logger";
+import type { commonError } from "~/digitalniweb-types/customHelpers/logger";
 import { filterStoreparams } from "~/custom/users";
-import { JwtPayload } from "jsonwebtoken";
+import type { JwtPayload } from "jsonwebtoken";
 
 interface State {
 	user: userStore | null;

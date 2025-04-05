@@ -33,7 +33,7 @@
 	</v-dialog>
 </template>
 <script setup lang="ts">
-	import { InferAttributes } from "sequelize";
+	import type { InferAttributes } from "sequelize";
 	import { WidgetContent } from "../../../digitalniweb-types/models/content";
 
 	import { VForm } from "vuetify/components";
@@ -41,7 +41,7 @@
 
 	const emit = defineEmits<{
 		returnWidgetContent: [
-			value: WidgetContentNew | InferAttributes<WidgetContent> | null
+			value: WidgetContentNew | InferAttributes<WidgetContent> | null,
 		];
 	}>();
 

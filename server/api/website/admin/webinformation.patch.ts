@@ -1,7 +1,7 @@
 import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureCall";
 import { log } from "~/digitalniweb-custom/helpers/logger";
-import { WebInformation } from "~/digitalniweb-types/models/content";
-import { InferAttributes } from "sequelize";
+import type { WebInformation } from "~/digitalniweb-types/models/content";
+import type { InferAttributes } from "sequelize";
 import { verifyUser } from "~/custom/helpers/usersAuth";
 import { resourceIdsType } from "~/digitalniweb-types/apps/communication";
 

@@ -2,9 +2,9 @@ import { userRefreshToken } from "~/digitalniweb-types/users";
 import jwt from "jsonwebtoken";
 import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureCall";
 import { User } from "~/digitalniweb-types/models/users";
-import { InferAttributes } from "sequelize";
+import type { InferAttributes } from "sequelize";
 import { userLoginData } from "~/custom/helpers/usersAuth";
-import { commonError } from "~/digitalniweb-types/customHelpers/logger";
+import type { commonError } from "~/digitalniweb-types/customHelpers/logger";
 /**
  *
  * @param token refresh token

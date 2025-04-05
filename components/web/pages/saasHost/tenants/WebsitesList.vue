@@ -63,7 +63,7 @@
 	</v-data-iterator>
 </template>
 <script setup lang="ts">
-	import { InferAttributes } from "sequelize";
+	import type { InferAttributes } from "sequelize";
 	import { Website } from "../../../../../digitalniweb-types/models/websites";
 
 	const search = ref("");

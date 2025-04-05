@@ -5,7 +5,7 @@ import {
 	getSaveNewArticleRequestBody,
 	saveNewArticleRequestBody,
 } from "~/digitalniweb-types/apps/communication/modules/articles";
-import { Article } from "~/digitalniweb-types/models/content";
+import type { Article } from "~/digitalniweb-types/models/content";
 export default eventHandler(async (event) => {
 	verifyUser(event);
 	let body = (await readBody(event)) as getSaveNewArticleRequestBody;

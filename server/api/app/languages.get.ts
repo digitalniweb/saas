@@ -3,7 +3,7 @@ import AppLanguage from "../../models/apps/appLanguage";
 import { appLanguages } from "~/digitalniweb-types";
 import { Language } from "~/digitalniweb-types/models/globalData";
 import { log } from "~/digitalniweb-custom/helpers/logger";
-import { InferAttributes } from "sequelize";
+import type { InferAttributes } from "sequelize";
 
 export default eventHandler(async (event): Promise<appLanguages | false> => {
 	try {

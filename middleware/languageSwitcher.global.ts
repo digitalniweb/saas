@@ -1,3 +1,4 @@
+import type { languages } from "~/digitalniweb-types";
 import { useLanguagesStore } from "~/store/languages";
 /**
  * /cs|en/:slug - default pages
@@ -20,7 +21,8 @@ export default defineNuxtRouteMiddleware((to) => {
 		return;
 	}
 	// load this array from API
-	if (["cs", "en"].includes(currentSlug)) {
+
+	if (languages.languages.includes(currentSlug as languages)) {
 		// set given language
 
 		currentSlug = slugs.shift();

@@ -1,8 +1,8 @@
 import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureCall";
 import { getQuery } from "h3";
 import { log } from "~/digitalniweb-custom/helpers/logger";
-import { Website } from "~/digitalniweb-types/models/websites";
-import { InferAttributes } from "sequelize";
+import type { Website } from "~/digitalniweb-types/models/websites";
+import type { InferAttributes } from "sequelize";
 import { verifyUser } from "~/custom/helpers/usersAuth";
 import {
 	resourceIdsType,

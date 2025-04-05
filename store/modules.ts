@@ -1,6 +1,6 @@
-import { Module } from "~/digitalniweb-types/models/globalData";
+import type { Module } from "~/digitalniweb-types/models/globalData";
 import { useWebInformationStore } from "./webInformation";
-import { InferAttributes } from "sequelize";
+import type { InferAttributes } from "sequelize";
 export const useModulesStore = defineStore("modules", {
 	state: () => ({
 		app: [] as number[],

@@ -1,5 +1,5 @@
 import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureCall";
-import { Article } from "~/digitalniweb-types/models/content";
+import type { Article } from "~/digitalniweb-types/models/content";
 
 import { getArticleQuery } from "~/digitalniweb-types/apps/communication/modules/articles";
 import { resourceIdsType } from "~/digitalniweb-types/apps/communication";

@@ -555,7 +555,7 @@
 			!!!v || isStrongPassword(v) || "Zadejte prosím silné heslo",
 	];
 	const generateStrongPassword = async () => {
-		let generatedPassword = await generatePassword();
+		let generatedPassword = await generatePassword(18, 25);
 		userData.value.password = generatedPassword;
 		aditionalData.value.passwordCheck = generatedPassword;
 	};
