@@ -118,8 +118,14 @@
 	import { useUserStore } from "@/store/user";
 	import { useRouter } from "vue-router";
 
-	import type { loginInformation } from "~/digitalniweb-types";
+	import type {
+		loginInformation,
+		wrongLoginError,
+		wrongLoginErrorMessageTranslate,
+	} from "~/digitalniweb-types";
 	import type { commonError } from "../../digitalniweb-types/customHelpers/logger";
+
+	const { translate } = useTranslations();
 
 	import { useSnackBarsStore } from "~/store/snackBars";
 	let snackBarStore = useSnackBarsStore();
@@ -150,8 +156,12 @@
 				// Warning + time
 				snackBarStore.setSnackBar({
 					text:
-						"Před dalšími pokusy vyčkejte prosím do " +
-						prettyDateTime(blockedLoginTill),
+						translate("LoginErrorTooManyAttempts") +
+						"<br><strong>" +
+						translate("Wait till") +
+						" " +
+						prettyDateTime(blockedLoginTill) +
+						"</strong>",
 					color: "orange",
 				});
 				return false;
@@ -165,9 +175,10 @@
 			let loginData: loginInformation = {
 				email: formdata.value.email,
 				password: formdata.value.password,
+				type: "tenant",
 			};
 
-			let userInfo = await userStore.login(loginData);
+			await userStore.login(loginData);
 
 			redirectAfterLogin();
 		} catch (error: unknown) {
@@ -182,20 +193,46 @@
 						"blockedLoginTill",
 						err.data.error.blockedTill
 					);
+				let errorMessage = err.data.error
+					?.messageTranslate as wrongLoginErrorMessageTranslate;
+				let errorMessageTranslated = "";
+				if (errorMessage === "LoginErrorTooManyAttempts")
+					errorMessageTranslated =
+						translate(errorMessage) +
+						"<br><strong>" +
+						translate("Wait till") +
+						" " +
+						prettyDateTime(err.data.error.blockedTill) +
+						"</strong>";
+				else
+					errorMessageTranslated = translate(
+						errorMessage ?? err.data.message
+					);
+				if (
+					(err.data.error as wrongLoginError).loginAttemptsCount &&
+					(err.data.error as wrongLoginError).maxLoginAttempts &&
+					(err.data.error as wrongLoginError).loginAttemptsCount !=
+						(err.data.error as wrongLoginError).maxLoginAttempts
+				)
+					errorMessageTranslated +=
+						" " +
+						err.data.error.loginAttemptsCount +
+						"/" +
+						err.data.error.maxLoginAttempts;
 				snackBarStore.setSnackBar({
-					text: err.data.message,
+					text: errorMessageTranslated,
 					color: "orange",
 				});
 				return;
 			}
 			snackBarStore.setSnackBar({
-				text: "Něco se pokazilo. Problém nemusí být na vaší straně.",
+				text: translate("Something went wrong"),
 				color: "red",
 			});
 
 			// if ((userInfo as commonError)?.code ?? 0 >= 500) {
 			// 	snackBarStore.setSnackBar({
-			// 		text: "Něco se pokazilo. Problém nemusí být na vaší straně.",
+			// 		text: translate('Something went wrong'),
 			// 		color: "red",
 			// 	});
 			// }
@@ -218,10 +255,10 @@
 		disabled.value = false;
 	};
 	const passwordRules = [
-		(v: string) => !!v || "Vyplňte prosím toto pole",
+		(v: string) => !!v || translate("Fill in this field"),
 		(v: string) =>
-			(v && v.length >= (strongPasswordOptions.minLength || 8)) ||
-			"Zadejte prosim platné přihlašovací údaje",
+			(v && v.length >= (strongPasswordOptions.minLength || 10)) ||
+			translate("Please enter valid login details"),
 	];
 
 	const redirectAfterLogin = async function () {

@@ -23,7 +23,6 @@ export const useDateTime = () => {
 			hour: "2-digit",
 			minute: "2-digit",
 			hour12: langCode.startsWith("en"),
-			timeZone: "UTC",
 		}).format(newDate);
 	};
 	return { prettyDateTime };

@@ -321,7 +321,6 @@
 		try {
 			let saveDataResponse =
 				await webInformationStore.saveData(dataDifference);
-			console.log(saveDataResponse);
 			if (!saveDataResponse || !saveDataResponse[0]) throw "err";
 
 			formDataFunctions.saveDataDifference(

@@ -9,7 +9,7 @@ export default eventHandler(async (event): Promise<boolean> => {
 		await mkdir(storagePath, { recursive: true });
 		return true;
 	} catch (error) {
-		console.log(error);
+		// console.log(error);
 		return false;
 	}
 });

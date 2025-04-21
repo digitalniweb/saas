@@ -37,8 +37,6 @@ export default eventHandler(async (event) => {
 		else callOptions.scope = "all";
 
 		let data = await microserviceCall<InferAttributes<User>>(callOptions);
-		console.log(data);
-		console.log(data.data);
 
 		if (data?.status >= 400) {
 			event.node.res.statusCode = data.status;

@@ -5,7 +5,7 @@ import type { Language } from "~/digitalniweb-types/models/globalData";
 import { log } from "~/digitalniweb-custom/helpers/logger";
 import type { InferAttributes } from "sequelize";
 
-export default eventHandler(async (event): Promise<appLanguages | false> => {
+export default eventHandler(async (): Promise<appLanguages | false> => {
 	try {
 		let languages = await AppLanguage.findAll();
 		let languagesIds: number[] = [];

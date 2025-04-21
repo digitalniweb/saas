@@ -14,7 +14,7 @@ export default eventHandler(async (event): Promise<boolean> => {
 		}
 		return true;
 	} catch (error) {
-		console.log(error);
+		// console.log(error);
 		return false;
 	}
 });
