@@ -6,8 +6,8 @@ import type {
 	commonError,
 	customLogObject,
 } from "~/digitalniweb-types/customHelpers/logger";
-import { userLoginData } from "../../../custom/helpers/usersAuth";
 import type { InferAttributes } from "sequelize";
+import type { registerUser } from "~/digitalniweb-types/users";
 
 export default eventHandler(async (event) => {
 	try {
@@ -19,17 +19,19 @@ export default eventHandler(async (event) => {
 				error: "User-agent not defined while registering.",
 			} as customLogObject;
 
-		let body = (await readBody(event)) as User;
-
-		return { ua, body };
+		let body = (await readBody(event)) as registerUser;
 
 		let data = await microserviceCall<InferAttributes<User>>({
 			name: "users",
 			method: "POST",
 			path: "/api/users/register",
-			data: body,
+			data: { ...body, ua },
 		});
+
+		return data.data;
 	} catch (error: any) {
+		console.log(error);
+
 		if (error?.status >= 500)
 			log({
 				type: "routing",

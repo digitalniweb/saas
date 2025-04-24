@@ -447,7 +447,8 @@
 	import isMobilePhoneVal from "validator/es/lib/isMobilePhone";
 	import isPostalCodeVal from "validator/es/lib/isPostalCode";
 	import { useUserStore } from "../../../store/user";
-	import type { InferAttributes, InferCreationAttributes } from "sequelize";
+	import type { InferAttributes } from "sequelize";
+	import type { registerUser as registerUserType } from "~/digitalniweb-types/users";
 
 	const translations = {};
 	const { translate } = useTranslations(translations);
@@ -562,6 +563,7 @@
 	const { fetchData } = useApiCall();
 
 	import { VForm } from "vuetify/components";
+	import type { userAuthorizationNames } from "../../../digitalniweb-types/authorization";
 	const form = ref<VForm | null>(null);
 
 	const saveUser = async () => {
@@ -584,10 +586,11 @@
 			return;
 		}
 		let data = {
-			...userData.value,
-		} as InferCreationAttributes<UserType>;
+			user: userData.value,
+			userRole: "tenant",
+		} as registerUserType;
 		if (props.userType === "tenant")
-			data.Tenant = { ...tenantData.value } as TenantType;
+			data.user.Tenant = { ...tenantData.value } as TenantType;
 
 		let userRegistered = await fetchData<boolean>("/api/user/register", {
 			method: "POST",

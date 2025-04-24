@@ -229,21 +229,6 @@
 				text: translate("Something went wrong"),
 				color: "red",
 			});
-
-			// if ((userInfo as commonError)?.code ?? 0 >= 500) {
-			// 	snackBarStore.setSnackBar({
-			// 		text: translate('Something went wrong'),
-			// 		color: "red",
-			// 	});
-			// }
-
-			// if (userInfo !== true && userInfo?.error?.error.message) {
-			// 	snackBarStore.setSnackBar({
-			// 		text: userInfo?.error?.error.message,
-			// 		color: "orange",
-			// 	});
-			// 	return;
-			// }
 		}
 	};
 	const resetPassword = async () => {
