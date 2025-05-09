@@ -123,7 +123,6 @@
 		wrongLoginError,
 		wrongLoginErrorMessageTranslate,
 	} from "~/digitalniweb-types";
-	import type { commonError } from "../../digitalniweb-types/customHelpers/logger";
 
 	const { translate } = useTranslations();
 
@@ -188,7 +187,7 @@
 				"data" in error
 			) {
 				const err = error as FetchError;
-				if ((err.data as commonError).error.blockedTill)
+				if (err.data.error.blockedTill)
 					localStorage.setItem(
 						"blockedLoginTill",
 						err.data.error.blockedTill

@@ -16,6 +16,7 @@
 					...currentPage.route.query,
 					url: currentPage.route.pathname,
 				},
+				key: "articleId-" + currentPage.route.id,
 			})
 		: { data: null });
 

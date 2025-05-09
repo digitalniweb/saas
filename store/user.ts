@@ -5,7 +5,7 @@ import type {
 	userLoginResponse,
 	userStore,
 } from "~/digitalniweb-types/users";
-import type { commonError } from "~/digitalniweb-types/customHelpers/logger";
+
 import { filterStoreparams } from "~/custom/users";
 import type { JwtPayload } from "jsonwebtoken";
 
@@ -47,25 +47,25 @@ export const useUserStore = defineStore("user", {
 			let accessToken = this.getToken("access");
 			let refreshToken = this.getToken("refresh");
 			if (!accessToken || !refreshToken) return;
-			let data = await useFetch<
-				userLoginResponse | JwtPayload,
-				commonError
-			>("/api/user/verifyAccessToken", {
-				method: "POST",
-				body: { accessToken } as tokensJWT,
-			});
+			let data = await useFetch<userLoginResponse | JwtPayload>(
+				"/api/user/verifyAccessToken",
+				{
+					method: "POST",
+					body: { accessToken } as tokensJWT,
+				}
+			);
 
 			if (
 				typeof data.data.value === "string" &&
 				data.data.value === "TokenExpiredError"
 			) {
-				data = await useFetch<
-					userLoginResponse | JwtPayload,
-					commonError
-				>("/api/user/verifyRefreshToken", {
-					method: "POST",
-					body: { refreshToken } as tokensJWT,
-				});
+				data = await useFetch<userLoginResponse | JwtPayload>(
+					"/api/user/verifyRefreshToken",
+					{
+						method: "POST",
+						body: { refreshToken } as tokensJWT,
+					}
+				);
 			}
 			if (!data.data.value || data.error.value) {
 				this.deleteToken("access");
@@ -81,9 +81,7 @@ export const useUserStore = defineStore("user", {
 			this.deleteToken("access");
 			this.deleteToken("refresh");
 		},
-		async login(
-			data: loginInformation
-		): Promise<commonError | true | null> {
+		async login(data: loginInformation): Promise<true | null> {
 			let { fetchData } = useApiCall();
 			let loginResponse = await fetchData<userLoginResponse>(
 				"/api/user/login",

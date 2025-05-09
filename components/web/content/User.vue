@@ -563,7 +563,7 @@
 	const { fetchData } = useApiCall();
 
 	import { VForm } from "vuetify/components";
-	import type { userAuthorizationNames } from "../../../digitalniweb-types/authorization";
+	import type { errorResponse } from "../../../digitalniweb-types/errors";
 	const form = ref<VForm | null>(null);
 
 	const saveUser = async () => {
@@ -592,15 +592,27 @@
 		if (props.userType === "tenant")
 			data.user.Tenant = { ...tenantData.value } as TenantType;
 
-		let userRegistered = await fetchData<boolean>("/api/user/register", {
-			method: "POST",
-			body: data,
-		});
-
-		snackBars.setSnackBar({
-			color: "success",
-			text: translate("RegistrationSuccessfulPersonal"),
-		});
+		try {
+			let userRegistered = await fetchData<boolean>(
+				"/api/user/register",
+				{
+					method: "POST",
+					body: data,
+				}
+			);
+			snackBars.setSnackBar({
+				color: "success",
+				text: translate("RegistrationSuccessfulPersonal"),
+			});
+		} catch (e: any) {
+			snackBars.setSnackBar({
+				color: "warning",
+				text: translate(
+					(e?.data as errorResponse).messageTranslate ??
+						"Something went Wrong"
+				),
+			});
+		}
 	};
 
 	const emailRules = () => useEmailRules();

@@ -20,6 +20,7 @@ import type {
 	TreeNode,
 } from "~/digitalniweb-custom/helpers/buildTree";
 import { useWebInformationStore } from "./webInformation";
+import getObjectFromArray from "~/digitalniweb-custom/functions/getObjectFromArray";
 const queryParamsKeys = ["page", "limit", "offset", "search"] as const;
 type queryParamsTypes = {
 	page: number;
@@ -221,9 +222,14 @@ export const useCurrentPageStore = defineStore("currentPage", {
 			// }
 
 			// pages (not admin)
-			if (menuStore.articles.length === 0) {
-				await menuStore.loadData();
-			}
+			if (menuStore.articles.length === 0) await menuStore.loadData();
+			let article = getObjectFromArray(
+				this.route.pathname,
+				menuStore.articles,
+				-1,
+				{ key: "url", children: "children" }
+			);
+			if (article) this.route.id = article.id;
 
 			// current module
 			let currentModule = null;

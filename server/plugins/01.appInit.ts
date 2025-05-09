@@ -6,8 +6,8 @@ import {
 import type { Website } from "~/digitalniweb-types/models/websites.js";
 import type { CreationAttributes } from "sequelize";
 import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureCall.js";
-import type { customLogObject } from "~/digitalniweb-types/customHelpers/logger.js";
-import { log } from "~/digitalniweb-custom/helpers/logger.js";
+import { consoleLogProduction } from "~/digitalniweb-custom/helpers/logger.js";
+
 export default defineNitroPlugin(async () => {
 	try {
 		await Subscriber.subscribe("globalDataMessage"); // subscribe to "globalDataMessage" messages from "globalData"
@@ -22,25 +22,21 @@ export default defineNitroPlugin(async () => {
 					let serviceRegistryInfo =
 						await requestServiceRegistryInfo();
 					if (!serviceRegistryInfo)
-						log({
-							type: "consoleLogProduction",
-							status: "error",
-							message:
-								"Couldn't get serviceRegistry information.",
-						});
+						consoleLogProduction(
+							"Couldn't get service registry information.",
+							"error"
+						);
 					try {
 						if (!process.env.APP_ID) await registerCurrentApp();
-						log({
-							message: `'${process.env.APP_NAME}' registered on 'globalData registered'.`,
-							type: "consoleLogProduction",
-							status: "success",
-						});
+						consoleLogProduction(
+							`'${process.env.APP_NAME}' registered on 'globalData registered'.`,
+							"success"
+						);
 					} catch (error) {
-						log({
-							type: "consoleLogProduction",
-							status: "error",
-							message: `Couldn't register '${process.env.APP_NAME}' after 'globalData registered'.`,
-						});
+						consoleLogProduction(
+							`Couldn't register '${process.env.APP_NAME}' after 'globalData registered'.`,
+							"error"
+						);
 					}
 				}
 			}
@@ -52,19 +48,12 @@ export default defineNitroPlugin(async () => {
 
 		if (process.env.APP_TYPE !== "saas-host") return;
 		let websiteInfo: Website | null;
-		try {
-			let { data } = await microserviceCall<Website>({
-				name: "websites",
-				path: "/api/url/" + process.env["HOST"],
-			});
-			websiteInfo = data;
-		} catch (error) {
-			throw {
-				type: "database",
-				status: "error",
-				error: `Error while getting Website ${process.env["HOST"]}`,
-			} as customLogObject;
-		}
+
+		let { data } = await microserviceCall<Website>({
+			name: "websites",
+			path: "/api/url/" + process.env["HOST"],
+		});
+		websiteInfo = data;
 
 		if (websiteInfo === null) {
 			let websiteData: CreationAttributes<Website> = {
@@ -87,19 +76,12 @@ export default defineNitroPlugin(async () => {
 			websiteInfo = data;
 
 			if (!websiteInfo) {
-				throw {
-					type: "database",
-					status: "error",
-					error: "Could not create new website while creating App.",
-				} as customLogObject;
+				throw new Error(
+					"Could not create new website while creating App."
+				);
 			}
 		}
 	} catch (error: any) {
-		log({
-			type: "functions",
-			status: "error",
-			message: "'appInit' failed.",
-			error,
-		});
+		consoleLogProduction(error, "error", "'appInit' failed.");
 	}
 });

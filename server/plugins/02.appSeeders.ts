@@ -1,4 +1,3 @@
-import { log } from "~/digitalniweb-custom/helpers/logger.js";
 import AppModule from "../models/apps/appModule";
 import { getGlobalDataModelArray } from "~/digitalniweb-custom/helpers/getGlobalData";
 import AppLanguage from "../models/apps/appLanguage";
@@ -6,6 +5,7 @@ import type { languages } from "~/digitalniweb-types";
 import AppWidget from "../models/apps/appWidget";
 import type { widgets } from "~/digitalniweb-types/functionality/widgets";
 import type { modules } from "~/digitalniweb-types/functionality/modules";
+import { consoleLogProduction } from "~/digitalniweb-custom/helpers/logger";
 export default defineNitroPlugin(async (nitroApp) => {
 	try {
 		let appModules = await AppModule.findAll();
@@ -86,11 +86,6 @@ export default defineNitroPlugin(async (nitroApp) => {
 			}
 		}
 	} catch (error: any) {
-		log({
-			type: "functions",
-			status: "error",
-			message: "App seeder failed.",
-			error,
-		});
+		consoleLogProduction(error, "error", "App seeder failed.");
 	}
 });

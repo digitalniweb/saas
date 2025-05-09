@@ -4,7 +4,7 @@ import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureC
 import type { User } from "~/digitalniweb-types/models/users";
 import type { InferAttributes } from "sequelize";
 import { userLoginData } from "~/custom/helpers/usersAuth";
-import type { commonError } from "~/digitalniweb-types/customHelpers/logger";
+
 /**
  *
  * @param token refresh token
@@ -42,14 +42,10 @@ const verifyRefreshToken = async function (token: string) {
 			} else if (error.name == "JsonWebTokenError") {
 				// someone modified the token: logout
 				return false;
-			} else {
-				throw error;
 			}
-		} else
-			throw {
-				error,
-				message: "Error while verifying refresh token.",
-			} as commonError;
+			throw error;
+		}
+		throw new Error("Error while verifying refresh token.");
 	}
 };
 
@@ -70,14 +66,10 @@ const verifyAccessToken = function (token: string) {
 			} else if (error.name == "JsonWebTokenError") {
 				// someone modified the token: logout
 				return false;
-			} else {
-				throw error;
 			}
-		} else
-			throw {
-				error,
-				message: "Error while verifying access token.",
-			} as commonError;
+			throw error;
+		}
+		throw error;
 	}
 };
 export { verifyAccessToken, verifyRefreshToken };

@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import type { SignOptions } from "jsonwebtoken";
 import { H3Event } from "h3";
 import {
 	userJWTParams,
@@ -11,7 +12,6 @@ import type {
 	userLoginResponse,
 	userRefreshToken,
 } from "../../digitalniweb-types/users";
-import type { commonError } from "../../digitalniweb-types/customHelpers/logger";
 import type { InferAttributes } from "sequelize";
 import type { modules } from "~/digitalniweb-types/functionality/modules";
 import { getGlobalDataList } from "~/digitalniweb-custom/helpers/getGlobalData";
@@ -55,54 +55,46 @@ async function userLoginData(
 	user: InferAttributes<User>,
 	usersMsId: number,
 	addRefreshToken: boolean = false
-): Promise<userLoginResponse | commonError> {
-	try {
-		if (isNaN(usersMsId))
-			throw {
-				message: `User login got 'usersMsId=${typeof usersMsId}'`,
-			};
-		let userLogged = {} as userLoginResponse;
-		userLoginResponseParams.forEach((prop) => {
-			if (user[prop] === undefined) return;
-			(userLogged as any)[prop] = user[prop];
-			// the 'as any' is shortcut for this:
-			// if (prop === "id") userLogged[prop] = user[prop];
-			// else if (prop === "roleId") userLogged[prop] = user[prop];
-			// else if (prop === "uuid") userLogged[prop] = user[prop];
-			// else if (prop === "nickname") userLogged[prop] = user[prop];
-			// // etc.
-			// else userLogged[prop] = user[prop];
-		});
-		userLogged.usersMsId = usersMsId;
+): Promise<userLoginResponse> {
+	if (isNaN(usersMsId))
+		throw {
+			message: `User login got 'usersMsId=${typeof usersMsId}'`,
+		};
+	let userLogged = {} as userLoginResponse;
+	userLoginResponseParams.forEach((prop) => {
+		if (user[prop] === undefined) return;
+		(userLogged as any)[prop] = user[prop];
+		// the 'as any' is shortcut for this:
+		// if (prop === "id") userLogged[prop] = user[prop];
+		// else if (prop === "roleId") userLogged[prop] = user[prop];
+		// else if (prop === "uuid") userLogged[prop] = user[prop];
+		// else if (prop === "nickname") userLogged[prop] = user[prop];
+		// // etc.
+		// else userLogged[prop] = user[prop];
+	});
+	userLogged.usersMsId = usersMsId;
 
-		let jwtData = {} as userJWT;
-		userJWTParams.forEach((prop) => {
-			if (userLogged[prop] === undefined) return;
-			(jwtData as any)[prop] = userLogged[prop];
-		});
-		let refreshTokenData = {} as userRefreshToken;
-		userRefreshTokenParams.forEach((prop) => {
-			if (userLogged[prop] === undefined) return;
-			(refreshTokenData as any)[prop] = userLogged[prop];
-		});
+	let jwtData = {} as userJWT;
+	userJWTParams.forEach((prop) => {
+		if (userLogged[prop] === undefined) return;
+		(jwtData as any)[prop] = userLogged[prop];
+	});
+	let refreshTokenData = {} as userRefreshToken;
+	userRefreshTokenParams.forEach((prop) => {
+		if (userLogged[prop] === undefined) return;
+		(refreshTokenData as any)[prop] = userLogged[prop];
+	});
 
-		let accessToken: string = generateToken(jwtData, {});
-		if (addRefreshToken) {
-			let refreshToken: string = generateToken(refreshTokenData, {
-				type: "refresh",
-				refreshTokenSalt: user.refreshTokenSalt,
-			});
-			userLogged.refresh_token = refreshToken;
-		}
-		userLogged.access_token = accessToken;
-		return userLogged;
-	} catch (error) {
-		return {
-			code: 403,
-			message: "Token couldn't be generated.",
-			error,
-		} as commonError;
+	let accessToken: string = generateToken(jwtData, {});
+	if (addRefreshToken) {
+		let refreshToken: string = generateToken(refreshTokenData, {
+			type: "refresh",
+			refreshTokenSalt: user.refreshTokenSalt,
+		});
+		userLogged.refresh_token = refreshToken;
 	}
+	userLogged.access_token = accessToken;
+	return userLogged;
 }
 
 function generateToken(data: object, options: Options = {}): string {
@@ -119,7 +111,7 @@ function generateToken(data: object, options: Options = {}): string {
 	} else {
 		return jwt.sign(data, process.env.APP_ACCESS_TOKEN_SECRET, {
 			expiresIn: time,
-		});
+		} as SignOptions);
 	}
 }
 

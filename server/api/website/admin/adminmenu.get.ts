@@ -4,7 +4,6 @@ import type {
 	useApiCallQuery,
 } from "~/digitalniweb-types/apps/communication";
 import { verifyUser } from "~/custom/helpers/usersAuth";
-import { log } from "~/digitalniweb-custom/helpers/logger";
 
 export default eventHandler(async (event) => {
 	verifyUser(event);
@@ -19,22 +18,12 @@ export default eventHandler(async (event) => {
 	if (["admin", "owner"].includes(userVerified.role.name))
 		query.modules = userVerified.UserModulesIds as [];
 
-	try {
-		let adminMenusGlobalData = await microserviceCall({
-			name: "globalData",
-			path: "/api/adminmenu/list",
-			id: resourceIds.contentMsId,
-			params: query,
-		});
+	let adminMenusGlobalData = await microserviceCall({
+		name: "globalData",
+		path: "/api/adminmenu/list",
+		id: resourceIds.contentMsId,
+		params: query,
+	});
 
-		return adminMenusGlobalData.data || [];
-	} catch (error: any) {
-		log({
-			type: "routing",
-			status: "error",
-			message: `Couldn't get adminmenu list.`,
-			error,
-		});
-		return false;
-	}
+	return adminMenusGlobalData.data || [];
 });

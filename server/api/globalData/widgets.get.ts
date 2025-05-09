@@ -1,6 +1,6 @@
 import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureCall";
 import { getQuery } from "h3";
-import { log } from "~/digitalniweb-custom/helpers/logger";
+
 import type { Widget } from "~/digitalniweb-types/models/globalData";
 
 export default eventHandler(async (event): Promise<Widget[] | null | false> => {
@@ -9,21 +9,11 @@ export default eventHandler(async (event): Promise<Widget[] | null | false> => {
 	if (!ids) return false;
 	if (typeof ids === "string") ids = [ids];
 
-	try {
-		let { data: widgets } = await microserviceCall<Widget[]>({
-			name: "globalData",
-			path: "/api/widgets/listbyids",
-			params: { ids },
-		});
+	let { data: widgets } = await microserviceCall<Widget[]>({
+		name: "globalData",
+		path: "/api/widgets/listbyids",
+		params: { ids },
+	});
 
-		return widgets;
-	} catch (error: any) {
-		log({
-			type: "routing",
-			status: "error",
-			message: `Couldn't get globalData widgets by ids.`,
-			error,
-		});
-		return false;
-	}
+	return widgets;
 });

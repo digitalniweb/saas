@@ -19,16 +19,12 @@ export default eventHandler(async (event): Promise<Article | null | false> => {
 		if (!articleModule) return false;
 		query.resourceIds.moduleId = articleModule.id;
 	}
-	try {
-		let { data: article } = await microserviceCall<Article>({
-			name: "content",
-			id: resourceIds.contentMsId,
-			path: "/api/current/modules/article",
-			params: query,
-		});
+	let { data: article } = await microserviceCall<Article>({
+		name: "content",
+		id: resourceIds.contentMsId,
+		path: "/api/current/modules/article",
+		params: query,
+	});
 
-		return article;
-	} catch (error: unknown) {
-		return false;
-	}
+	return article;
 });
