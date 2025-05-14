@@ -604,11 +604,14 @@
 				color: "success",
 				text: translate("RegistrationSuccessfulPersonal"),
 			});
+			console.log(userRegistered);
 		} catch (e: any) {
+			console.log(e);
+
 			snackBars.setSnackBar({
 				color: "warning",
 				text: translate(
-					(e?.data as errorResponse).messageTranslate ??
+					(e?.data?.data as errorResponse)?.messageTranslate ??
 						"Something went Wrong"
 				),
 			});

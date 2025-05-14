@@ -187,12 +187,12 @@
 				"data" in error
 			) {
 				const err = error as FetchError;
-				if (err.data.error.blockedTill)
+				if (err.data?.data.blockedTill)
 					localStorage.setItem(
 						"blockedLoginTill",
-						err.data.error.blockedTill
+						err.data?.data.blockedTill
 					);
-				let errorMessage = err.data.error
+				let errorMessage = err.data?.data
 					?.messageTranslate as wrongLoginErrorMessageTranslate;
 				let errorMessageTranslated = "";
 				if (errorMessage === "LoginErrorTooManyAttempts")
@@ -201,23 +201,23 @@
 						"<br><strong>" +
 						translate("Wait till") +
 						" " +
-						prettyDateTime(err.data.error.blockedTill) +
+						prettyDateTime(err.data?.data.blockedTill) +
 						"</strong>";
 				else
 					errorMessageTranslated = translate(
 						errorMessage ?? err.data.message
 					);
 				if (
-					(err.data.error as wrongLoginError).loginAttemptsCount &&
-					(err.data.error as wrongLoginError).maxLoginAttempts &&
-					(err.data.error as wrongLoginError).loginAttemptsCount !=
-						(err.data.error as wrongLoginError).maxLoginAttempts
+					(err.data?.data as wrongLoginError).loginAttemptsCount &&
+					(err.data?.data as wrongLoginError).maxLoginAttempts &&
+					(err.data?.data as wrongLoginError).loginAttemptsCount !=
+						(err.data?.data as wrongLoginError).maxLoginAttempts
 				)
 					errorMessageTranslated +=
 						" " +
-						err.data.error.loginAttemptsCount +
+						err.data?.data.loginAttemptsCount +
 						"/" +
-						err.data.error.maxLoginAttempts;
+						err.data?.data.maxLoginAttempts;
 				snackBarStore.setSnackBar({
 					text: errorMessageTranslated,
 					color: "orange",
@@ -260,7 +260,7 @@
 				);
 			return router.push("/admin/");
 		} else if (userStore?.user?.role?.RoleType?.name === "user") {
-			if (userStore?.user?.Tenant) {
+			if (userStore?.user?.role?.name === "tenant") {
 				// if (
 				// 	router.currentRoute.value.query.redirect &&
 				// 	(router.currentRoute.value.query.redirect ===

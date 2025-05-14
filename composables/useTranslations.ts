@@ -1,6 +1,6 @@
 import { useCurrentPageStore } from "../store/currentPage";
 import type { translations } from "~/digitalniweb-types/translations";
-import { defaultTranslations } from "~/digitalniweb-custom/variables/translations";
+import { defaultTranslations } from "~/digitalniweb-custom/variables/translations/translations";
 
 export function useTranslations(translations?: translations) {
 	const currentPage = useCurrentPageStore();

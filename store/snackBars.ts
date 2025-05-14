@@ -5,6 +5,7 @@ export type snackBar = {
 	timeout: number;
 	text: string;
 	icon: string;
+	textTranslate?: string;
 	enableBody?: boolean; // defaultly remove 'disabled' class from <body>
 };
 import { useCurrentPageStore } from "./currentPage";
@@ -21,11 +22,27 @@ export const useSnackBarsStore = defineStore("snackBars", {
 		setSnackBar(options: Partial<snackBar>) {
 			const currentPage = useCurrentPageStore();
 			this.idCounter++;
+			let color = options.color || "primary";
+			let colorTextMap = {
+				primary: "OK",
+				success: "Success",
+				warning: "Something went wrong",
+				error: "Error",
+			} as Record<string, string>;
+			let text: string;
+			if (options.text) {
+				text = options.text;
+			} else {
+				const { translate } = useTranslations();
+				let textTranslate =
+					options.textTranslate || colorTextMap[color] || "Finished";
+				text = translate(textTranslate);
+			}
 			this.snackBars.push({
 				id: this.idCounter,
 				show: true,
-				text: options.text || "OK",
-				color: options.color || "primary",
+				text,
+				color,
 				icon: options.icon || "information-outline",
 				timeout: options.timeout || 4000,
 			});
