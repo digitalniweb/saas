@@ -9,6 +9,14 @@ import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureC
 import { consoleLogProduction } from "~/digitalniweb-custom/helpers/logger.js";
 
 export default defineNitroPlugin(async () => {
+	// subscribe now and on connect to everything
+	pubSubServiceInitApp();
+	Subscriber.on("connect", () => {
+		pubSubServiceInitApp();
+	});
+});
+
+async function pubSubServiceInitApp() {
 	try {
 		await Subscriber.subscribe("globalDataMessage"); // subscribe to "globalDataMessage" messages from "globalData"
 		await Subscriber.psubscribe("serviceRegistry-responseInformation-*"); // handled in registerCurrentApp()
@@ -17,8 +25,6 @@ export default defineNitroPlugin(async () => {
 		Subscriber.on("message", async (channel, message) => {
 			if (channel === "globalDataMessage") {
 				if (message === "registered") {
-					console.log("registered globalDataMessage");
-
 					let serviceRegistryInfo =
 						await requestServiceRegistryInfo();
 					if (!serviceRegistryInfo)
@@ -84,4 +90,4 @@ export default defineNitroPlugin(async () => {
 	} catch (error: any) {
 		consoleLogProduction(error, "error", "'appInit' failed.");
 	}
-});
+}

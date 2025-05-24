@@ -233,58 +233,9 @@
 	import { useSnackBarsStore } from "~/store/snackBars";
 	let snackBarStore = useSnackBarsStore();
 
-	let translations = {
-		"Main image": {
-			cs: "Hlavní obrázek",
-		},
-		"Google Tag Manager Active": {
-			cs: "Google Tag Manager Aktivní",
-		},
-		Owner: {
-			cs: "Majitel",
-		},
-		TIN: {
-			cs: "IČ",
-		},
-		"VAT ID": {
-			cs: "DIČ",
-		},
-		Country: {
-			cs: "Země",
-		},
-		ZIP: {
-			cs: "PSČ",
-		},
-		"Street Address": {
-			cs: "Ulice",
-		},
-		"Land Registry Number": {
-			cs: "Číslo katastrálního území",
-		},
-		"House number": {
-			cs: "Číslo domu",
-		},
-		"Address Pattern": {
-			cs: "Vzor adresy",
-		},
-		"Full Address": {
-			cs: "Celá adresa",
-		},
-		"Bank name": {
-			cs: "Název banky",
-		},
-		"Bank Account Number": {
-			cs: "Číslo bankovního účtu",
-		},
-		"Bank Code": {
-			cs: "Kód banky",
-		},
-		"Bank IBAN": {
-			cs: "Bankovní IBAN",
-		},
-	};
+	import { webInformationTranslations } from "../../../../digitalniweb-custom/variables/translations/webInformation";
 
-	const { translate } = useTranslations(translations);
+	const { translate } = useTranslations(webInformationTranslations);
 
 	import { useWebInformationStore } from "~/store/webInformation";
 	import type { formHeader } from "~/types/components/form";

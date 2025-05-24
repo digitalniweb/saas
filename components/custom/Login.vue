@@ -126,6 +126,8 @@
 
 	const { translate } = useTranslations();
 
+	const { modulesLocale } = useLocales();
+
 	import { useSnackBarsStore } from "~/store/snackBars";
 	let snackBarStore = useSnackBarsStore();
 
@@ -246,9 +248,7 @@
 	];
 
 	const redirectAfterLogin = async function () {
-		// !!! commented stuff is from vue 2 needs to be ported to vue 3
 		if (userStore?.user?.role?.RoleType?.name === "admin") {
-			// await this.$store.dispatch("getAdminmenu", { force: true });
 			if (
 				router.currentRoute.value.query.redirect &&
 				(router.currentRoute.value.query.redirect as string).startsWith(
@@ -260,30 +260,9 @@
 				);
 			return router.push("/admin/");
 		} else if (userStore?.user?.role?.RoleType?.name === "user") {
-			if (userStore?.user?.role?.name === "tenant") {
-				// if (
-				// 	router.currentRoute.value.query.redirect &&
-				// 	(router.currentRoute.value.query.redirect ===
-				// 		this.getModulePath({
-				// 			module: "tenant-order",
-				// 			returnString: true,
-				// 		}) ||
-				// 		router.currentRoute.value.query.redirect ===
-				// 			this.getModulePath({
-				// 				module: "tenant-profile",
-				// 				returnString: true,
-				// 			}))
-				// )
-				// 	return router.push(
-				// 		router.currentRoute.value.query.redirect as string
-				// 	);
-				// return router.push(
-				// 	this.getModulePath({
-				// 		module: "tenant-profile",
-				// 	})
-				// );
-			}
-			return router.push("/");
+			// if (userStore?.user?.role?.name === "tenant") {
+			// }
+			return router.push(modulesLocale("users", "Profile", "url"));
 		}
 	};
 	const emailRules = () => useEmailRules();

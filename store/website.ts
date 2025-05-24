@@ -9,12 +9,13 @@ export const useWebsiteStore = defineStore("website", {
 	actions: {
 		async loadData() {
 			let requestUrl = useRequestURL();
-			let website = await useFetch<InferAttributes<Website> | null>(
+			const { fetchData } = useApiCall();
+			let website = await fetchData<InferAttributes<Website> | null>(
 				`/api/website/website?url=${requestUrl.hostname}`
 			);
-			if (!website.data.value) return false;
-			this.data = website.data.value;
-			return website.data.value;
+			if (!website) return false;
+			this.data = website;
+			return website;
 		},
 	},
 });

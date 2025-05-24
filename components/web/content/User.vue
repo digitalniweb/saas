@@ -15,14 +15,16 @@
 		<v-card-text>
 			<v-form ref="form" lazy-validation :disabled="disabled">
 				<v-row v-if="props.userType === 'tenant'">
-					<v-col cols="12" v-if="loggedIn">
+					<v-col cols="12" xl="6" v-if="loggedIn">
 						<v-card
-							img="https://images.pexels.com/photos/50987/money-card-business-credit-card-50987.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
-							to="/"
+							image="https://images.pexels.com/photos/50987/money-card-business-credit-card-50987.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
+							height="150px"
+							class="d-flex justify-center align-center"
 							hover
+							:to="'/'"
 						>
 							<v-card-title
-								class="text-h4 white--text relative justify-center"
+								class="text-h4 text-white"
 								v-if="userStore.user?.credit !== null"
 							>
 								{{ userStore.user?.credit }}
@@ -32,26 +34,34 @@
 							</v-card-title>
 
 							<v-card-subtitle
-								class="white--text relative text-center"
+								class="text-white"
+								v-if="userStore.user?.credit !== null"
 							>
-								Aktuální zůstatek kreditů
+								Aktuální zůstatek kreditu
 							</v-card-subtitle>
 
-							<v-card-actions
-								class="text-h4 white--text relative justify-center"
-							>
+							<v-card-actions class="text-h4 text-white">
 								Dobít kredit
 							</v-card-actions>
 						</v-card>
 					</v-col>
-					<v-col cols="12" v-if="loggedIn">
+					<v-col cols="12" xl="6" v-if="loggedIn">
 						<v-card
-							img="https://images.pexels.com/photos/1029757/pexels-photo-1029757.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
-							height="100%"
+							image="https://images.pexels.com/photos/1029757/pexels-photo-1029757.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
+							height="150px"
 							class="d-flex justify-center align-center"
 							hover
+							:to="
+								modulesLocale(
+									'saasHost',
+									'Tenant\'s websites list',
+									'url'
+								)
+							"
 						>
-							<v-card-title> Moje weby </v-card-title>
+							<v-card-title class="text-h4 text-white">
+								Moje weby
+							</v-card-title>
 						</v-card>
 					</v-col>
 					<v-col cols="12" class="pb-0">
@@ -238,65 +248,68 @@
 						</v-btn>
 					</v-col>
 					<v-col cols="12">
-						<v-card
-							elevation="0"
-							class="py-0"
-							:disabled="!tenantData.company"
-						>
-							<v-row>
-								<v-col cols="12">
-									<v-text-field
-										variant="underlined"
-										label="Název firmy"
-										prepend-inner-icon="mdi-domain"
-										type="text"
-										v-model="tenantData.companyName"
-										:rules="[
-											(v) =>
-												!tenantData?.company ||
-												!!tenantData.companyName ||
-												'Vyplňte název firmy.',
-										]"
-										validate-on="blur"
-										counter="200"
-									/>
-								</v-col>
-								<v-col cols="6">
-									<v-text-field
-										variant="underlined"
-										label="IČO"
-										prepend-inner-icon="mdi-card-account-details-outline"
-										type="text"
-										v-model="tenantData.tin"
-										:rules="[
-											(v) =>
-												!tenantData?.company ||
-												!!tenantData.tin ||
-												'Vyplňte IČO',
-										]"
-										validate-on="blur"
-										counter="15"
-									/>
-								</v-col>
-								<v-col cols="6">
-									<v-text-field
-										variant="underlined"
-										label="DIČ"
-										prepend-inner-icon="mdi-card-account-details-outline"
-										type="text"
-										v-model="tenantData.vatId"
-										:rules="[
-											(v) =>
-												!tenantData?.company ||
-												!!tenantData.vatId ||
-												'Vyplňte DIČ',
-										]"
-										validate-on="blur"
-										counter="15"
-									/>
-								</v-col>
-							</v-row> </v-card
-					></v-col>
+						<v-expand-transition>
+							<v-card
+								elevation="0"
+								class="py-0"
+								v-show="tenantData.company"
+							>
+								<v-row>
+									<v-col cols="12">
+										<v-text-field
+											variant="underlined"
+											label="Název firmy"
+											prepend-inner-icon="mdi-domain"
+											type="text"
+											v-model="tenantData.companyName"
+											:rules="[
+												(v) =>
+													!tenantData?.company ||
+													!!tenantData.companyName ||
+													'Vyplňte název firmy.',
+											]"
+											validate-on="blur"
+											counter="200"
+										/>
+									</v-col>
+									<v-col cols="6">
+										<v-text-field
+											variant="underlined"
+											label="IČO"
+											prepend-inner-icon="mdi-card-account-details-outline"
+											type="text"
+											v-model="tenantData.tin"
+											:rules="[
+												(v) =>
+													!tenantData?.company ||
+													!!tenantData.tin ||
+													'Vyplňte IČO',
+											]"
+											validate-on="blur"
+											counter="15"
+										/>
+									</v-col>
+									<v-col cols="6">
+										<v-text-field
+											variant="underlined"
+											label="DIČ"
+											prepend-inner-icon="mdi-card-account-details-outline"
+											type="text"
+											v-model="tenantData.vatId"
+											:rules="[
+												(v) =>
+													!tenantData?.company ||
+													!!tenantData.vatId ||
+													'Vyplňte DIČ',
+											]"
+											validate-on="blur"
+											counter="15"
+										/>
+									</v-col>
+								</v-row>
+							</v-card>
+						</v-expand-transition>
+					</v-col>
 				</v-row>
 				<v-row>
 					<v-col cols="12" class="pb-0 mt-10">
@@ -315,6 +328,9 @@
 						/>
 					</v-col>
 
+					<v-col cols="12" class="pb-0" v-if="loggedIn">
+						<h2 class="overline mb-0">Změna hesla</h2>
+					</v-col>
 					<v-col cols="12" md="6">
 						<v-text-field
 							variant="underlined"
@@ -351,9 +367,9 @@
 							label="Ověření hesla"
 							name="passwordCheck"
 							prepend-inner-icon="mdi-lock"
-							v-model="aditionalData.passwordCheck"
+							v-model="additionalData.passwordCheck"
 							:rules="[
-								aditionalData.passwordCheck ===
+								additionalData.passwordCheck ===
 									userData.password ||
 									'Musí se shodovat s Vámi zadaným heslem!',
 							]"
@@ -386,13 +402,13 @@
 							</template>
 						</v-checkbox>
 						<v-checkbox
-							v-model="aditionalData.agreement"
+							v-model="additionalData.agreement"
 							:rules="[
 								(v) =>
 									!!v ||
 									'Musíte souhlasit s obchodními podmínkami',
 							]"
-							:disabled="props.type === 'edit'"
+							:readonly="props.type === 'edit'"
 						>
 							<template v-slot:label>
 								<v-icon class="mr-3">mdi-handshake</v-icon>
@@ -447,6 +463,7 @@
 	import isMobilePhoneVal from "validator/es/lib/isMobilePhone";
 	import isPostalCodeVal from "validator/es/lib/isPostalCode";
 	import { useUserStore } from "../../../store/user";
+	const { modulesLocale } = useLocales();
 	import type { InferAttributes } from "sequelize";
 	import type { registerUser as registerUserType } from "~/digitalniweb-types/users";
 
@@ -512,6 +529,7 @@
 	onMounted(() => {
 		if (!userStore.logged) return;
 		loggedIn.value = true;
+		additionalData.value.agreement = true;
 		userData.value.email = userStore.user?.email ?? "";
 		if (!userStore.user?.Tenant) return;
 		if (userStore.user?.Tenant) {
@@ -521,7 +539,7 @@
 		}
 	});
 
-	const aditionalData = ref({
+	const additionalData = ref({
 		agreement: false,
 		passwordCheck: "",
 	}) as Ref<additionalFormdataOptions>;
@@ -557,7 +575,7 @@
 	const generateStrongPassword = async () => {
 		let generatedPassword = await generatePassword(18, 25);
 		userData.value.password = generatedPassword;
-		aditionalData.value.passwordCheck = generatedPassword;
+		additionalData.value.passwordCheck = generatedPassword;
 	};
 
 	const { fetchData } = useApiCall();

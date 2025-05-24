@@ -22,7 +22,7 @@ export default eventHandler(async (event) => {
 	>({
 		name: "websites",
 		id: resourceIds.websitesMsId,
-		path: "/api/saas-host/tenants-websites/" + userVerified.id,
+		path: "/api/tenantwebsites/" + userVerified.id,
 	});
 
 	if (!mainWebsiteInfoData) return false;
