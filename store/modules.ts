@@ -1,6 +1,7 @@
 import type { Module } from "~/digitalniweb-types/models/globalData";
 import { useWebInformationStore } from "./webInformation";
 import type { InferAttributes } from "sequelize";
+import type { modules } from "~/digitalniweb-types/functionality/modules";
 export const useModulesStore = defineStore("modules", {
 	state: () => ({
 		app: [] as number[],
@@ -40,6 +41,34 @@ export const useModulesStore = defineStore("modules", {
 			);
 			if (!globalDataModules.data.value) return false;
 			this.globalData = globalDataModules.data.value;
+		},
+		getModule(moduleName: modules) {
+			return this.globalData.find((e) => e.name == moduleName);
+		},
+		hasWebsiteModule(moduleName: modules) {
+			let foundModule = this.getModule(moduleName);
+			if (!foundModule) return false;
+			return !!this.website.includes(foundModule.id);
+		},
+		/**
+		 * Website has to have all modules from list = AND
+		 */
+		hasWebsiteModules(moduleNames: modules[]) {
+			for (let index = 0; index < moduleNames.length; index++) {
+				const module = moduleNames[index];
+				if (!this.hasWebsiteModule(module)) return false;
+			}
+			return true;
+		},
+		/**
+		 * Website has to have at least one module from list = OR
+		 */
+		hasSomeWebsiteModules(moduleNames: modules[]) {
+			for (let index = 0; index < moduleNames.length; index++) {
+				const module = moduleNames[index];
+				if (this.hasWebsiteModule(module)) return true;
+			}
+			return false;
 		},
 	},
 });

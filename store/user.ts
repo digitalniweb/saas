@@ -6,8 +6,11 @@ import type {
 	userStore,
 } from "~/digitalniweb-types/users";
 
+import { useModulesStore } from "@/store/modules";
+
 import { filterStoreparams } from "~/custom/users";
 import type { JwtPayload } from "jsonwebtoken";
+import type { modules } from "~/digitalniweb-types/functionality/modules";
 
 interface State {
 	user: userStore | null;
@@ -102,6 +105,32 @@ export const useUserStore = defineStore("user", {
 			this.user = await filterStoreparams(loginResponse);
 
 			return true;
+		},
+		hasModule(moduleName: modules) {
+			const modulesStore = useModulesStore();
+			let module = modulesStore.getModule(moduleName);
+			if (!module) return false;
+			return this.user?.UserModulesIds?.includes(module.id);
+		},
+		/**
+		 * User has to have all modules from list = AND
+		 */
+		hasModules(moduleNames: modules[]) {
+			for (let index = 0; index < moduleNames.length; index++) {
+				const module = moduleNames[index];
+				if (!this.hasModule(module)) return false;
+			}
+			return true;
+		},
+		/**
+		 * User has to have at least one module from list = OR
+		 */
+		hasSomeModules(moduleNames: modules[]) {
+			for (let index = 0; index < moduleNames.length; index++) {
+				const module = moduleNames[index];
+				if (this.hasModule(module)) return true;
+			}
+			return false;
 		},
 	},
 });
