@@ -344,7 +344,7 @@
 												element: widgetContent,
 												index: i,
 											}: {
-												element: WidgetContent;
+												element: ArticleWidget;
 												index: number;
 											}"
 										>
@@ -381,9 +381,7 @@
 												<template v-slot:default>
 													<v-list-item-title
 														v-text="
-															translate(
-																widgetContent.name
-															)
+															'translate(ArticleWidget.name)'
 														"
 													></v-list-item-title>
 												</template>
@@ -571,18 +569,13 @@
 	import draggable from "vuedraggable";
 
 	import type {
-		WidgetContentNew,
-		WidgetContentCreate,
-	} from "../../../../digitalniweb-types";
-
-	import type {
 		buildTreeType,
 		TreeNode,
 	} from "~/digitalniweb-custom/helpers/buildTree";
 	import type { InferAttributes } from "sequelize";
 	import type {
 		Article,
-		WidgetContent,
+		ArticleWidget,
 	} from "~/digitalniweb-types/models/content";
 	import getObjectFromArray from "~/digitalniweb-custom/functions/getObjectFromArray";
 	import { useSnackBarsStore } from "~/store/snackBars";
@@ -658,7 +651,7 @@
 
 	const { fetchData } = useApiCall();
 
-	const pickedWidgetContent = ref<InferAttributes<WidgetContent> | null>(
+	const pickedWidgetContent = ref<InferAttributes<ArticleWidget> | null>(
 		null
 	);
 
@@ -690,7 +683,7 @@
 	};
 
 	const editWidgetContent = (
-		widgetContent: InferAttributes<WidgetContent>
+		widgetContent: InferAttributes<ArticleWidget>
 	) => {
 		if (!pickedWidget.value)
 			pickedWidget.value = getWidget(widgetContent.widgetId) ?? null;
@@ -708,8 +701,8 @@
 
 	const returnedWidgetContent = (
 		newInfoWidgetContent:
-			| WidgetContentNew
-			| InferAttributes<WidgetContent>
+			| newWidgetContent
+			| InferAttributes<ArticleWidget>
 			| null
 	) => {
 		if (!pickedWidget.value || !newInfoWidgetContent) {
@@ -723,9 +716,9 @@
 			let newWidgetContent = {
 				...newInfoWidgetContent,
 				order: widgetsdata.value?.length || 0,
-				moduleId: currentModule?.id,
+				// moduleId: currentModule?.id,
 				widgetId: pickedWidget.value?.id,
-			} as WidgetContentCreate;
+			} as newWidgetContent;
 			widgetsdata.value?.push(newWidgetContent);
 		} else {
 			for (const key in newInfoWidgetContent) {
@@ -750,12 +743,12 @@
 
 	let formDataFunctions = useFormData();
 
-	const formdataOriginalWidgetContent = ref<InferAttributes<WidgetContent>[]>(
+	const formdataOriginalWidgetContent = ref<InferAttributes<ArticleWidget>[]>(
 		[]
 	);
 	const menudata = ref<InferAttributes<Article> | null>(null);
 	const widgetsdata = ref<
-		(InferAttributes<WidgetContent> | WidgetContentCreate)[] | null
+		(InferAttributes<ArticleWidget> | newWidgetContent)[] | null
 	>(null);
 
 	type menuTreeNode = TreeNode<Partial<InferAttributes<Article>>>;
@@ -1083,7 +1076,7 @@
 		}
 
 		if (menuIsNew) {
-			let newWCs = [] as WidgetContentCreate[];
+			let newWCs = [] as newWidgetContent[];
 			newWCs = widgetsdata.value || [];
 
 			let menudataSave: Partial<InferAttributes<Article>>;
@@ -1096,9 +1089,9 @@
 				disableBody: true,
 				method: "PUT",
 				body: {
-					menu: { data: menudataSave },
-					widgetContent: {
-						newWCs,
+					menu: menudataSave,
+					widgets: {
+						new: newWCs,
 					},
 				} as saveNewArticleRequestBody,
 			});
@@ -1149,12 +1142,12 @@
 
 			//  menu's WidgetContent - create new / edited / deleted
 			let deletedWCs = [] as number[];
-			let newWCs = [] as WidgetContentCreate[];
-			let editedWCs = [] as Partial<InferAttributes<WidgetContent>>[];
+			let newWCs = [] as newWidgetContent[];
+			let editedWCs = [] as Partial<InferAttributes<ArticleWidget>>[];
 
 			let newWidgetContentData = [] as (
-				| InferAttributes<WidgetContent>
-				| WidgetContentCreate
+				| InferAttributes<ArticleWidget>
+				| newWidgetContent
 			)[];
 			if (widgetsdata.value)
 				newWidgetContentData = [...widgetsdata.value];
@@ -1170,7 +1163,7 @@
 
 				let editCandidateWC = newWidgetContentData[
 					indexWC
-				] as InferAttributes<WidgetContent>;
+				] as InferAttributes<ArticleWidget>;
 
 				let diff = formDataFunctions.dataDifference(
 					wc,
@@ -1180,7 +1173,7 @@
 				if (Object.keys(diff).length > 0) {
 					editedWCs.push({
 						...diff,
-						moduleId: currentModule?.id,
+						// moduleId: currentModule?.id,
 						id: editCandidateWC.id,
 					});
 				}
@@ -1506,7 +1499,7 @@
 	const changeWidgetPosition = (
 		way: "up" | "down",
 		index: number,
-		widget: WidgetContent
+		widget: ArticleWidget
 	) => {
 		let changed = {
 			moved: {
@@ -1540,7 +1533,7 @@
 		};
 	};
 	const changePositionDragged = (
-		changed: draggablePositionChanged<WidgetContent>
+		changed: draggablePositionChanged<ArticleWidget>
 	) => {
 		if (!changeWidgetsOrder(changed)) {
 			revertDraggable(changed);
@@ -1555,7 +1548,7 @@
 		if (tmpList) widgetsdata.value?.splice(oldIndex, 0, tmpList[0]);
 	};
 	const revertDraggable = (
-		changed: draggablePositionChanged<WidgetContent>
+		changed: draggablePositionChanged<ArticleWidget>
 	) => {
 		changeDraggablePositionProgramatically(
 			changed.moved.newIndex,
@@ -1572,6 +1565,7 @@
 		saveNewArticleRequestBody,
 		urlDataObject,
 	} from "../../../../digitalniweb-types/apps/communication/modules/articles";
+	import type { newWidgetContent } from "../../blocks/EditWidgetContent.vue";
 
 	const widgets = useWidgetsStore();
 	const getWidget = (widgetId: number) => {
@@ -1579,7 +1573,7 @@
 	};
 
 	const changeWidgetsOrder = (
-		changed: draggablePositionChanged<WidgetContent>
+		changed: draggablePositionChanged<ArticleWidget>
 	) => {
 		if (widgetsdata.value)
 			changeObjectsOrderRange(

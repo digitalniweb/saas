@@ -25,7 +25,7 @@
 							<v-icon :icon="widget.icon"></v-icon>
 						</template>
 						<v-list-item-title class="text-overline text-h5">
-							{{ widget.widgetName }}
+							{{ widget.name }}
 						</v-list-item-title>
 					</v-list-item>
 				</v-list>

@@ -30,10 +30,10 @@ export default eventHandler(async (event) => {
 	// }
 	if (typeof widgetContent === "string")
 		widgetContent = JSON.parse(widgetContent);
-	if (typeof menu.data === "string") menu.data = JSON.parse(menu.data);
-	if (menu.data) {
-		menu.data.websiteId = (resourceIds as resourceIdsType).websiteId;
-		menu.data.websitesMsId = (resourceIds as resourceIdsType).websitesMsId;
+	if (typeof menu === "string") menu = JSON.parse(menu);
+	if (menu) {
+		menu.websiteId = (resourceIds as resourceIdsType).websiteId;
+		menu.websitesMsId = (resourceIds as resourceIdsType).websitesMsId;
 	}
 	try {
 		let { data: article } = await microserviceCall<Article>({

@@ -2,10 +2,10 @@
 	<v-container class="fill-height">
 		<v-row>
 			<v-col>
-				<template v-for="widget in widgetContents">
+				<template v-for="widget in mappedWidgets">
 					<component
-						:is="widgetMap(widget.widgetId)"
-						:content="widget.content"
+						:is="widget?.component"
+						:widget="widget.widgetData"
 					/>
 				</template>
 			</v-col>
@@ -16,14 +16,23 @@
 <script setup lang="ts">
 	import { useWidgetsStore } from "@/store/widgets";
 	import type { InferAttributes } from "sequelize";
-	import type { WidgetContent } from "~/digitalniweb-types/models/content";
+	import type { ArticleWidget } from "../../digitalniweb-types/models/content";
 	const props = defineProps({
-		widgetContents: Array as PropType<InferAttributes<WidgetContent>[]>,
+		articleWidgets: Array as PropType<InferAttributes<ArticleWidget>[]>,
 	});
 
 	const widgetsStore = useWidgetsStore();
 	function widgetMap(id: number) {
-		return widgetsStore.globalData?.find((item) => item.id == id)
-			?.component;
+		return widgetsStore.globalData?.find((item) => item.id == id);
 	}
+
+	const mappedWidgets = computed(() =>
+		props?.articleWidgets?.map((widget) => {
+			const map = widgetMap(widget.widgetId);
+			return {
+				component: map?.component ?? null,
+				widgetData: map?.model ? widget[map.model] : null,
+			};
+		})
+	);
 </script>

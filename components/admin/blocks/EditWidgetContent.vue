@@ -34,15 +34,13 @@
 </template>
 <script setup lang="ts">
 	import type { InferAttributes } from "sequelize";
-	import type { WidgetContent } from "../../../digitalniweb-types/models/content";
+	import type { ArticleWidget } from "../../../digitalniweb-types/models/content";
 
 	import { VForm } from "vuetify/components";
 	const form = ref<VForm | null>(null);
 
 	const emit = defineEmits<{
-		returnWidgetContent: [
-			value: WidgetContentNew | InferAttributes<WidgetContent> | null,
-		];
+		returnWidgetContent: [value: InferAttributes<ArticleWidget> | null];
 	}>();
 
 	const { translate } = useTranslations();
@@ -57,17 +55,25 @@
 
 	const props = defineProps<{
 		widget: InferAttributes<Widget> | null;
-		widgetContent: InferAttributes<WidgetContent> | null;
+		widgetContent: InferAttributes<ArticleWidget> | null;
 	}>();
 
-	const emptyWidgetContent: WidgetContentNew = {
+	export type newWidgetContent = Pick<
+		modulesWidgetsContent,
+		"active" | "order" | "widgetId" | "widgetRowId" | "ArticleId" | "id"
+	>;
+	const emptyWidgetContent: newWidgetContent = {
 		active: true,
-		content: "",
-		name: "",
-		options: undefined,
+		order: 0,
+		widgetId: 0,
+		widgetRowId: 0,
+		ArticleId: 0,
+		id: 0,
 	};
 
-	const widgetContentCopy = ref<WidgetContentNew | null>(null);
+	const widgetContentCopy = ref<
+		newWidgetContent | modulesWidgetsContent | null
+	>(null);
 	watch(
 		() => open.value,
 		() => {
@@ -85,7 +91,6 @@
 	);
 
 	import type { Widget } from "../../../digitalniweb-types/models/globalData";
-	import type { WidgetContentNew } from "../../../digitalniweb-types";
 
 	const cancel = () => {
 		emit("returnWidgetContent", null);
@@ -93,6 +98,7 @@
 	};
 
 	import { useSnackBarsStore } from "~/store/snackBars";
+	import type { modulesWidgetsContent } from "../../../digitalniweb-types/functionality/widgets";
 	const snackBars = useSnackBarsStore();
 
 	const agree = async () => {

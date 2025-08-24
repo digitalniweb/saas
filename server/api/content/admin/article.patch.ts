@@ -10,7 +10,7 @@ export default eventHandler(async (event) => {
 	verifyUser(event);
 	let body = (await readBody(event)) as getEditArticleRequestBody;
 
-	let { resourceIds, menu, widgetContent } = body;
+	let { resourceIds, menu, widgets } = body;
 	// if (typeof resourceIds === "string")
 	// 	resourceIds = JSON.parse(resourceIds) as resourceIdsType;
 
@@ -41,14 +41,14 @@ export default eventHandler(async (event) => {
 	// }
 	// if (typeof widgetContent === "string")
 	// 	widgetContent = JSON.parse(widgetContent);
-	if (widgetContent)
-		for (const key in widgetContent) {
-			if (Object.prototype.hasOwnProperty.call(widgetContent, key)) {
+	if (widgets)
+		for (const key in widgets) {
+			if (Object.prototype.hasOwnProperty.call(widgets, key)) {
 				// @ts-ignore
-				const value = widgetContent[key];
+				const value = widgets[key];
 				if (Array.isArray(value)) {
 					// @ts-ignore
-					widgetContent[key] = value.map((order) => {
+					widgets[key] = value.map((order) => {
 						if (typeof order === "string") {
 							return JSON.parse(order);
 						}
@@ -66,7 +66,7 @@ export default eventHandler(async (event) => {
 			path: "/api/current/modules/article/auth/admin/edit",
 			data: {
 				menu,
-				widgetContent,
+				widgets,
 			} as editArticleRequestBody,
 		});
 

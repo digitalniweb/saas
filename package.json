@@ -12,7 +12,8 @@
 		"buildSequelize": "npx rimraf --glob sequelize/server/ && npx tsc --project tsconfig.sequelize.json && node -e \"require('fs').writeFileSync('./sequelize/package.json', JSON.stringify({type: 'commonjs'}))\"",
 		"migrations": "npm run buildSequelize && npx sequelize-cli db:migrate",
 		"migrationsUndoAll": "npm run buildSequelize && npx sequelize-cli db:migrate:undo:all",
-		"seeders": "npm run buildSequelize && npx sequelize-cli db:seed:all"
+		"seeders": "npm run buildSequelize && npx sequelize-cli db:seed:all",
+		"createDb": "node --experimental-strip-types --env-file=.env digitalniweb-custom/helpers/createDb.ts"
 	},
 	"devDependencies": {
 		"@nuxt/types": "^2.18.1",

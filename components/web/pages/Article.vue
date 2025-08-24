@@ -1,8 +1,7 @@
 <template>
-	<CustomWidgetContents :widgetContents="article?.widgetContents" />
+	<CustomWidgetContents :articleWidgets="article?.ArticleWidgets" />
 </template>
 <script setup lang="ts">
-	import type { moduleResponse } from "../../../digitalniweb-types/apps/communication/modules";
 	import type { Article } from "../../../digitalniweb-types/models/content";
 	import { useCurrentPageStore } from "../../../store/currentPage";
 
@@ -11,7 +10,7 @@
 
 	const { data: article } = await (currentPage.module?.current?.name ===
 	"articles"
-		? fetchRef<moduleResponse<Article> | null>("/api/content/article", {
+		? fetchRef<Article | null>("/api/content/article", {
 				query: {
 					...currentPage.route.query,
 					url: currentPage.route.pathname,
@@ -21,11 +20,8 @@
 		: { data: null });
 
 	currentPage.page.title =
-		article?.value?.moduleInfo?.title ||
-		article?.value?.moduleInfo?.name ||
-		"";
-	currentPage.page.description =
-		article?.value?.moduleInfo?.description || "";
+		article?.value?.title || article?.value?.name || "";
+	currentPage.page.description = article?.value?.description || "";
 
 	if (!article?.value && currentPage.module?.current?.name === "articles") {
 		throw createError({

@@ -1,11 +1,13 @@
 <template>
-	<div v-html="content"></div>
+	<div v-html="widget?.content"></div>
 </template>
 
 <script setup lang="ts">
-	const props = defineProps({
-		content: String,
-	});
+	import type { WidgetText } from "../../../digitalniweb-types/models/content";
+
+	const props = defineProps<{
+		widget: WidgetText | undefined;
+	}>();
 	// html data from default slot => data between component tags
 	// let slotContent = ref();
 	// const slots = useSlots();
