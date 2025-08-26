@@ -24,8 +24,11 @@ import type { Website } from "~/digitalniweb-types/models/websites";
 import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureCall";
 import type { saveNewArticleRequestBody } from "~/digitalniweb-types/apps/communication/modules/articles";
 import type { remoteCallResponse } from "~/digitalniweb-types/custom/helpers/remoteProcedureCall";
+import type {
+	getWebsiteUserByEmailRequest,
+	registerAdmin,
+} from "~/digitalniweb-types/users";
 import type { User } from "~/digitalniweb-types/models/users";
-import type { adminAuthorizationNames } from "~/digitalniweb-types/authorization";
 export default defineNitroPlugin(async (nitroApp) => {
 	try {
 		// app layer
@@ -156,7 +159,7 @@ export default defineNitroPlugin(async (nitroApp) => {
 				moduleIds: moduleDifferenceIds,
 				websiteId: website.data.id,
 			};
-			let addWebsiteModules = await microserviceCall<boolean>({
+			await microserviceCall<boolean>({
 				name: "websites",
 				id: website.headers["x-ms-id"],
 				method: "POST",
@@ -164,15 +167,7 @@ export default defineNitroPlugin(async (nitroApp) => {
 				data: addWebsiteModulesData,
 			});
 		}
-		type registerAdmin = {
-			user: Required<
-				Pick<
-					InferAttributes<User>,
-					"email" | "password" | "websiteId" | "websitesMsId"
-				>
-			>;
-			userRole: adminAuthorizationNames;
-		};
+		let superAdminUserRole = "superadmin" as const;
 		let superAdminUser: registerAdmin = {
 			user: {
 				password: "123456",
@@ -180,8 +175,29 @@ export default defineNitroPlugin(async (nitroApp) => {
 				websiteId: website.data.id,
 				websitesMsId: website.headers["x-ms-id"],
 			},
-			userRole: "superadmin",
+			userRole: superAdminUserRole,
 		};
+
+		let adminUser = await microserviceCall<InferAttributes<User>>({
+			name: "users",
+			method: "GET",
+			scope: "all",
+			path: "/api/users/getwebsiteuserbyemail",
+			params: {
+				email: superAdminUser.user.email,
+				websiteId: website.data.id,
+				websitesMsId: website.headers["x-ms-id"],
+			} as getWebsiteUserByEmailRequest,
+		});
+
+		if (!adminUser.data) {
+			await microserviceCall<boolean>({
+				name: "users",
+				data: superAdminUser,
+				method: "POST",
+				path: "/api/users/registeradmin",
+			});
+		}
 
 		let webinformation = await microserviceCall<
 			InferAttributes<WebInformation>

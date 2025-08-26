@@ -9,10 +9,11 @@
 	const currentPage = useCurrentPageStore();
 	const route = useRoute();
 	const user = useUserStore();
+	const { modulesLocale } = useLocales();
 
 	if (user?.$state.user?.role?.RoleType?.name !== "admin") {
 		// !!! this doesn't account language - need to be done
-		navigateTo("/login");
+		await navigateTo(modulesLocale("users", "Login", "url"));
 	}
 
 	watch(
