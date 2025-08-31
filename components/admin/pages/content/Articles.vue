@@ -162,7 +162,7 @@
 								color="red"
 								icon="mdi-trash-can-outline"
 								v-tooltip:bottom="translate('Delete') + ' menu'"
-								style="left: 70px"
+								style="left: 20px"
 								size="small"
 								:disabled="indexMenuActivated"
 							></v-fab>
@@ -370,7 +370,7 @@
 													></v-switch>
 													<v-icon
 														:icon="
-															getWidget(
+															widgets.getWidgetById(
 																widgetContent.widgetId
 															)?.icon ||
 															'mdi-cube'
@@ -381,7 +381,11 @@
 												<template v-slot:default>
 													<v-list-item-title
 														v-text="
-															'translate(ArticleWidget.name)'
+															translate(
+																widgets.getWidgetById(
+																	widgetContent.widgetId
+																)?.name ?? ''
+															)
 														"
 													></v-list-item-title>
 												</template>
@@ -422,7 +426,7 @@
 															color="blue-lighten-5"
 															icon="mdi-pencil"
 															@click="
-																editWidgetContent(
+																editArticleWidgetContent(
 																	widgetContent
 																)
 															"
@@ -461,10 +465,10 @@
 		:moduleName="moduleName"
 		@widgetSelected="widgetSelected"
 	/>
-	<AdminBlocksEditWidgetContent
-		v-model="editWidgetContentDialog"
+	<AdminBlocksEditArticleWidgetContent
+		v-model="editArticleWidgetContentDialog"
 		:widget="pickedWidget"
-		:widget-content="pickedWidgetContent"
+		:article-widget="pickedWidgetContent"
 		@returnWidgetContent="returnedWidgetContent"
 	/>
 </template>
@@ -581,7 +585,6 @@
 	import { useSnackBarsStore } from "~/store/snackBars";
 	const snackBars = useSnackBarsStore();
 
-	import type { moduleResponse } from "~/digitalniweb-types/apps/communication/modules";
 	import validator from "validator";
 
 	import { useConfirmStore } from "~/store/confirm";
@@ -647,7 +650,7 @@
 		chooseWidgetDialog.value = true;
 	};
 
-	const editWidgetContentDialog = ref(false);
+	const editArticleWidgetContentDialog = ref(false);
 
 	const { fetchData } = useApiCall();
 
@@ -679,24 +682,25 @@
 
 	const widgetSelected = (widget: InferAttributes<Widget>) => {
 		pickedWidget.value = widget;
-		editWidgetContentDialog.value = true;
+		editArticleWidgetContentDialog.value = true;
 	};
 
-	const editWidgetContent = (
+	const editArticleWidgetContent = (
 		widgetContent: InferAttributes<ArticleWidget>
 	) => {
 		if (!pickedWidget.value)
-			pickedWidget.value = getWidget(widgetContent.widgetId) ?? null;
+			pickedWidget.value =
+				widgets.getWidgetById(widgetContent.widgetId) ?? null;
 
 		pickedWidgetContent.value = widgetContent;
-		editWidgetContentDialog.value = true;
+		editArticleWidgetContentDialog.value = true;
 	};
 
 	import { useModulesStore } from "~/store/modules";
 	const modules = useModulesStore();
 
-	const moduleName = "articles";
-	const currentModule = modules.globalData.find((e) => e.name === moduleName);
+	const moduleName = "articles" as modules;
+	// const currentModule = modules.globalData.find((e) => e.name === moduleName);
 	// I should do some error handling here, because "currentModule" should must exist
 
 	const returnedWidgetContent = (
@@ -710,7 +714,8 @@
 			pickedWidget.value = null;
 			return;
 		}
-		pickedWidget.value = getWidget(pickedWidget.value.id) ?? null;
+		pickedWidget.value =
+			widgets.getWidgetById(pickedWidget.value.id) ?? null;
 
 		if (!pickedWidgetContent.value) {
 			let newWidgetContent = {
@@ -913,7 +918,7 @@
 			return false;
 		}
 
-		let menuDeleted = await fetchData<moduleResponse<Article> | false>(
+		let menuDeleted = await fetchData<Article | false>(
 			"/api/content/admin/article",
 			{
 				disableBody: true,
@@ -1083,18 +1088,19 @@
 			menudataSave = { ...menudata.value };
 			delete menudataSave.id;
 
-			let newMenuCreated = await fetchData<
-				moduleResponse<Article> | false
-			>("/api/content/admin/article", {
-				disableBody: true,
-				method: "PUT",
-				body: {
-					menu: menudataSave,
-					widgets: {
-						new: newWCs,
-					},
-				} as saveNewArticleRequestBody,
-			});
+			let newMenuCreated = await fetchData<Article | false>(
+				"/api/content/admin/article",
+				{
+					disableBody: true,
+					method: "PUT",
+					body: {
+						menu: menudataSave,
+						widgets: {
+							new: newWCs,
+						},
+					} as saveNewArticleRequestBody,
+				}
+			);
 			if (!newMenuCreated) {
 				snackBars.setSnackBar({
 					color: "error",
@@ -1103,33 +1109,28 @@
 				return false;
 			}
 
-			newMenuLocation.splice(
-				newMenuCreated.moduleInfo.order,
-				0,
-				newMenuCreated.moduleInfo
-			);
+			newMenuLocation.splice(newMenuCreated.order, 0, newMenuCreated);
 
 			changeObjectsOrderFrom(
-				newMenuCreated.moduleInfo.order,
+				newMenuCreated.order,
 				newMenuLocation as buildTreeType<InferAttributes<Article>>
 			);
 
 			menuTreeActivated.value.pop();
 			newMenuActive.value = false;
 
-			if (newMenuCreated.widgetContents) {
-				formdataOriginalWidgetContent.value =
-					newMenuCreated.widgetContents;
-				widgetsdata.value = formDataFunctions.cloneData(
-					newMenuCreated.widgetContents
-				);
-			}
+			if (newMenuCreated) {
+				menudata.value = formDataFunctions.cloneData(newMenuCreated);
+				menuTreeActivated.value.push(newMenuCreated);
 
-			if (newMenuCreated.moduleInfo) {
-				menudata.value = formDataFunctions.cloneData(
-					newMenuCreated.moduleInfo
-				);
-				menuTreeActivated.value.push(newMenuCreated.moduleInfo);
+				if (newMenuCreated.ArticleWidgets) {
+					formdataOriginalWidgetContent.value =
+						newMenuCreated.ArticleWidgets;
+					widgetsdata.value = formDataFunctions.cloneData(
+						newMenuCreated.ArticleWidgets
+					);
+					delete newMenuCreated.ArticleWidgets;
+				}
 			}
 			createMenuOrder();
 
@@ -1204,7 +1205,7 @@
 			}
 
 			let id = menudata.value.id;
-			let menuUpdated = await fetchData<moduleResponse<Article> | false>(
+			let menuUpdated = await fetchData<Article | false>(
 				"/api/content/admin/article",
 				{
 					disableBody: true,
@@ -1234,10 +1235,10 @@
 
 			if (menuChangedLocation || menuChangedLocationToOtherMenu) {
 				let originalOrder = menuTreeActivated.value[0].order!;
-				let newOrder = menuUpdated.moduleInfo.order;
+				let newOrder = menuUpdated.order;
 
 				let tmpList = originalMenuLocation?.splice(originalOrder, 1);
-				tmpList[0].parentId = menuUpdated.moduleInfo.parentId;
+				tmpList[0].parentId = menuUpdated.parentId;
 				tmpList[0].order = newOrder;
 
 				newMenuLocation?.splice(newOrder, 0, tmpList[0]);
@@ -1260,35 +1261,31 @@
 			}
 
 			let key: keyof Partial<Article>;
-			for (key in menuUpdated.moduleInfo) {
-				if (
-					Object.prototype.hasOwnProperty.call(
-						menuUpdated.moduleInfo,
-						key
-					)
-				) {
+			for (key in menuUpdated) {
+				if (Object.prototype.hasOwnProperty.call(menuUpdated, key)) {
 					if (
-						menuUpdated.moduleInfo[key] !== undefined &&
+						menuUpdated[key] !== undefined &&
 						key in menuTreeActivated.value[0]
 					) {
 						(menuTreeActivated.value[0] as any)[key] =
-							menuUpdated.moduleInfo[key];
+							menuUpdated[key];
 					}
 				}
 			}
 
-			if (menuUpdated.widgetContents) {
-				formdataOriginalWidgetContent.value =
-					menuUpdated.widgetContents;
-				widgetsdata.value = formDataFunctions.cloneData(
-					menuUpdated.widgetContents
-				);
-			}
-
-			if (menuUpdated.moduleInfo) {
+			if (menuUpdated) {
 				menudata.value = formDataFunctions.cloneData(
 					menuTreeActivated.value[0] as Article
 				);
+
+				if (menuUpdated.ArticleWidgets) {
+					formdataOriginalWidgetContent.value =
+						menuUpdated.ArticleWidgets;
+					widgetsdata.value = formDataFunctions.cloneData(
+						menuUpdated.ArticleWidgets
+					);
+					delete menuUpdated.ArticleWidgets;
+				}
 			}
 
 			createMenuOrder();
@@ -1372,23 +1369,25 @@
 			if (parentObj) pickMenuTreeActivated.value = [parentObj];
 		}
 
-		const data = await fetchData<moduleResponse<
-			InferAttributes<Article>
-		> | null>("/api/content/article", {
-			params: {
-				url: menuTreeActivated.value[0]?.url ?? "/",
-			},
-		});
+		const data = await fetchData<InferAttributes<Article> | null>(
+			"/api/content/article",
+			{
+				params: {
+					url: menuTreeActivated.value[0]?.url ?? "/",
+				},
+			}
+		);
 
-		if (data?.moduleInfo) {
-			menudata.value = formDataFunctions.cloneData(data?.moduleInfo);
-		}
-
-		if (data?.widgetContents) {
-			formdataOriginalWidgetContent.value = data.widgetContents;
-			widgetsdata.value = formDataFunctions.cloneData(
-				data?.widgetContents
-			);
+		if (data) {
+			menudata.value = formDataFunctions.cloneData(data);
+			if (menudata.value?.ArticleWidgets) {
+				formdataOriginalWidgetContent.value =
+					menudata.value.ArticleWidgets;
+				widgetsdata.value = formDataFunctions.cloneData(
+					formdataOriginalWidgetContent.value
+				);
+				delete menudata.value.ArticleWidgets;
+			}
 		}
 
 		createMenuOrder();
@@ -1556,7 +1555,6 @@
 		);
 	};
 
-	import { useWidgetsStore } from "~/store/widgets";
 	import type { Widget } from "../../../../digitalniweb-types/models/globalData";
 	import type {
 		deleteArticleRequestBody,
@@ -1565,12 +1563,11 @@
 		saveNewArticleRequestBody,
 		urlDataObject,
 	} from "../../../../digitalniweb-types/apps/communication/modules/articles";
-	import type { newWidgetContent } from "../../blocks/EditWidgetContent.vue";
+	import type { newWidgetContent } from "../../blocks/EditArticleWidgetContent.vue";
+	import type { modules } from "../../../../digitalniweb-types/functionality/modules";
 
+	import { useWidgetsStore } from "~/store/widgets";
 	const widgets = useWidgetsStore();
-	const getWidget = (widgetId: number) => {
-		return widgets.$state.globalData.find((e) => e.id === widgetId);
-	};
 
 	const changeWidgetsOrder = (
 		changed: draggablePositionChanged<ArticleWidget>

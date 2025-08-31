@@ -6,6 +6,9 @@ export const useWidgetsStore = defineStore("widgets", {
 		app: [] as number[],
 		globalData: [] as InferAttributes<Widget>[],
 		moduleWidgets: {} as { [key in modules]: InferAttributes<Widget>[] },
+		globalDataIdMapCache: {} as {
+			[key in number]: InferAttributes<Widget>;
+		},
 	}),
 	getters: {},
 	actions: {
@@ -49,6 +52,14 @@ export const useWidgetsStore = defineStore("widgets", {
 			);
 			this.moduleWidgets[module] = moduleWidgets;
 			return moduleWidgets;
+		},
+		getWidgetById(widgetId: number) {
+			if (this.globalDataIdMapCache[widgetId])
+				return this.globalDataIdMapCache[widgetId];
+			let currentWidget = this.globalData.find((e) => e.id === widgetId);
+			if (currentWidget)
+				this.globalDataIdMapCache[widgetId] = currentWidget;
+			return currentWidget;
 		},
 	},
 });

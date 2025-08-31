@@ -170,7 +170,7 @@ export default defineNitroPlugin(async (nitroApp) => {
 		let superAdminUserRole = "superadmin" as const;
 		let superAdminUser: registerAdmin = {
 			user: {
-				password: "123456",
+				password: "123456789abc",
 				email: "admin@digitalniweb.cz",
 				websiteId: website.data.id,
 				websitesMsId: website.headers["x-ms-id"],

@@ -14,9 +14,10 @@
 			<v-card-text>
 				<v-form ref="form">
 					<component
-						v-if="props.widget && widgetContentCopy"
+						v-if="props.widget && articleWidgetCopy"
 						:is="createWidgetPickerComponentString(props.widget)"
-						v-model="widgetContentCopy"
+						v-model="articleWidget"
+						:module-id="currentModule?.id ?? 0"
 					/>
 				</v-form>
 			</v-card-text>
@@ -39,6 +40,12 @@
 	import { VForm } from "vuetify/components";
 	const form = ref<VForm | null>(null);
 
+	import type { modules } from "../../../digitalniweb-types/functionality/modules";
+	import { useModulesStore } from "~/store/modules";
+	const modules = useModulesStore();
+	const moduleName = "articles" as modules;
+	const currentModule = modules.globalData.find((e) => e.name === moduleName);
+
 	const emit = defineEmits<{
 		returnWidgetContent: [value: InferAttributes<ArticleWidget> | null];
 	}>();
@@ -47,16 +54,24 @@
 
 	const open = defineModel<boolean>({ default: false });
 
+	import { useWidgetsStore } from "~/store/widgets";
+	const widgets = useWidgetsStore();
+
 	const createWidgetPickerComponentString = (
 		widget: InferAttributes<Widget>
 	) => {
-		return `Admin${widget.component}`;
+		let widgetGlobalData = widgets.getWidgetById(widget.id);
+		if (widgetGlobalData)
+			return `Admin${widgets.getWidgetById(widgetGlobalData.id)?.component}`;
+		return "";
 	};
 
 	const props = defineProps<{
 		widget: InferAttributes<Widget> | null;
-		widgetContent: InferAttributes<ArticleWidget> | null;
+		articleWidget: InferAttributes<ArticleWidget> | null;
 	}>();
+
+	const articleWidget = ref<Widget | null>(null);
 
 	export type newWidgetContent = Pick<
 		modulesWidgetsContent,
@@ -71,22 +86,34 @@
 		id: 0,
 	};
 
-	const widgetContentCopy = ref<
+	const articleWidgetCopy = ref<
 		newWidgetContent | modulesWidgetsContent | null
 	>(null);
 	watch(
 		() => open.value,
 		() => {
 			if (open.value) {
-				if (props.widgetContent) {
-					widgetContentCopy.value = structuredClone(
-						toRaw(props.widgetContent)
+				if (props.articleWidget) {
+					articleWidgetCopy.value = structuredClone(
+						toRaw(props.articleWidget)
 					);
 				} else {
-					widgetContentCopy.value =
+					articleWidgetCopy.value =
 						structuredClone(emptyWidgetContent);
 				}
-			} else widgetContentCopy.value = null;
+				let model = props.widget
+					? widgets.getWidgetById(props.widget.id)?.model
+					: null;
+				articleWidget.value =
+					model && articleWidgetCopy.value
+						? // @ts-ignore
+							(articleWidgetCopy?.value?.[
+								model as widgetModels
+							] as Widget)
+						: null;
+			} else {
+				articleWidgetCopy.value = null;
+			}
 		}
 	);
 
@@ -98,7 +125,10 @@
 	};
 
 	import { useSnackBarsStore } from "~/store/snackBars";
-	import type { modulesWidgetsContent } from "../../../digitalniweb-types/functionality/widgets";
+	import type {
+		modulesWidgetsContent,
+		widgetModels,
+	} from "../../../digitalniweb-types/functionality/widgets";
 	const snackBars = useSnackBarsStore();
 
 	const agree = async () => {
@@ -111,8 +141,21 @@
 			});
 			return;
 		}
-		if (widgetContentCopy.value)
-			emit("returnWidgetContent", widgetContentCopy.value);
+		let widget = widgets.getWidgetById(props.widget?.id ?? 0);
+
+		if (articleWidgetCopy.value) {
+			if (widget) {
+				// @ts-ignore
+				articleWidgetCopy.value[widget.model] = structuredClone(
+					toRaw(articleWidget.value)
+				);
+			}
+			emit(
+				"returnWidgetContent",
+				structuredClone(toRaw(articleWidgetCopy.value))
+			);
+		}
+		articleWidget.value = null;
 		open.value = false;
 	};
 
