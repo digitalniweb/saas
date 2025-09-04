@@ -1216,7 +1216,7 @@
 							data: menudataSave,
 							newMenuUrls,
 						},
-						widgetContent: {
+						widgets: {
 							deletedWCs,
 							newWCs,
 							editedWCs,
@@ -1405,7 +1405,7 @@
 		if (currentMenuId === clickedPickMenuId) {
 			snackBars.setSnackBar({
 				color: "warning",
-				text: "MenuLocationFail",
+				text: translate("MenuLocationFail"),
 			});
 			return;
 		}
@@ -1417,7 +1417,7 @@
 		if (child) {
 			snackBars.setSnackBar({
 				color: "warning",
-				text: "MenuLocationFail",
+				text: translate("MenuLocationFail"),
 			});
 			return;
 		}

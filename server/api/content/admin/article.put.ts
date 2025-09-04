@@ -10,7 +10,7 @@ export default eventHandler(async (event) => {
 	verifyUser(event);
 	let body = (await readBody(event)) as getSaveNewArticleRequestBody;
 
-	let { resourceIds, menu, widgetContent } = body;
+	let { resourceIds, menu, widgets } = body;
 	// if (typeof resourceIds === "string")
 	// 	resourceIds = JSON.parse(resourceIds) as resourceIdsType;
 
@@ -28,8 +28,7 @@ export default eventHandler(async (event) => {
 	// 		return order;
 	// 	});
 	// }
-	if (typeof widgetContent === "string")
-		widgetContent = JSON.parse(widgetContent);
+	if (typeof widgets === "string") widgets = JSON.parse(widgets);
 	if (typeof menu === "string") menu = JSON.parse(menu);
 	if (menu) {
 		menu.websiteId = (resourceIds as resourceIdsType).websiteId;
@@ -43,7 +42,7 @@ export default eventHandler(async (event) => {
 			path: "/api/current/modules/article/auth/admin/create",
 			data: {
 				menu,
-				widgetContent,
+				widgets,
 			} as saveNewArticleRequestBody,
 		});
 
