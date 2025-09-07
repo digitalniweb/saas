@@ -108,7 +108,7 @@
 					model && articleWidgetCopy.value
 						? // @ts-ignore
 							(articleWidgetCopy?.value?.[
-								model as widgetModels
+								model as widgetModels[number]
 							] as Widget)
 						: null;
 			} else {

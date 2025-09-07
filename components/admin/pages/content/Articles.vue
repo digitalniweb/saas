@@ -1370,7 +1370,7 @@
 		}
 
 		const data = await fetchData<InferAttributes<Article> | null>(
-			"/api/content/article",
+			"/api/content/admin/article",
 			{
 				params: {
 					url: menuTreeActivated.value[0]?.url ?? "/",
