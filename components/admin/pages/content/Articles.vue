@@ -510,6 +510,7 @@
 		"Menu was deleted": {
 			cs: "Menu bylo smazáno",
 		},
+		"Please change menu's name": { cs: "Prosím změňte název menu" },
 		Article: {
 			cs: "Článek",
 		},
@@ -1061,6 +1062,13 @@
 		if (menudata.value?.id === 0) {
 			// new menu
 			menuIsNew = true;
+			if (menudata.value.name == translate("New menu")) {
+				snackBars.setSnackBar({
+					color: "orange",
+					text: translate("Please change menu's name"),
+				});
+				return false;
+			}
 		} else {
 			// already existing menu
 			if (originalParentId === newParentId) {
@@ -1117,6 +1125,7 @@
 			);
 
 			menuTreeActivated.value.pop();
+			menus.value?.pop();
 			newMenuActive.value = false;
 
 			if (newMenuCreated) {
@@ -1129,7 +1138,7 @@
 					widgetsdata.value = formDataFunctions.cloneData(
 						newMenuCreated.ArticleWidgets
 					);
-					delete newMenuCreated.ArticleWidgets;
+					// delete newMenuCreated.ArticleWidgets;
 				}
 			}
 			createMenuOrder();
