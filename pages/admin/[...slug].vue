@@ -11,14 +11,12 @@
 	const user = useUserStore();
 	const { modulesLocale } = useLocales();
 
-	if (user?.$state.user?.role?.RoleType?.name !== "admin") {
-		// !!! this doesn't account language - need to be done
-		await navigateTo(modulesLocale("users", "Login", "url"));
-	}
-
 	watch(
 		route,
 		async () => {
+			if (user?.$state.user?.role?.RoleType?.name !== "admin") {
+				return await navigateTo(modulesLocale("users", "Login", "url"));
+			}
 			await currentPage.getAdminData();
 		},
 		{ deep: true, immediate: true }
