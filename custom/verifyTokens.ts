@@ -1,9 +1,9 @@
-import type { userRefreshToken } from "~/digitalniweb-types/users";
+import type { userRefreshToken } from "~~/digitalniweb-types/users";
 import jwt from "jsonwebtoken";
-import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureCall";
-import type { User } from "~/digitalniweb-types/models/users";
+import { microserviceCall } from "~~/digitalniweb-custom/helpers/remoteProcedureCall";
+import type { User } from "~~/digitalniweb-types/models/users";
 import type { InferAttributes } from "sequelize";
-import { userLoginData } from "~/custom/helpers/usersAuth";
+import { userLoginData } from "~~/custom/helpers/usersAuth";
 
 /**
  *

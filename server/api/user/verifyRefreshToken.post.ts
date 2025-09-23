@@ -1,6 +1,6 @@
-import { verifyRefreshToken } from "~/custom/verifyTokens";
+import { verifyRefreshToken } from "~~/custom/verifyTokens";
 
-import type { tokensJWT } from "~/digitalniweb-types/users";
+import type { tokensJWT } from "~~/digitalniweb-types/users";
 
 export default eventHandler(async (event) => {
 	let { refreshToken } = (await readBody(event)) as tokensJWT;

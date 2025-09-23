@@ -1,13 +1,13 @@
-import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureCall";
+import { microserviceCall } from "~~/digitalniweb-custom/helpers/remoteProcedureCall";
 import { getQuery } from "h3";
 
-import type { Website } from "~/digitalniweb-types/models/websites";
+import type { Website } from "~~/digitalniweb-types/models/websites";
 import type { InferAttributes } from "sequelize";
-import { verifyUser } from "~/custom/helpers/usersAuth";
+import { verifyUser } from "~~/custom/helpers/usersAuth";
 import type {
 	resourceIdsType,
 	useApiCallQuery,
-} from "~/digitalniweb-types/apps/communication";
+} from "~~/digitalniweb-types/apps/communication";
 
 export default eventHandler(async (event) => {
 	verifyUser(event);

@@ -1,12 +1,12 @@
-import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureCall";
-import type { User } from "~/digitalniweb-types/models/users";
+import { microserviceCall } from "~~/digitalniweb-custom/helpers/remoteProcedureCall";
+import type { User } from "~~/digitalniweb-types/models/users";
 import { readBody, getHeader } from "h3";
 
-import type { loginInformation } from "~/digitalniweb-types";
+import type { loginInformation } from "~~/digitalniweb-types";
 import { userLoginData } from "../../../custom/helpers/usersAuth";
 import type { InferAttributes } from "sequelize";
-import type { resourceIdsType } from "~/digitalniweb-types/apps/communication";
-import type { msCallOptions } from "~/digitalniweb-types/custom/helpers/remoteProcedureCall";
+import type { resourceIdsType } from "~~/digitalniweb-types/apps/communication";
+import type { msCallOptions } from "~~/digitalniweb-types/custom/helpers/remoteProcedureCall";
 
 export default eventHandler(async (event) => {
 	let ua = getHeader(event, "user-agent");

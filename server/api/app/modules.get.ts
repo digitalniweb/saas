@@ -1,4 +1,4 @@
-import AppModule from "~/server/models/apps/appModule";
+import AppModule from "~~/server/models/apps/appModule";
 
 export default eventHandler(async (event): Promise<number[] | null | false> => {
 	let modules = await AppModule.findAll();

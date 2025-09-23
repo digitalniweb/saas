@@ -1,35 +1,35 @@
 import AppModule from "../models/apps/appModule";
-import { getGlobalDataList } from "~/digitalniweb-custom/helpers/getGlobalData";
+import { getGlobalDataList } from "../../digitalniweb-custom/helpers/getGlobalData";
 import AppLanguage from "../models/apps/appLanguage";
-import type { languages } from "~/digitalniweb-types";
+import type { languages } from "../../digitalniweb-types";
 import AppWidget from "../models/apps/appWidget";
-import type { widgets } from "~/digitalniweb-types/functionality/widgets";
-import type { modules } from "~/digitalniweb-types/functionality/modules";
-import { consoleLogProduction } from "~/digitalniweb-custom/helpers/logger";
+import type { widgets } from "../../digitalniweb-types/functionality/widgets";
+import type { modules } from "../../digitalniweb-types/functionality/modules";
+import { consoleLogProduction } from "../../digitalniweb-custom/helpers/logger";
 import type {
 	WebInformation,
 	WidgetText,
-} from "~/digitalniweb-types/models/content";
+} from "../../digitalniweb-types/models/content";
 import type {
 	Article,
 	WebInformationLanguage as WebInformationLanguageType,
 	ArticleWidget,
-} from "~/digitalniweb-types/models/content.js";
+} from "../../digitalniweb-types/models/content.js";
 import type { InferAttributes, CreationAttributes } from "sequelize";
 import type {
 	createWebsiteRequest,
 	addWebsiteModulesRequest,
-} from "~/digitalniweb-types/apps/communication/websites/";
-import type { Website } from "~/digitalniweb-types/models/websites";
-import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureCall";
-import type { saveNewArticleRequestBody } from "~/digitalniweb-types/apps/communication/modules/articles";
-import type { remoteCallResponse } from "~/digitalniweb-types/custom/helpers/remoteProcedureCall";
+} from "../../digitalniweb-types/apps/communication/websites/";
+import type { Website } from "../../digitalniweb-types/models/websites";
+import { microserviceCall } from "../../digitalniweb-custom/helpers/remoteProcedureCall";
+import type { saveNewArticleRequestBody } from "../../digitalniweb-types/apps/communication/modules/articles";
+import type { remoteCallResponse } from "../../digitalniweb-types/custom/helpers/remoteProcedureCall";
 import type {
 	getWebsiteUserByEmailRequest,
 	registerAdmin,
-} from "~/digitalniweb-types/users";
-import type { User } from "~/digitalniweb-types/models/users";
-export default defineNitroPlugin(async (nitroApp) => {
+} from "../../digitalniweb-types/users";
+import type { User } from "../../digitalniweb-types/models/users";
+export default defineNitroPlugin(async () => {
 	try {
 		// app layer
 		let appModules = await AppModule.findAll();
@@ -116,7 +116,7 @@ export default defineNitroPlugin(async (nitroApp) => {
 				active: true,
 				paused: false,
 				testingMode: false,
-				appId: process.env.APP_ID,
+				appId: Number(process.env.APP_ID),
 				mainLanguageId: mainLanguage.id,
 			} as CreationAttributes<Website>;
 			let createWebsiteRequest: createWebsiteRequest = {

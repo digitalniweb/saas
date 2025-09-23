@@ -1,8 +1,8 @@
-import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureCall";
+import { microserviceCall } from "~~/digitalniweb-custom/helpers/remoteProcedureCall";
 import type {
 	resourceIdsType,
 	useApiCallQuery,
-} from "~/digitalniweb-types/apps/communication";
+} from "~~/digitalniweb-types/apps/communication";
 
 export default eventHandler(async (event) => {
 	let query = getQuery(event) as useApiCallQuery;

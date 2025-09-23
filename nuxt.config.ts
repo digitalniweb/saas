@@ -8,7 +8,10 @@ export default defineNuxtConfig({
 		typeCheck: true,
 		strict: true,
 		tsConfig: {
+			include: ["../digitalniweb-types", "../types"],
 			compilerOptions: {
+				noUncheckedIndexedAccess: false,
+				noEmit: true,
 				verbatimModuleSyntax: true,
 				moduleResolution: "bundler",
 				isolatedModules: false,
@@ -68,5 +71,5 @@ export default defineNuxtConfig({
 	},
 	ignore: ["digitalniweb-custom", "digitalniweb-types", "sequelize"],
 	devtools: { enabled: false },
-	compatibilityDate: "2024-11-04",
+	compatibilityDate: "2025-09-13",
 });

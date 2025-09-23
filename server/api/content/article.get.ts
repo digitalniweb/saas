@@ -1,10 +1,10 @@
-import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureCall";
-import type { Article } from "~/digitalniweb-types/models/content";
+import { microserviceCall } from "~~/digitalniweb-custom/helpers/remoteProcedureCall";
+import type { Article } from "~~/digitalniweb-types/models/content";
 
-import type { getArticleQuery } from "~/digitalniweb-types/apps/communication/modules/articles";
-import type { resourceIdsType } from "~/digitalniweb-types/apps/communication";
+import type { getArticleQuery } from "~~/digitalniweb-types/apps/communication/modules/articles";
+import type { resourceIdsType } from "~~/digitalniweb-types/apps/communication";
 
-import { getGlobalDataList } from "~/digitalniweb-custom/helpers/getGlobalData";
+import { getGlobalDataList } from "~~/digitalniweb-custom/helpers/getGlobalData";
 
 export default eventHandler(async (event): Promise<Article | null | false> => {
 	let query = getQuery(event) as getArticleQuery;

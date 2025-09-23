@@ -1,6 +1,6 @@
-import { verifyAccessToken } from "~/custom/verifyTokens";
+import { verifyAccessToken } from "~~/custom/verifyTokens";
 
-import type { tokensJWT } from "~/digitalniweb-types/users";
+import type { tokensJWT } from "~~/digitalniweb-types/users";
 
 export default eventHandler(async (event) => {
 	let { accessToken } = (await readBody(event)) as tokensJWT;

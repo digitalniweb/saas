@@ -3,7 +3,7 @@ import {
 	requestServiceRegistryInfo,
 	registerCurrentApp,
 } from "../../digitalniweb-custom/helpers/serviceRegistryCache.js";
-import { consoleLogProduction } from "~/digitalniweb-custom/helpers/logger.js";
+import { consoleLogProduction } from "../../digitalniweb-custom/helpers/logger.js";
 
 export default defineNitroPlugin(async () => {
 	// subscribe now and on connect to everything

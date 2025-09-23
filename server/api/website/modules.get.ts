@@ -1,4 +1,4 @@
-import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureCall";
+import { microserviceCall } from "~~/digitalniweb-custom/helpers/remoteProcedureCall";
 import { getQuery } from "h3";
 
 export default eventHandler(async (event): Promise<number[] | null | false> => {

@@ -1,7 +1,7 @@
 import { Sequelize } from "sequelize";
 import type { Options } from "sequelize";
 
-import configDB from "./../config/config";
+import configDB from "../config/config";
 
 const env: string = process.env.NODE_ENV || "development";
 

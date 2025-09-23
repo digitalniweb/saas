@@ -1,13 +1,13 @@
 import path from "path";
 import { existsSync, promises as fsPromises } from "fs";
-import { verifyUser } from "~/custom/helpers/usersAuth";
+import { verifyUser } from "~~/custom/helpers/usersAuth";
 const { readdir, mkdir, stat } = fsPromises;
 
 import type {
 	fileSystemFile,
 	fileSystemDirectory,
 	fileSystemItems,
-} from "~/digitalniweb-types/filesystem";
+} from "~~/digitalniweb-types/filesystem";
 
 /**
  * TODO:
@@ -21,6 +21,7 @@ export default eventHandler(async (event): Promise<fileSystemItems> => {
 	let query = getQuery(event);
 	// let storagePath = `./local-storage/${process.env.APP_NAME}/websites/${userVerified.websiteUuid}/users/${userVerified.uuid}`;
 	let storagePath = process.env.FILEBROWSER_LOCAL_ROOT_PATH;
+	if (!storagePath || query.path) return { dirs: [], files: [] };
 	let currentDirname = storagePath + query.path;
 
 	if (existsSync(storagePath)) await mkdir(storagePath, { recursive: true });

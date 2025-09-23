@@ -1,10 +1,10 @@
-import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureCall";
+import { microserviceCall } from "~~/digitalniweb-custom/helpers/remoteProcedureCall";
 import type {
 	resourceIdsType,
 	useApiCallQuery,
-} from "~/digitalniweb-types/apps/communication";
+} from "~~/digitalniweb-types/apps/communication";
 
-import { verifyUser } from "~/custom/helpers/usersAuth";
+import { verifyUser } from "~~/custom/helpers/usersAuth";
 
 export default eventHandler(async (event) => {
 	verifyUser(event);

@@ -1,9 +1,9 @@
-import { microserviceCall } from "~/digitalniweb-custom/helpers/remoteProcedureCall";
+import { microserviceCall } from "~~/digitalniweb-custom/helpers/remoteProcedureCall";
 
-import type { WebInformation } from "~/digitalniweb-types/models/content";
+import type { WebInformation } from "~~/digitalniweb-types/models/content";
 import type { InferAttributes } from "sequelize";
-import { verifyUser } from "~/custom/helpers/usersAuth";
-import type { resourceIdsType } from "~/digitalniweb-types/apps/communication";
+import { verifyUser } from "~~/custom/helpers/usersAuth";
+import type { resourceIdsType } from "~~/digitalniweb-types/apps/communication";
 
 export default eventHandler(async (event) => {
 	verifyUser(event);
