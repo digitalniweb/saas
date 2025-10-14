@@ -1,5 +1,5 @@
-import { Sequelize } from "sequelize";
 import type { Options } from "sequelize";
+import { Sequelize } from "sequelize";
 
 import configDB from "../config/config";
 

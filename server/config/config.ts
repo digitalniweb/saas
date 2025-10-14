@@ -1,5 +1,5 @@
-import type { Options } from "sequelize";
 import dotenv from "dotenv";
+import type { Options } from "sequelize";
 dotenv.config();
 
 interface ConfigTs {

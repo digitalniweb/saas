@@ -2,7 +2,7 @@ export default defineNuxtConfig({
 	modules: ["@pinia/nuxt"],
 	components: {
 		global: true,
-		dirs: ["~/components"],
+		dirs: ["~~/app/components"],
 	},
 	typescript: {
 		typeCheck: true,

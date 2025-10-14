@@ -3,13 +3,13 @@ type fileManagerOptions = {
 	maxUploadFileSize: number;
 	multipleSelect: boolean;
 };
+import { useConfirmStore } from "@/store/confirm";
+import { useSnackBarsStore } from "~/store/snackBars";
 import type {
 	fileSystemDirectory,
 	fileSystemFile,
 	fileSystemItems,
 } from "~~/digitalniweb-types/filesystem";
-import { useSnackBarsStore } from "~/store/snackBars";
-import { useConfirmStore } from "@/store/confirm";
 export const useFileManagerStore = defineStore("fileManager", {
 	state: () => ({
 		opened: false as boolean,
@@ -137,6 +137,7 @@ export const useFileManagerStore = defineStore("fileManager", {
 				icon: "check",
 				color: "light-green",
 			});
+			this.loadList();
 			this.loading = false;
 		},
 		async deleteDirectory(item: fileSystemDirectory) {
@@ -162,6 +163,7 @@ export const useFileManagerStore = defineStore("fileManager", {
 				icon: "check",
 				color: "light-green",
 			});
+			this.loadList();
 			this.loading = false;
 		},
 		async mkdir(folderPath: string) {
@@ -180,6 +182,7 @@ export const useFileManagerStore = defineStore("fileManager", {
 					icon: "check",
 					color: "light-green",
 				});
+				this.loadList();
 			} catch (error) {
 				if (process.env.NODE_ENV === "development") console.log(error);
 				let snackBarStore = useSnackBarsStore();

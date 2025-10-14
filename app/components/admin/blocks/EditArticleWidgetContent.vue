@@ -6,7 +6,7 @@
 		@after-leave="afterLeave"
 	>
 		<v-card>
-			<v-toolbar dark dense flat>
+			<v-toolbar density="compact" flat>
 				<v-toolbar-title class="white--text">
 					{{ translate("Edit Widget") }}
 				</v-toolbar-title>
@@ -40,8 +40,8 @@
 	import { VForm } from "vuetify/components";
 	const form = ref<VForm | null>(null);
 
-	import type { modules } from "~~/digitalniweb-types/functionality/modules";
 	import { useModulesStore } from "~/store/modules";
+	import type { modules } from "~~/digitalniweb-types/functionality/modules";
 	const modules = useModulesStore();
 	const moduleName = "articles" as modules;
 	const currentModule = modules.globalData.find((e) => e.name === moduleName);

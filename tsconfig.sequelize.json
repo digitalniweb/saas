@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
 		"target": "ES2022",
-		"module": "CommonJS",
+		"module": "ESNext",
 		"moduleResolution": "Node",
 		"types": [],
 		"outDir": "./sequelize",
@@ -9,7 +9,7 @@
 		"allowSyntheticDefaultImports": true,
 		"resolveJsonModule": true,
 		"strict": true,
-		"typeRoots": ["./types", "./digitalniweb-types"],
+		"typeRoots": ["../types", "../digitalniweb-types"],
 		"strictNullChecks": true,
 		"esModuleInterop": true,
 		"skipLibCheck": true

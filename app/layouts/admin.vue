@@ -17,12 +17,11 @@
 		<v-main>
 			<v-container fluid>
 				<v-row class="border-b-sm">
-					<v-col>
+					<v-col cols="2">
 						<v-app-bar-nav-icon
 							@click="drawer = !drawer"
 						></v-app-bar-nav-icon>
 					</v-col>
-					<v-spacer></v-spacer>
 					<v-col class="text-right">
 						<CustomThemeToggle />
 						<v-skeleton-loader

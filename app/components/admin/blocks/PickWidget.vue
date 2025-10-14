@@ -6,7 +6,7 @@
 		@after-leave="afterLeave"
 	>
 		<v-card>
-			<v-toolbar dark dense flat>
+			<v-toolbar density="compact" flat>
 				<v-toolbar-title class="white--text">
 					{{ translate("Choose Widget") }}
 				</v-toolbar-title>
@@ -40,10 +40,10 @@
 	</v-dialog>
 </template>
 <script setup lang="ts">
-	import { useWidgetsStore } from "~/store/widgets";
-	import type { Widget } from "~~/digitalniweb-types/models/globalData";
 	import type { InferAttributes } from "sequelize";
+	import { useWidgetsStore } from "~/store/widgets";
 	import type { modules } from "~~/digitalniweb-types/functionality/modules";
+	import type { Widget } from "~~/digitalniweb-types/models/globalData";
 
 	const { translate } = useTranslations();
 

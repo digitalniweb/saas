@@ -1,3 +1,5 @@
+@use "sass:map";
+@use "../../../node_modules/vuetify/lib/styles/settings/_colors.scss" as colors;
 .cursor-pointer {
 	cursor: pointer;
 }
@@ -34,4 +36,17 @@ body.disabled {
 }
 .overlay-light::before {
 	background-color: rgba(255, 255, 255, 0.3);
+}
+.cssProperty {
+	&::before {
+		content: "[";
+	}
+	&::after {
+		content: "]";
+	}
+	background: map.get(colors.$grey, "darken-3");
+	border-radius: 4px;
+	padding: 4px 6px;
+	font-size: 10px;
+	line-height: 23px;
 }
