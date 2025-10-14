@@ -1,6 +1,6 @@
 <template>
 	<v-btn-toggle v-model="size" mandatory>
-		<v-tooltip location="top" v-for="value in values">
+		<v-tooltip location="top" v-for="value in props.values">
 			<template v-slot:activator="{ props }">
 				<v-btn
 					:key="value"

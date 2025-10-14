@@ -17,22 +17,22 @@
 					lg="3"
 					xl="2"
 					class="text-center"
-					v-if="props.currentIcon"
+					v-if="path"
 				>
 					<v-card
 						color="white"
 						class="pa-1 d-flex align-center justify-center h-100 flex-column"
 					>
-						<v-icon :icon="'mdi-' + props.currentIcon"></v-icon>
+						<v-icon :icon="'mdi-' + path"></v-icon>
 						<v-card-text class="text-subtitle-2">{{
-							props.currentIcon
+							path
 						}}</v-card-text>
 					</v-card>
 				</v-col>
 				<v-col
 					cols="1"
 					class="d-flex align-center justify-center"
-					v-if="props.currentIcon && newlySelectedIcon"
+					v-if="path && newlySelectedIcon"
 				>
 					<v-icon icon="mdi-arrow-right"></v-icon>
 				</v-col>
@@ -170,11 +170,9 @@
 		newlySelectedIcon.value = icon;
 	};
 
-	const emit = defineEmits(["changedIcon"]);
-
-	const props = defineProps<{
-		currentIcon: string | undefined;
-	}>();
+	const path = defineModel<string | null>({
+		default: "",
+	});
 
 	const openChooseMenuIcon = async () => {
 		if (icons.value === undefined)
@@ -199,7 +197,11 @@
 
 		filteredIcons.value = [];
 		displayedIcons.value = [];
-		if (!response) return;
-		emit("changedIcon", newlySelectedIcon.value);
+		if (!response) {
+			newlySelectedIcon.value = "";
+			return;
+		}
+		path.value = newlySelectedIcon.value;
+		newlySelectedIcon.value = "";
 	};
 </script>

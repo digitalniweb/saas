@@ -267,8 +267,7 @@
 										{{ currentSlug }}
 									</p>
 									<customFormPickFiles
-										:object="menudata"
-										property="otherUrl"
+										v-model="menudata.otherUrl"
 										icon="mdi-alpha-u"
 										icon-button="mdi-file"
 										:rules="validationMenuOtherUrl"
@@ -303,14 +302,12 @@
 									>
 										<template v-slot:append>
 											<CustomFormPickIcon
-												:currentIcon="menudata.icon"
-												@changedIcon="changedIcon"
+												v-model="menudata.icon"
 											></CustomFormPickIcon>
 										</template>
 									</v-text-field>
 									<customFormPickFiles
-										:object="menudata"
-										property="image"
+										v-model="menudata.image"
 									/>
 								</v-card>
 							</v-tabs-window-item>
@@ -573,17 +570,17 @@
 	import slugify from "slugify";
 	import draggable from "vuedraggable";
 
+	import type { InferAttributes } from "sequelize";
+	import { useSnackBarsStore } from "~/store/snackBars";
+	import getObjectFromArray from "~~/digitalniweb-custom/functions/getObjectFromArray";
 	import type {
 		buildTreeType,
 		TreeNode,
 	} from "~~/digitalniweb-custom/helpers/buildTree.ts";
-	import type { InferAttributes } from "sequelize";
 	import type {
 		Article,
 		ArticleWidget,
 	} from "~~/digitalniweb-types/models/content";
-	import getObjectFromArray from "~~/digitalniweb-custom/functions/getObjectFromArray";
-	import { useSnackBarsStore } from "~/store/snackBars";
 	const snackBars = useSnackBarsStore();
 
 	import validator from "validator";
@@ -1465,10 +1462,6 @@
 		];
 	});
 
-	const changedIcon = (icon: string) => {
-		if (menudata.value?.icon !== undefined) menudata.value.icon = icon;
-	};
-
 	const validationMenuNameRules = computed(() => [
 		() => !!menudata.value?.name || translate("Fill in this field"),
 		() =>
@@ -1564,7 +1557,6 @@
 		);
 	};
 
-	import type { Widget } from "~~/digitalniweb-types/models/globalData";
 	import type {
 		deleteArticleRequestBody,
 		editArticleRequestBody,
@@ -1572,8 +1564,9 @@
 		saveNewArticleRequestBody,
 		urlDataObject,
 	} from "~~/digitalniweb-types/apps/communication/modules/articles";
-	import type { newWidgetContent } from "../../blocks/EditArticleWidgetContent.vue";
 	import type { modules } from "~~/digitalniweb-types/functionality/modules";
+	import type { Widget } from "~~/digitalniweb-types/models/globalData";
+	import type { newWidgetContent } from "../../blocks/EditArticleWidgetContent.vue";
 
 	import { useWidgetsStore } from "~/store/widgets";
 	const widgets = useWidgetsStore();

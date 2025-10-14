@@ -12,19 +12,13 @@
 					v-model="formdata.name"
 				/>
 				<customFormPickFiles
-					:object="formdata"
-					property="mainImage"
+					v-model="formdata.mainImage"
 					name="Main image"
 					:translation="{ 'Main image': { cs: 'Hlavní obrázek' } }"
 				/>
+				<customFormPickFiles v-model="formdata.logo" name="Logo" />
 				<customFormPickFiles
-					:object="formdata"
-					property="logo"
-					name="Logo"
-				/>
-				<customFormPickFiles
-					:object="formdata"
-					property="favicon"
+					v-model="formdata.favicon"
 					name="Favicon"
 				/>
 

@@ -5,7 +5,7 @@
 			:label="translate(props.name)"
 			counter="255"
 			:prepend-inner-icon="props.icon"
-			v-model="props.object[props.property]"
+			v-model="path"
 			:rules="props.rules"
 			validate-on="blur"
 			ref="textField"
@@ -13,7 +13,7 @@
 		>
 			<template v-slot:append>
 				<v-btn
-					v-if="props.object[props.property]"
+					v-if="path"
 					color="red"
 					variant="text"
 					small
@@ -22,20 +22,15 @@
 				>
 					<v-icon>mdi-close</v-icon>
 				</v-btn>
-				<v-btn
-					color="primary"
-					fab
-					small
-					@click="chooseFile(props.property, props.object)"
-				>
+				<v-btn color="primary" fab small @click="chooseFile()">
 					<v-icon>{{ props.iconButton }}</v-icon>
 				</v-btn>
 			</template>
 		</v-text-field>
 		<v-img
-			v-if="props.object[props.property]"
+			v-if="path"
 			max-width="200"
-			:src="props.object[props.property] as string | undefined"
+			:src="path as string | undefined"
 			rounded
 			class="elevation-5"
 		/>
@@ -43,8 +38,8 @@
 </template>
 <script setup lang="ts" generic="T">
 	import { useFileManagerStore } from "@/store/fileManager";
-	import type { translations } from "~~/digitalniweb-types/translations";
 	import { validImages } from "~~/digitalniweb-custom/variables/validImages";
+	import type { translations } from "~~/digitalniweb-types/translations";
 	import type { validImages as validImagesType } from "~~/digitalniweb-types/validImages";
 
 	// this will get us vuetify's ValidationRule type = ValidationRule$1[]
@@ -56,16 +51,15 @@
 
 	// Usage:
 	/* <customFormPickFiles
-        :object="formdata"
-        property="mainImage"
+        v-model="formdata.image"
         name="Main image"
         :translation="{ 'Main image': { cs: 'Hlavní obrázek' } }"
     /> */
 	const props = withDefaults(
 		defineProps<
 			{
-				object: T;
-				property: keyof T;
+				object?: T;
+				property?: keyof T;
 				icon?: string;
 				iconButton?: string;
 				rules?: ValidationRule[];
@@ -83,28 +77,34 @@
 		}
 	);
 
+	const path = defineModel<string | null>({
+		default: "",
+	});
+
+	// if (path.value === null) path.value = "";
+
 	const textField = ref<InstanceType<typeof VTextField>>();
 
 	const { translate } = useTranslations(props.translation);
-	const chooseFile = async <T,>(
-		property: keyof T,
-		object: T,
-		multipleSelect: boolean = false
-	) => {
+	const chooseFile = async <T,>(multipleSelect: boolean = false) => {
 		let img = await fileManagerStore.open({ multipleSelect });
-		if (object[property] === undefined) return;
-		if (multipleSelect) (object[property] as string) = img.join(",");
-		else (object[property] as string) = img[0] ?? "";
+
+		if (!img) {
+			path.value = "";
+			return;
+		}
+		if (multipleSelect) path.value = img.join(",");
+		else path.value = img[0] ?? "";
 		textField.value?.validate();
 	};
 
 	const clearText = () => {
-		(props.object[props.property] as string) = "";
+		path.value = "";
 		textField.value?.validate();
 	};
 
 	const fileChosenClass = computed(() => {
-		let file = props.object[props.property] as string;
+		let file = path.value;
 		if (!file) return "";
 		let fileExtension = file.split(".").pop() ?? "";
 		if (!validImages.includes(fileExtension as validImagesType)) return "";
