@@ -378,10 +378,8 @@
 												<template v-slot:default>
 													<v-list-item-title
 														v-text="
-															translate(
-																widgets.getWidgetById(
-																	widgetContent.widgetId
-																)?.name ?? ''
+															widgets.getWidgetsContentTitle(
+																widgetContent
 															)
 														"
 													></v-list-item-title>
@@ -392,6 +390,10 @@
 															icon="mdi-chevron-up"
 															size="x-small"
 															:disabled="i === 0"
+															v-if="
+																widgetsdata.length >
+																1
+															"
 															@click="
 																changeWidgetPosition(
 																	'up',
@@ -408,6 +410,10 @@
 																i ===
 																widgetsdata.length -
 																	1
+															"
+															v-if="
+																widgetsdata.length >
+																1
 															"
 															@click="
 																changeWidgetPosition(

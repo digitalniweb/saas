@@ -24,13 +24,20 @@
 								<v-tooltip
 									:text="translate('show')"
 									location="bottom"
+									v-if="
+										widgetContent.options?.showHeading !==
+										undefined
+									"
 								>
 									<template v-slot:activator="{ props }">
 										<v-switch
 											v-bind="props"
 											density="compact"
 											hide-details
-											v-model="headingShow"
+											v-model="
+												widgetContent.options
+													.showHeading
+											"
 											width="50px"
 											color="success"
 										/>
@@ -38,7 +45,9 @@
 								</v-tooltip>
 								<v-select
 									:items="headingTypes"
-									:disabled="!headingShow"
+									:disabled="
+										!widgetContent.options?.showHeading
+									"
 									v-model="headingType"
 									:label="translate('Show as')"
 									width="135px"
@@ -87,6 +96,16 @@
 							<v-tabs-window-item value="options-container">
 								<v-card flat>
 									<v-card-text>
+										<CustomPickersCustomClass
+											v-if="
+												widgetContent.options?.container
+													?.class !== undefined
+											"
+											v-model="
+												widgetContent.options.container
+													.class
+											"
+										/>
 										<CustomPickersContainerWidth
 											v-if="
 												widgetContent.options?.container
@@ -99,10 +118,12 @@
 										/>
 										<CustomPickersPadding
 											v-if="
-												widgetContent.options?.padding
+												widgetContent.options?.container
+													?.padding
 											"
 											v-model="
-												widgetContent.options.padding
+												widgetContent.options.container
+													.padding
 											"
 										/>
 										<v-card elevation="10" class="mt-7">
@@ -110,16 +131,46 @@
 												{{ translate("Background") }}
 											</v-card-title>
 											<v-card-text>
+												<CustomPickersBackgroundOverlay
+													v-if="
+														widgetContent?.options
+															?.container
+															?.background
+															?.overlay !==
+														undefined
+													"
+													v-model="
+														widgetContent.options
+															.container
+															.background.overlay
+													"
+												/>
 												<CustomPickersBackgroundColor
 													v-if="
 														widgetContent?.options
+															?.container
 															?.background
 															?.color !==
 														undefined
 													"
 													v-model="
 														widgetContent.options
+															.container
 															.background.color
+													"
+												/>
+												<CustomPickersBackgroundImage
+													v-if="
+														widgetContent?.options
+															?.container
+															?.background
+															?.image !==
+														undefined
+													"
+													v-model="
+														widgetContent.options
+															.container
+															.background.image
 													"
 												/>
 											</v-card-text>
@@ -192,7 +243,6 @@
 
 	const tab = ref("option-1");
 
-	const headingShow = ref(false);
 	const headingType = ref<(typeof headingTypes)[number]>("h2");
 
 	const props = defineProps<{

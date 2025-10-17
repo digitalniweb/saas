@@ -1,6 +1,7 @@
 import type { InferAttributes } from "sequelize";
-import type { Widget } from "~~/digitalniweb-types/models/globalData";
 import type { modules } from "~~/digitalniweb-types/functionality/modules";
+import type { modulesWidgetsContent } from "~~/digitalniweb-types/functionality/widgets";
+import type { Widget } from "~~/digitalniweb-types/models/globalData";
 export const useWidgetsStore = defineStore("widgets", {
 	state: () => ({
 		app: [] as number[],
@@ -62,6 +63,17 @@ export const useWidgetsStore = defineStore("widgets", {
 			if (currentWidget)
 				this.globalDataIdMapCache[widgetId] = currentWidget;
 			return currentWidget;
+		},
+		getWidgetsContentTitle(moduleWidget: modulesWidgetsContent) {
+			let widget = this.getWidgetById(moduleWidget.widgetId);
+			if (!widget) return "";
+			if (
+				widget.model &&
+				moduleWidget[widget.model] &&
+				moduleWidget[widget.model]?.name
+			)
+				return moduleWidget[widget.model]?.name;
+			return widget?.name ?? "";
 		},
 	},
 });
