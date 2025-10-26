@@ -20,9 +20,9 @@
 						{{ translate("content") }}
 					</span>
 					<div class="padding">
-						<span class="description">{{
-							translate("Padding")
-						}}</span>
+						<span class="description">
+							{{ translate("Padding") }}</span
+						>
 						<div class="description-text">TEXT</div>
 					</div>
 				</div>
@@ -52,10 +52,12 @@
 				padding: 40px;
 				display: inline-block;
 				background: #444;
+				max-width: 100%;
 				.inner {
 					position: relative;
 					height: 75px;
 					width: 250px;
+					max-width: 100%;
 					background: repeating-linear-gradient(
 						-45deg,
 						#888,
@@ -95,7 +97,8 @@
 				box-sizing: border-box;
 			}
 			.margin {
-				padding: 40px 80px;
+				padding: 40px;
+				max-width: 100%;
 				display: inline-block;
 				position: relative;
 				.description {
@@ -113,7 +116,8 @@
 					background-color: #aaa;
 					border-radius: 6px;
 					height: 150px;
-					width: 250px;
+					width: 330px;
+					max-width: 100%;
 					position: relative;
 					& > .description {
 						right: auto;
@@ -126,6 +130,7 @@
 						color: #fff;
 						border-radius: 0 0 5px 0;
 						z-index: 1;
+						max-width: 100%;
 					}
 					.padding {
 						position: relative;

@@ -31,6 +31,7 @@ export default defineNuxtConfig({
 	},
 	experimental: {
 		// renderJsonPayloads: false,
+		typescriptPlugin: true,
 	},
 	css: [
 		"vuetify/styles",

@@ -62,6 +62,9 @@
 					</v-card-text>
 				</v-card>
 			</v-col>
+			<v-col class="d-none d-sm-flex" style="flex: 0 0 10px">
+				<v-divider vertical thickness="3"></v-divider>
+			</v-col>
 			<v-col>
 				<v-card>
 					<!-- <v-card-title>{{ translate("appearance") }}</v-card-title> -->
@@ -116,6 +119,26 @@
 													.width
 											"
 										/>
+										<CustomPickersHeight100
+											v-if="
+												widgetContent.options?.container
+													?.height100 !== undefined
+											"
+											v-model="
+												widgetContent.options.container
+													.height100
+											"
+										/>
+										<CustomPickersMargin
+											v-if="
+												widgetContent.options?.container
+													?.margin
+											"
+											v-model="
+												widgetContent.options.container
+													.margin
+											"
+										/>
 										<CustomPickersPadding
 											v-if="
 												widgetContent.options?.container
@@ -126,55 +149,32 @@
 													.padding
 											"
 										/>
-										<v-card elevation="10" class="mt-7">
-											<v-card-title class="text-overline">
-												{{ translate("Background") }}
-											</v-card-title>
-											<v-card-text>
-												<CustomPickersBackgroundOverlay
-													v-if="
-														widgetContent?.options
-															?.container
-															?.background
-															?.overlay !==
-														undefined
-													"
-													v-model="
-														widgetContent.options
-															.container
-															.background.overlay
-													"
-												/>
-												<CustomPickersBackgroundColor
-													v-if="
-														widgetContent?.options
-															?.container
-															?.background
-															?.color !==
-														undefined
-													"
-													v-model="
-														widgetContent.options
-															.container
-															.background.color
-													"
-												/>
-												<CustomPickersBackgroundImage
-													v-if="
-														widgetContent?.options
-															?.container
-															?.background
-															?.image !==
-														undefined
-													"
-													v-model="
-														widgetContent.options
-															.container
-															.background.image
-													"
-												/>
-											</v-card-text>
-										</v-card>
+
+										<CustomPickersShadow
+											v-if="
+												widgetContent.options?.container
+													?.elevation
+											"
+											v-model="
+												widgetContent.options.container
+													.elevation
+											"
+										/>
+										<CustomPickersBackground
+											:values="[
+												'color',
+												'image',
+												'overlay',
+											]"
+											v-if="
+												widgetContent?.options
+													?.container?.background
+											"
+											v-model="
+												widgetContent.options.container
+													.background
+											"
+										></CustomPickersBackground>
 									</v-card-text>
 								</v-card>
 							</v-tabs-window-item>
@@ -270,4 +270,12 @@
 	// nested objects must be filled in as default like so
 	if (!widgetContent?.value.options)
 		widgetContent.value.options = structuredClone(widgetTextOptionsDefault);
+	else {
+		console.log(widgetContent.value.options);
+
+		widgetContent.value.options = {
+			...structuredClone(widgetTextOptionsDefault),
+			...widgetContent.value.options,
+		};
+	}
 </script>

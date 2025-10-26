@@ -9,6 +9,11 @@
 			<v-toolbar density="compact" flat>
 				<v-toolbar-title class="white--text">
 					{{ translate("Edit Widget") }}
+					<v-chip
+						:text="props.widget?.name"
+						color="green"
+						variant="flat"
+					></v-chip>
 				</v-toolbar-title>
 			</v-toolbar>
 			<v-card-text>
