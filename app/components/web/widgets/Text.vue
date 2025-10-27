@@ -1,5 +1,16 @@
 <template>
-	<div v-html="widget?.content"></div>
+	<!-- create containerComponent with slot -->
+	<webBlocksContainer v-model="options.container">
+		<v-col>
+			<component
+				:is="headingType"
+				v-if="!props.widget?.options?.showHeading"
+			>
+				{{ props.widget?.name }}
+			</component>
+			<div v-html="props.widget?.content"></div>
+		</v-col>
+	</webBlocksContainer>
 </template>
 
 <script setup lang="ts">
@@ -8,6 +19,12 @@
 	const props = defineProps<{
 		widget: WidgetText | undefined;
 	}>();
+	let options = computed(() =>
+		typeof props.widget?.options === "string"
+			? JSON.parse(props.widget?.options)
+			: props.widget?.options
+	);
+	let headingType = "h1";
 	// html data from default slot => data between component tags
 	// let slotContent = ref();
 	// const slots = useSlots();

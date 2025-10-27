@@ -40,6 +40,7 @@
 </template>
 <script setup lang="ts">
 	import type { InferAttributes } from "sequelize";
+	import toRawDeep from "~~/custom/helpers/toRawDeep";
 	import type { ArticleWidget } from "~~/digitalniweb-types/models/content";
 
 	import { VForm } from "vuetify/components";
@@ -149,16 +150,16 @@
 		let widget = widgets.getWidgetById(props.widget?.id ?? 0);
 
 		if (articleWidgetCopy.value) {
-			if (widget) {
+			if (widget && widget.model && articleWidget.value) {
 				// @ts-ignore
-				articleWidgetCopy.value[widget.model] = structuredClone(
-					toRaw(articleWidget.value)
+				articleWidgetCopy.value[widget.model] = toRawDeep(
+					articleWidget.value
 				);
+				// JSON.parse(
+				// 	JSON.stringify(articleWidget.value)
+				// ); // structuredClone(toRaw()) doesn't work for nested proxies for some reason
 			}
-			emit(
-				"returnWidgetContent",
-				structuredClone(toRaw(articleWidgetCopy.value))
-			);
+			emit("returnWidgetContent", toRawDeep(articleWidgetCopy.value)); // structuredClone(toRaw()) doesn't work for nested proxies for some reason
 		}
 		articleWidget.value = null;
 		open.value = false;

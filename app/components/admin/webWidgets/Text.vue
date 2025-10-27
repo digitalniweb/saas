@@ -271,8 +271,6 @@
 	if (!widgetContent?.value.options)
 		widgetContent.value.options = structuredClone(widgetTextOptionsDefault);
 	else {
-		console.log(widgetContent.value.options);
-
 		widgetContent.value.options = {
 			...structuredClone(widgetTextOptionsDefault),
 			...widgetContent.value.options,
