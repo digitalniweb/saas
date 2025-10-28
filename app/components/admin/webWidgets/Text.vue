@@ -227,6 +227,7 @@
 <script setup lang="ts">
 	const { translate } = useTranslations();
 	import type { CreationAttributes, InferAttributes } from "sequelize";
+	import deepMergeObjects from "~~/digitalniweb-custom/helpers/deepMergeObjects";
 	import { widgetTextOptionsDefault } from "~~/digitalniweb-custom/variables/widgets";
 	import type { WidgetText } from "~~/digitalniweb-types/models/content";
 	const headingTypes = [
@@ -271,9 +272,9 @@
 	if (!widgetContent?.value.options)
 		widgetContent.value.options = structuredClone(widgetTextOptionsDefault);
 	else {
-		widgetContent.value.options = {
-			...structuredClone(widgetTextOptionsDefault),
-			...widgetContent.value.options,
-		};
+		widgetContent.value.options = deepMergeObjects(
+			structuredClone(widgetTextOptionsDefault),
+			widgetContent.value.options
+		);
 	}
 </script>
