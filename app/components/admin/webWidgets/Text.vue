@@ -25,7 +25,7 @@
 									:text="translate('show')"
 									location="bottom"
 									v-if="
-										widgetContent.options?.showHeading !==
+										widgetContent.options?.heading?.show !==
 										undefined
 									"
 								>
@@ -35,8 +35,8 @@
 											density="compact"
 											hide-details
 											v-model="
-												widgetContent.options
-													.showHeading
+												widgetContent.options.heading
+													.show
 											"
 											width="50px"
 											color="success"
@@ -46,7 +46,7 @@
 								<v-select
 									:items="headingTypes"
 									:disabled="
-										!widgetContent.options?.showHeading
+										!widgetContent.options?.heading?.show
 									"
 									v-model="headingType"
 									:label="translate('Show as')"
@@ -149,6 +149,26 @@
 													.padding
 											"
 										/>
+										<CustomPickersBorder
+											v-if="
+												widgetContent.options?.container
+													?.border
+											"
+											v-model="
+												widgetContent.options.container
+													.border
+											"
+										/>
+										<CustomPickersBorderRadius
+											v-if="
+												widgetContent.options?.container
+													?.borderRadius
+											"
+											v-model="
+												widgetContent.options.container
+													.borderRadius
+											"
+										/>
 
 										<CustomPickersShadow
 											v-if="
@@ -218,7 +238,7 @@
 				</v-toolbar-title>
 			</v-toolbar>
 			<v-card-text class="pa-0">
-				<div v-html="widgetContent.content"></div>
+				<WebWidgetsText :widget="widgetContent" />
 			</v-card-text>
 		</v-card>
 	</div>
@@ -226,45 +246,22 @@
 
 <script setup lang="ts">
 	const { translate } = useTranslations();
-	import type { CreationAttributes, InferAttributes } from "sequelize";
+	import type { InferAttributes } from "sequelize";
 	import deepMergeObjects from "~~/digitalniweb-custom/helpers/deepMergeObjects";
 	import { widgetTextOptionsDefault } from "~~/digitalniweb-custom/variables/widgets";
 	import type { WidgetText } from "~~/digitalniweb-types/models/content";
-	const headingTypes = [
-		"h1",
-		"h2",
-		"h3",
-		"h4",
-		"h5",
-		"h6",
-		"p.subtitle",
-		"p.caption",
-		"p.overline",
-	] as const;
+	import { headingTypes } from "../../../../digitalniweb-custom/variables/css";
+	import type { headingTypes as headingTypesType } from "../../../../digitalniweb-types/css";
 
 	const tab = ref("option-1");
 
-	const headingType = ref<(typeof headingTypes)[number]>("h2");
+	const headingType = ref<headingTypesType>("h2");
 
 	const props = defineProps<{
 		moduleId: number;
 	}>();
-	const widgetContent = defineModel<
-		InferAttributes<WidgetText> | CreationAttributes<WidgetText>
-	>({
-		default: {
-			// name: "",
-			// content: "",
-			// moduleId: 0,
-			// options: {
-			// 	background: {
-			// 		color: "",
-			// 	},
-			// 	container: {
-			// 		width: "container-fluid",
-			// 	},
-			// } as widgetTextOptions,
-		},
+	const widgetContent = defineModel<InferAttributes<WidgetText>>({
+		default: {},
 	});
 	if (props.moduleId) widgetContent.value.moduleId = props.moduleId;
 

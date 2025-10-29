@@ -5,7 +5,7 @@
 		</template>
 		<template #values>
 			<CustomPickersWidth
-				:values="['container-fluid', 'container']"
+				:values="['container', 'container-fluid']"
 				v-model="width"
 			/>
 		</template>

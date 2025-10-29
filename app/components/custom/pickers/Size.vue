@@ -38,8 +38,10 @@
 	};
 	const { translate } = useTranslations(translations);
 	import type { sizeOptions } from "~~/digitalniweb-types/css";
+	import deepMergeObjects from "../../../../digitalniweb-custom/helpers/deepMergeObjects";
 	const props = defineProps<{
 		values: sizeOptions[];
+		btnValues?: optionalButtonsValuesType;
 	}>();
 	const size = defineModel<sizeOptions>({
 		default: "none",
@@ -52,7 +54,11 @@
 			tooltip: string;
 		};
 	};
-	let buttonsValues: buttonsValuesType = {
+	type optionalButtonsValuesType = {
+		[key in keyof buttonsValuesType]?: Partial<buttonsValuesType[key]>;
+	};
+
+	let buttonsValuesDefault: buttonsValuesType = {
 		none: {
 			icon: "mdi-border-none-variant",
 			size: "x-small",
@@ -84,4 +90,15 @@
 			tooltip: "extra large",
 		},
 	};
+
+	const buttonsValues = computed(() => {
+		let buttonsValuesCurrent = structuredClone(buttonsValuesDefault);
+		if (props.btnValues) {
+			buttonsValuesCurrent = deepMergeObjects(
+				buttonsValuesCurrent,
+				props.btnValues as buttonsValuesType
+			);
+		}
+		return buttonsValuesCurrent;
+	});
 </script>

@@ -13,13 +13,81 @@
 
 	const options = defineModel<containerOptions>();
 
+	type classableProperties = Extract<
+		keyof containerOptions,
+		| "elevation"
+		| "border"
+		| "borderRadius"
+		| "margin"
+		| "padding"
+		| "textAlign"
+		| "height100"
+	>;
+	type classMap = {
+		[K in classableProperties]?: Record<
+			Extract<NonNullable<containerOptions[K]>, string>,
+			string | null
+		>;
+	};
+	let classMap = {
+		margin: {
+			none: null,
+			small: "my-5",
+			large: "my-10",
+		},
+		padding: {
+			none: null,
+			small: "pa-5",
+			large: "pa-10",
+		},
+		border: {
+			none: null,
+			small: "border-sm",
+			large: "border-lg",
+		},
+		borderRadius: {
+			none: null,
+			small: "rounded-lg",
+			large: "rounded-xl",
+		},
+		elevation: {
+			none: null,
+			small: "elevation-8",
+			large: "elevation-20",
+		},
+		textAlign: {
+			center: "",
+			justify: "",
+			left: "",
+			right: "",
+		},
+		height100: {
+			false: null,
+			true: "height-100",
+		},
+	} as classMap;
+
 	let customClass = computed(() => {
-		let finalClass = "";
-		finalClass += options.value?.class ?? "";
-		if (options.value?.margin !== "none") {
-		}
-		if (options.value?.padding !== "none") {
-		}
-		return finalClass;
+		let finalClassArray = [];
+		if (options.value?.class) finalClassArray.push(options.value?.class);
+
+		(
+			[
+				"padding",
+				"border",
+				"borderRadius",
+				"margin",
+				"elevation",
+				"textAlign",
+				"height100",
+			] as const
+		).forEach((prop) => {
+			const value = options.value?.[prop];
+			const map = classMap[prop];
+			// @ts-ignore
+			if (value && map?.[value]) finalClassArray.push(map[value]);
+		});
+
+		return finalClassArray.join(" ");
 	});
 </script>

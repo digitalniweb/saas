@@ -2,7 +2,7 @@
 	<!-- create containerComponent with slot -->
 	<webBlocksContainer v-model="options.container">
 		<v-col>
-			<component :is="headingType" v-if="!options?.showHeading">
+			<component :is="headingType" v-if="options?.heading?.show">
 				{{ props.widget?.name }}
 			</component>
 			<div v-html="props.widget?.content"></div>
@@ -11,13 +11,14 @@
 </template>
 
 <script setup lang="ts">
+	import type { InferAttributes } from "sequelize";
 	import deepMergeObjects from "~~/digitalniweb-custom/helpers/deepMergeObjects";
 	import type { WidgetText } from "~~/digitalniweb-types/models/content";
 	import { widgetTextOptionsDefault } from "../../../../digitalniweb-custom/variables/widgets";
 	import type { widgetTextOptions } from "../../../../digitalniweb-types/functionality/widgets";
 
 	const props = defineProps<{
-		widget: WidgetText | undefined;
+		widget: InferAttributes<WidgetText> | undefined;
 	}>();
 	let options = computed<widgetTextOptions>(() => {
 		let options = props.widget?.options;
