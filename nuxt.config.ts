@@ -8,8 +8,13 @@ export default defineNuxtConfig({
 		typeCheck: true,
 		strict: true,
 		tsConfig: {
-			include: ["../digitalniweb-types", "../types"],
+			include: [
+				"../digitalniweb-types",
+				"../types",
+				// "**/*.ts",
+			],
 			compilerOptions: {
+				allowImportingTsExtensions: true,
 				noUncheckedIndexedAccess: false,
 				noEmit: true,
 				verbatimModuleSyntax: true,
@@ -18,19 +23,12 @@ export default defineNuxtConfig({
 			},
 		},
 	},
-	// delete this
-	// devServer: {
-	// 	cors: {
-	// 		origin: ["http://digitalniwebapp.local"],
-	// 	},
-	// },
 	vite: {
 		server: {
 			allowedHosts: [process.env.HOST],
 		},
 	},
 	experimental: {
-		// renderJsonPayloads: false,
 		typescriptPlugin: true,
 	},
 	css: [

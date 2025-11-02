@@ -42,7 +42,6 @@
 						</v-tooltip>
 					</v-alert>
 					<v-treeview
-						:key="treeViewKey"
 						:items="menus ?? []"
 						density="compact"
 						activatable
@@ -222,7 +221,6 @@
 										</v-tooltip>
 									</p>
 									<v-treeview
-										:key="treeViewKey"
 										density="compact"
 										item-value="id"
 										item-title="name"
@@ -615,10 +613,7 @@
 		return "/" + slug;
 	};
 
-	// when saving menu with location change there are errors when not using :key
-	const treeViewKey = ref(0);
-
-	// this assure opened tree after saving menu (incrementing treeViewKey)
+	// this assure opened tree after saving menu
 	const menuTreeOpened = ref([]);
 	const pickMenuTreeOpened = ref([]);
 
@@ -1184,6 +1179,12 @@
 				);
 
 				if (Object.keys(diff).length > 0) {
+					// widgetContent.options is json which I want to save whole, not just a difference
+					let widgetModelName = widgets.getWidgetById(wc.id)?.model;
+					if (widgetModelName && diff?.[widgetModelName]?.options) {
+						diff[widgetModelName].options =
+							editCandidateWC[widgetModelName]?.options;
+					}
 					editedWCs.push({
 						...diff,
 						// moduleId: currentModule?.id,
@@ -1311,7 +1312,6 @@
 			delete newMenuLocationParent?.children;
 		if (originalMenuLocation.length === 0)
 			delete originalMenuLocationParent?.children;
-		treeViewKey.value++;
 	};
 
 	/**
