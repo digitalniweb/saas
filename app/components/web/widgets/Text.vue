@@ -2,7 +2,11 @@
 	<!-- create containerComponent with slot -->
 	<webBlocksContainer v-model="options.container">
 		<v-col>
-			<component :is="headingType" v-if="options?.heading?.show">
+			<component
+				:is="options?.heading?.type"
+				v-if="options?.heading?.show"
+				:class="customClass"
+			>
 				{{ props.widget?.name }}
 			</component>
 			<div v-html="props.widget?.content"></div>
@@ -15,6 +19,7 @@
 	import deepMergeObjects from "~~/digitalniweb-custom/helpers/deepMergeObjects";
 	import type { WidgetText } from "~~/digitalniweb-types/models/content";
 	import { widgetTextOptionsDefault } from "../../../../digitalniweb-custom/variables/widgets";
+	import type { headingOptions } from "../../../../digitalniweb-types/css";
 	import type { widgetTextOptions } from "../../../../digitalniweb-types/functionality/widgets";
 
 	const props = defineProps<{
@@ -34,15 +39,44 @@
 		);
 		return finalOptions;
 	});
-	let headingType = "h1";
-	// html data from default slot => data between component tags
-	// let slotContent = ref();
-	// const slots = useSlots();
-	// const defaultSlot = slots.default;
-	// if (defaultSlot) {
-	// 	const vnodeArray = defaultSlot();
-	// 	if (vnodeArray.length > 0 && vnodeArray[0].children) {
-	// 		slotContent.value = vnodeArray[0].children;
-	// 	}
-	// }
+
+	type classableProperties = Extract<
+		keyof headingOptions,
+		"weight" | "class"
+	>;
+
+	type classMap = {
+		[K in classableProperties]?: Record<
+			Extract<NonNullable<headingOptions[K]>, string>,
+			string | null
+		>;
+	};
+	let classMap = {
+		weight: {
+			black: "font-black",
+			bold: "font-bold",
+			light: "font-light",
+			medium: "font-medium",
+			regular: "font-regular",
+			thin: "font-thin",
+		},
+		class: {
+			"": null,
+		},
+	} as classMap;
+
+	let customClass = computed(() => {
+		let finalClassArray = [];
+		if (options.value?.heading)
+			finalClassArray.push(options.value?.heading.class);
+
+		(["weight"] as const).forEach((prop) => {
+			const value = options.value?.heading[prop];
+			const map = classMap[prop];
+			// @ts-ignore
+			if (value && map?.[value]) finalClassArray.push(map[value]);
+		});
+
+		return finalClassArray.join(" ");
+	});
 </script>

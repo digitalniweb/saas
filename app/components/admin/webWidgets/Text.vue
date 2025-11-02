@@ -2,65 +2,165 @@
 	<div v-if="widgetContent">
 		<v-row>
 			<v-col>
-				<v-card>
-					<v-card-text>
-						<v-row>
-							<v-col lg="8" cols="12">
-								<v-text-field
-									variant="underlined"
-									:label="translate('Name2')"
-									counter="64"
-									prepend-inner-icon="mdi-alpha-n"
-									v-model="widgetContent.name"
-									validate-on="blur"
-									:rules="[
-										() =>
-											!!widgetContent.name ||
-											translate('Fill in this field'),
-									]"
-								/>
-							</v-col>
-							<v-col lg="4" cols="12" class="d-flex">
-								<v-tooltip
-									:text="translate('show')"
-									location="bottom"
-									v-if="
-										widgetContent.options?.heading?.show !==
-										undefined
-									"
-								>
-									<template v-slot:activator="{ props }">
-										<v-switch
-											v-bind="props"
-											density="compact"
-											hide-details
-											v-model="
-												widgetContent.options.heading
-													.show
-											"
-											width="50px"
-											color="success"
-										/>
-									</template>
-								</v-tooltip>
-								<v-select
-									:items="headingTypes"
-									:disabled="
-										!widgetContent.options?.heading?.show
-									"
-									v-model="headingType"
-									:label="translate('Show as')"
-									width="135px"
-									density="compact"
-									hide-details
-									variant="solo"
-									class="elevation-0 ml-5 align-center"
-								></v-select>
-							</v-col>
-							<CustomTextEditor v-model="widgetContent.content" />
-						</v-row>
-					</v-card-text>
-				</v-card>
+				<v-row>
+					<v-col cols="12">
+						<v-card elevation="10" class="mt-7" color="border-md">
+							<v-card-title class="text-overline">
+								{{ translate("Name2") }}
+							</v-card-title>
+							<v-card-text>
+								<v-row>
+									<v-col cols="12">
+										<v-text-field
+											variant="underlined"
+											counter="64"
+											prepend-inner-icon="mdi-alpha-n"
+											v-model="widgetContent.name"
+											validate-on="blur"
+											:rules="[
+												() =>
+													!!widgetContent.name ||
+													translate(
+														'Fill in this field'
+													),
+											]"
+										>
+											<template #append>
+												<v-tooltip
+													:text="translate('show')"
+													location="bottom"
+													v-if="
+														widgetContent.options
+															?.heading?.show !==
+														undefined
+													"
+												>
+													<template
+														v-slot:activator="{
+															props,
+														}"
+													>
+														<v-switch
+															v-bind="props"
+															density="compact"
+															hide-details
+															v-model="
+																widgetContent
+																	.options
+																	.heading
+																	.show
+															"
+															width="50px"
+															color="success"
+														/>
+													</template>
+												</v-tooltip>
+											</template>
+										</v-text-field>
+									</v-col>
+								</v-row>
+								<v-expand-transition>
+									<v-row
+										v-show="
+											widgetContent.options?.heading?.show
+										"
+									>
+										<v-col>
+											<v-select
+												:items="headingTypes"
+												v-if="
+													widgetContent.options
+														?.heading?.type
+												"
+												v-model="
+													widgetContent.options
+														.heading.type
+												"
+												:label="translate('Show as')"
+												width="150px"
+												density="compact"
+												hide-details
+												variant="solo"
+												class="elevation-0 ml-5 align-center"
+											></v-select>
+										</v-col>
+										<v-col>
+											<v-select
+												:items="textClasses"
+												v-if="
+													widgetContent.options
+														?.heading?.class !==
+													undefined
+												"
+												v-model="
+													widgetContent.options
+														.heading.class
+												"
+												:label="
+													translate(
+														'Custom CSS class'
+													)
+												"
+												width="180px"
+												density="compact"
+												hide-details
+												variant="solo"
+												class="elevation-0 ml-5 align-center"
+											></v-select>
+										</v-col>
+										<v-col>
+											<v-select
+												:items="textWeight"
+												v-if="
+													widgetContent.options
+														?.heading?.weight !==
+													undefined
+												"
+												v-model="
+													widgetContent.options
+														.heading.weight
+												"
+												:label="translate('Weight')"
+												width="150px"
+												density="compact"
+												hide-details
+												variant="solo"
+												class="elevation-0 ml-5 align-center"
+											></v-select>
+										</v-col>
+										<v-col>
+											<v-switch
+												v-bind="props"
+												density="compact"
+												hide-details
+												v-if="
+													widgetContent?.options
+														?.heading?.italic !==
+													undefined
+												"
+												v-model="
+													widgetContent.options
+														.heading.italic
+												"
+												color="success"
+											>
+												<template #label>
+													<span class="font-italic">
+														{{
+															translate("italic")
+														}}
+													</span>
+												</template>
+											</v-switch>
+										</v-col>
+									</v-row>
+								</v-expand-transition>
+							</v-card-text>
+						</v-card>
+					</v-col>
+
+					<CustomTextEditor v-model="widgetContent.content" />
+				</v-row>
 			</v-col>
 			<v-col class="d-none d-sm-flex" style="flex: 0 0 10px">
 				<v-divider vertical thickness="3"></v-divider>
@@ -250,12 +350,13 @@
 	import deepMergeObjects from "~~/digitalniweb-custom/helpers/deepMergeObjects";
 	import { widgetTextOptionsDefault } from "~~/digitalniweb-custom/variables/widgets";
 	import type { WidgetText } from "~~/digitalniweb-types/models/content";
-	import { headingTypes } from "../../../../digitalniweb-custom/variables/css";
-	import type { headingTypes as headingTypesType } from "../../../../digitalniweb-types/css";
+	import {
+		headingTypes,
+		textClasses,
+		textWeight,
+	} from "../../../../digitalniweb-custom/variables/css";
 
 	const tab = ref("option-1");
-
-	const headingType = ref<headingTypesType>("h2");
 
 	const props = defineProps<{
 		moduleId: number;
