@@ -5,7 +5,7 @@
 				<v-toolbar color="primary" prominent flat height="100">
 					<template v-slot:image>
 						<v-img
-							src="https://images.pexels.com/photos/1029757/pexels-photo-1029757.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
+							src="/img/monitor.webp"
 							cover
 							class="overlay-dark"
 						/>
@@ -100,15 +100,16 @@
 	</v-row>
 </template>
 <script setup lang="ts">
-	import { useUserStore } from "@/store/user";
 	import { useCurrentPageStore } from "@/store/currentPage";
+	import { useUserStore } from "@/store/user";
 	import type { CreationAttributes } from "sequelize";
+	import { useLanguagesStore } from "~/store/languages";
+	import { webInformationTranslations } from "~~/digitalniweb-custom/variables/translations/webInformation";
+	import type { languages } from "~~/digitalniweb-types";
 	import type {
 		WebInformation,
 		WebInformationLanguage,
 	} from "~~/digitalniweb-types/models/content";
-	import { useLanguagesStore } from "~/store/languages";
-	import type { languages } from "~~/digitalniweb-types";
 	const languageStore = useLanguagesStore();
 
 	let translations = {
@@ -120,7 +121,6 @@
 			cs: "Vyplnit provizorními daty. Informace budete muset změnit jakmile budete chtít spustit webové stránky.",
 		},
 	};
-	import { webInformationTranslations } from "~~/digitalniweb-custom/variables/translations/webInformation";
 
 	const { translate } = useTranslations({
 		...webInformationTranslations,

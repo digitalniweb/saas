@@ -5,7 +5,7 @@
 				<v-toolbar color="primary" prominent flat height="100">
 					<template v-slot:image>
 						<v-img
-							src="https://images.pexels.com/photos/196655/pexels-photo-196655.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
+							src="/img/website.webp"
 							cover
 							class="overlay-dark"
 						/>
@@ -143,6 +143,7 @@
 	const { modulesLocale } = useLocales();
 
 	import { useCurrentPageStore } from "@/store/currentPage";
+	import { useSnackBarsStore } from "~/store/snackBars";
 	const currentPage = useCurrentPageStore();
 
 	currentPage.page.title =
@@ -203,7 +204,6 @@
 		await getData();
 	};
 	const { fetchData } = useApiCall();
-	import { useSnackBarsStore } from "~/store/snackBars";
 	const snackBars = useSnackBarsStore();
 	type paginatedList<T> = Promise<{
 		count: number;

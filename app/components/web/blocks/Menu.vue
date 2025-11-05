@@ -8,7 +8,7 @@
 				size="80"
 			>
 				<img
-					src="/img/logo.webp"
+					src="/files/files/default/logo.webp"
 					:alt="webInformationStore.data.name"
 					width="100%"
 				/>
@@ -150,12 +150,12 @@
 	</v-app-bar>
 </template>
 <script setup lang="ts">
-	import { useLocales } from "../../../composables/useLocales";
 	import { useMenusStore } from "@/store/menus";
 	import { useModulesStore } from "@/store/modules";
+	import { storeToRefs } from "pinia";
+	import { useLocales } from "../../../composables/useLocales";
 	import { useUserStore } from "../../../store/user";
 	import { useWebInformationStore } from "../../../store/webInformation";
-	import { storeToRefs } from "pinia";
 
 	const config = useRuntimeConfig();
 

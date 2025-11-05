@@ -1,15 +1,15 @@
+import type { modules } from "~~/digitalniweb-types/functionality/modules";
 import { useCurrentPageStore } from "../store/currentPage";
 import { useModulesStore } from "../store/modules";
 import { useWebInformationStore } from "../store/webInformation";
-import type { modules } from "~~/digitalniweb-types/functionality/modules";
 
 import type { InferAttributes } from "sequelize";
 
-import type { ModulePageLanguage } from "~~/digitalniweb-types/models/globalData";
 import type {
 	WebInformation,
 	WebInformationLanguage,
 } from "~~/digitalniweb-types/models/content";
+import type { ModulePageLanguage } from "~~/digitalniweb-types/models/globalData";
 
 export const useLocales = () => {
 	const currentPage = useCurrentPageStore();

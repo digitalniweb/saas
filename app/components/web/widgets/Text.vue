@@ -53,12 +53,12 @@
 	};
 	let classMap = {
 		weight: {
-			black: "font-black",
-			bold: "font-bold",
-			light: "font-light",
-			medium: "font-medium",
-			regular: "font-regular",
-			thin: "font-thin",
+			black: "font-weight-black",
+			bold: "font-weight-bold",
+			light: "font-weight-light",
+			medium: "font-weight-medium",
+			regular: "font-weight-regular",
+			thin: "font-weight-thin",
 		},
 		class: {
 			"": null,
@@ -76,6 +76,8 @@
 			// @ts-ignore
 			if (value && map?.[value]) finalClassArray.push(map[value]);
 		});
+
+		if (options.value.heading.italic) finalClassArray.push("font-italic");
 
 		return finalClassArray.join(" ");
 	});

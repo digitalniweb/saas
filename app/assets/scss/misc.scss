@@ -3,7 +3,14 @@
 .cursor-pointer {
 	cursor: pointer;
 }
-
+p:empty {
+	margin: 0;
+	&::before {
+		content: "";
+		display: block;
+		height: 1rem;
+	}
+}
 .pageLoader {
 	display: none;
 	position: fixed;

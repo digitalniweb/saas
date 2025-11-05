@@ -2,11 +2,7 @@
 	<v-card class="elevation-12">
 		<v-toolbar color="primary" prominent flat>
 			<template v-slot:image>
-				<v-img
-					src="https://images.pexels.com/photos/196655/pexels-photo-196655.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
-					cover
-					class="overlay-dark"
-				/>
+				<v-img src="/img/website.webp" cover class="overlay-dark" />
 			</template>
 			<v-toolbar-title>
 				{{ props.headline }}
@@ -17,7 +13,7 @@
 				<v-row v-if="props.userType === 'tenant'">
 					<v-col cols="12" xl="6" v-if="loggedIn">
 						<v-card
-							image="https://images.pexels.com/photos/50987/money-card-business-credit-card-50987.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
+							image="/img/credit-card.webp"
 							height="150px"
 							class="d-flex justify-center align-center"
 							hover
@@ -47,7 +43,7 @@
 					</v-col>
 					<v-col cols="12" xl="6" v-if="loggedIn">
 						<v-card
-							image="https://images.pexels.com/photos/1029757/pexels-photo-1029757.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
+							image="/img/monitor.webp"
 							height="150px"
 							class="d-flex justify-center align-center"
 							hover
@@ -456,16 +452,16 @@
 	</v-card>
 </template>
 <script setup lang="ts">
+	import type { InferAttributes } from "sequelize";
+	import isMobilePhoneVal from "validator/es/lib/isMobilePhone";
+	import isPostalCodeVal from "validator/es/lib/isPostalCode";
 	import type {
 		Tenant as TenantType,
 		User as UserType,
 	} from "~~/digitalniweb-types/models/users";
-	import isMobilePhoneVal from "validator/es/lib/isMobilePhone";
-	import isPostalCodeVal from "validator/es/lib/isPostalCode";
+	import type { registerUser as registerUserType } from "~~/digitalniweb-types/users";
 	import { useUserStore } from "../../../store/user";
 	const { modulesLocale } = useLocales();
-	import type { InferAttributes } from "sequelize";
-	import type { registerUser as registerUserType } from "~~/digitalniweb-types/users";
 
 	const translations = {};
 	const { translate } = useTranslations(translations);

@@ -2,11 +2,7 @@
 	<v-card class="elevation-12">
 		<v-toolbar color="primary" class="py-5">
 			<template v-slot:image>
-				<v-img
-					src="https://images.pexels.com/photos/6964507/pexels-photo-6964507.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
-					cover
-					class="overlay-dark"
-				/>
+				<v-img src="/img/keyboard.webp" cover class="overlay-dark" />
 			</template>
 			<v-toolbar-title>
 				<v-icon>mdi-account-arrow-left</v-icon>
@@ -114,9 +110,9 @@
 	</v-expand-transition>
 </template>
 <script setup lang="ts">
-	import { VForm } from "vuetify/components";
 	import { useUserStore } from "@/store/user";
 	import { useRouter } from "vue-router";
+	import { VForm } from "vuetify/components";
 
 	import type {
 		loginInformation,
@@ -128,6 +124,7 @@
 
 	const { modulesLocale } = useLocales();
 
+	import { FetchError } from "ofetch";
 	import { useSnackBarsStore } from "~/store/snackBars";
 	let snackBarStore = useSnackBarsStore();
 
@@ -148,7 +145,6 @@
 	const resetForm = ref<InstanceType<typeof VForm>>();
 
 	const { prettyDateTime } = useDateTime();
-	import { FetchError } from "ofetch";
 	const loginUser = async () => {
 		let blockedLoginTill =
 			localStorage.getItem("blockedLoginTill") ?? undefined;

@@ -234,7 +234,7 @@
 	import { useWebInformationStore } from "~/store/webInformation";
 	import type { formHeader } from "~~/types/components/form";
 	const formHeader = ref<formHeader>({
-		image: "https://images.pexels.com/photos/196655/pexels-photo-196655.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+		image: "/img/website.webp",
 		headline: "Informace o webu",
 	});
 

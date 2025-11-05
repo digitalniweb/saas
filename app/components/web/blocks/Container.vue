@@ -2,7 +2,9 @@
 	<v-container
 		:class="customClass"
 		:fluid="options?.width ? options?.width === 'container-fluid' : true"
+		:style="customStyle"
 	>
+		<div class="sectionOverlay"></div>
 		<v-row>
 			<slot></slot>
 		</v-row>
@@ -89,5 +91,15 @@
 		});
 
 		return finalClassArray.join(" ");
+	});
+
+	let customStyle = computed(() => {
+		let style = "";
+		if (options.value?.background?.color)
+			style += `background-color: ${options.value?.background?.color};`;
+		if (options.value?.background?.image)
+			style += `background-image: url(${options.value?.background?.image});`;
+
+		return style;
 	});
 </script>
