@@ -5,11 +5,12 @@
 			<component
 				:is="options?.heading?.type"
 				v-if="options?.heading?.show"
-				:class="customClass"
+				class="heading"
+				:class="headingClass"
 			>
 				{{ props.widget?.name }}
 			</component>
-			<div v-html="props.widget?.content"></div>
+			<div class="content" v-html="props.widget?.content"></div>
 		</v-col>
 	</webBlocksContainer>
 </template>
@@ -65,7 +66,7 @@
 		},
 	} as classMap;
 
-	let customClass = computed(() => {
+	let headingClass = computed(() => {
 		let finalClassArray = [];
 		if (options.value?.heading)
 			finalClassArray.push(options.value?.heading.class);

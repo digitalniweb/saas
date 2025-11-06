@@ -1,10 +1,15 @@
 <template>
 	<v-container
-		:class="customClass"
+		:class="containerClass"
 		:fluid="options?.width ? options?.width === 'container-fluid' : true"
-		:style="customStyle"
+		:style="containerStyle"
 	>
-		<div class="sectionOverlay"></div>
+		<div
+			class="overlay background-position-center background-size-cover"
+			:style="overlayStyle"
+		>
+			<div :class="overlayClass"></div>
+		</div>
 		<v-row>
 			<slot></slot>
 		</v-row>
@@ -69,8 +74,8 @@
 		},
 	} as classMap;
 
-	let customClass = computed(() => {
-		let finalClassArray = [];
+	let containerClass = computed(() => {
+		let finalClassArray: string[] = [];
 		if (options.value?.class) finalClassArray.push(options.value?.class);
 
 		(
@@ -93,13 +98,34 @@
 		return finalClassArray.join(" ");
 	});
 
-	let customStyle = computed(() => {
+	let containerStyle = computed(() => {
 		let style = "";
 		if (options.value?.background?.color)
 			style += `background-color: ${options.value?.background?.color};`;
+
+		return style;
+	});
+
+	let overlayStyle = computed(() => {
+		let style = "";
 		if (options.value?.background?.image)
 			style += `background-image: url(${options.value?.background?.image});`;
 
 		return style;
+	});
+
+	let overlayClass = computed(() => {
+		let finalClassArray: string[] = [];
+		if (options.value?.background?.overlay?.includes("darken"))
+			finalClassArray.push("overlay-dark");
+		else if (options.value?.background?.overlay?.includes("lighten"))
+			finalClassArray.push("overlay-light");
+
+		if (options.value?.background?.overlay?.includes("blur"))
+			finalClassArray.push("overlay-blur");
+		if (options.value?.background?.overlay?.includes("desaturate"))
+			finalClassArray.push("overlay-desaturate");
+
+		return finalClassArray.join(" ");
 	});
 </script>
