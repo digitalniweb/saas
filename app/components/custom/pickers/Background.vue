@@ -1,32 +1,27 @@
 <template>
-	<v-card elevation="10" class="mt-7" color="border-md">
-		<v-card-title class="text-overline">
-			{{ translate("Background") }}
-		</v-card-title>
-		<v-card-text>
-			<CustomPickersBackgroundOverlay
-				v-if="
-					props.values?.includes('overlay') &&
-					background?.overlay !== undefined
-				"
-				v-model="background.overlay"
-			/>
-			<CustomPickersBackgroundColor
-				v-if="
-					props.values?.includes('color') &&
-					background?.color !== undefined
-				"
-				v-model="background.color"
-			/>
-			<CustomPickersBackgroundImage
-				v-if="
-					props.values?.includes('image') &&
-					background?.image !== undefined
-				"
-				v-model="background.image"
-			/>
-		</v-card-text>
-	</v-card>
+	<CustomPickersCardShow :title="translate('Background')" :opened="false">
+		<CustomPickersBackgroundOverlay
+			v-if="
+				props.values?.includes('overlay') &&
+				background?.overlay !== undefined
+			"
+			v-model="background.overlay"
+		/>
+		<CustomPickersBackgroundColor
+			v-if="
+				props.values?.includes('color') &&
+				background?.color !== undefined
+			"
+			v-model="background.color"
+		/>
+		<CustomPickersBackgroundImage
+			v-if="
+				props.values?.includes('image') &&
+				background?.image !== undefined
+			"
+			v-model="background.image"
+		/>
+	</CustomPickersCardShow>
 </template>
 
 <script setup lang="ts">

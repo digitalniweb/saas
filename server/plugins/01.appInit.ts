@@ -1,9 +1,9 @@
-import Subscriber from "../../digitalniweb-custom/helpers/subscriberService.js";
-import {
-	requestServiceRegistryInfo,
-	registerCurrentApp,
-} from "../../digitalniweb-custom/helpers/serviceRegistryCache.js";
 import { consoleLogProduction } from "../../digitalniweb-custom/helpers/logger.js";
+import {
+	registerCurrentApp,
+	requestServiceRegistryInfo,
+} from "../../digitalniweb-custom/helpers/serviceRegistryCache.js";
+import Subscriber from "../../digitalniweb-custom/helpers/subscriberService.js";
 
 export default defineNitroPlugin(async () => {
 	// subscribe now and on connect to everything

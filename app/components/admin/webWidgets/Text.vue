@@ -65,7 +65,7 @@
 											widgetContent.options?.heading?.show
 										"
 									>
-										<v-col>
+										<v-col sm="auto" cols="12">
 											<v-select
 												:items="headingTypes"
 												v-if="
@@ -77,14 +77,14 @@
 														.heading.type
 												"
 												:label="translate('Show as')"
-												width="150px"
+												min-width="150px"
 												density="compact"
 												hide-details
 												variant="solo"
 												class="elevation-0 ml-5 align-center"
 											></v-select>
 										</v-col>
-										<v-col>
+										<v-col sm="auto" cols="12">
 											<v-select
 												:items="textClasses"
 												v-if="
@@ -101,14 +101,14 @@
 														'Custom CSS class'
 													)
 												"
-												width="180px"
+												min-width="180px"
 												density="compact"
 												hide-details
 												variant="solo"
 												class="elevation-0 ml-5 align-center"
 											></v-select>
 										</v-col>
-										<v-col>
+										<v-col sm="auto" cols="12">
 											<v-select
 												:items="textWeight"
 												v-if="
@@ -121,14 +121,14 @@
 														.heading.weight
 												"
 												:label="translate('Weight')"
-												width="150px"
+												min-width="150px"
 												density="compact"
 												hide-details
 												variant="solo"
 												class="elevation-0 ml-5 align-center"
 											></v-select>
 										</v-col>
-										<v-col>
+										<v-col sm="auto" cols="12">
 											<v-switch
 												v-bind="props"
 												density="compact"
@@ -209,76 +209,60 @@
 													.class
 											"
 										/>
-										<CustomPickersContainerWidth
+										<CustomPickersContainerSize
 											v-if="
 												widgetContent.options?.container
-													?.width
+													.width &&
+												widgetContent.options?.container
+													.height100 !== undefined
 											"
-											v-model="
+											v-model:width="
 												widgetContent.options.container
 													.width
 											"
-										/>
-										<CustomPickersHeight100
-											v-if="
-												widgetContent.options?.container
-													?.height100 !== undefined
-											"
-											v-model="
+											v-model:height100="
 												widgetContent.options.container
 													.height100
 											"
 										/>
-										<CustomPickersMargin
+										<CustomPickersSpacing
 											v-if="
 												widgetContent.options?.container
-													?.margin
+													.margin &&
+												widgetContent.options?.container
+													.padding
 											"
-											v-model="
+											v-model:margin="
 												widgetContent.options.container
 													.margin
 											"
-										/>
-										<CustomPickersPadding
-											v-if="
-												widgetContent.options?.container
-													?.padding
-											"
-											v-model="
+											v-model:padding="
 												widgetContent.options.container
 													.padding
 											"
 										/>
-										<CustomPickersBorder
+										<CustomPickersBorders
 											v-if="
 												widgetContent.options?.container
-													?.border
-											"
-											v-model="
-												widgetContent.options.container
-													.border
-											"
-										/>
-										<CustomPickersBorderRadius
-											v-if="
+													?.border &&
 												widgetContent.options?.container
-													?.borderRadius
-											"
-											v-model="
-												widgetContent.options.container
-													.borderRadius
-											"
-										/>
-
-										<CustomPickersShadow
-											v-if="
+													?.borderRadius &&
 												widgetContent.options?.container
 													?.elevation
 											"
-											v-model="
+											v-model:border="
+												widgetContent.options.container
+													.border
+											"
+											v-model:borderRadius="
+												widgetContent.options.container
+													.borderRadius
+											"
+											v-model:shadow="
 												widgetContent.options.container
 													.elevation
 											"
+											:closable="true"
 										/>
 										<CustomPickersBackground
 											:values="[
@@ -331,16 +315,18 @@
 			</v-col>
 		</v-row>
 
-		<v-card class="mt-10">
-			<v-toolbar density="compact" flat>
-				<v-toolbar-title class="white--text">
-					{{ translate("Preview") }}
-				</v-toolbar-title>
-			</v-toolbar>
-			<v-card-text class="pa-0">
-				<WebWidgetsText :widget="widgetContent" />
-			</v-card-text>
-		</v-card>
+		<v-row>
+			<v-card class="w-100">
+				<v-toolbar density="compact" flat>
+					<v-toolbar-title class="white--text">
+						{{ translate("Preview") }}
+					</v-toolbar-title>
+				</v-toolbar>
+				<v-card-text class="pa-0 border-md">
+					<WebWidgetsText :widget="widgetContent" />
+				</v-card-text>
+			</v-card>
+		</v-row>
 	</div>
 </template>
 
