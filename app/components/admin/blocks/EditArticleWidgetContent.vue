@@ -110,13 +110,12 @@
 				let model = props.widget
 					? widgets.getWidgetById(props.widget.id)?.model
 					: null;
+
 				articleWidget.value =
-					model && articleWidgetCopy.value
-						? // @ts-ignore
-							(articleWidgetCopy?.value?.[
-								model as widgetModels[number]
-							] as Widget)
-						: null;
+					// @ts-ignore
+					(articleWidgetCopy?.value?.[
+						model as widgetModels[number]
+					] as Widget) ?? {};
 			} else {
 				articleWidgetCopy.value = null;
 			}

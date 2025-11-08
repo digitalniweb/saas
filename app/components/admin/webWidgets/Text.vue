@@ -19,7 +19,7 @@
 											validate-on="blur"
 											:rules="[
 												() =>
-													!!widgetContent.name ||
+													!!widgetContent?.name ||
 													translate(
 														'Fill in this field'
 													),
@@ -167,7 +167,6 @@
 			</v-col>
 			<v-col>
 				<v-card>
-					<!-- <v-card-title>{{ translate("appearance") }}</v-card-title> -->
 					<v-card-text>
 						<v-tabs v-model="tab">
 							<v-tab
@@ -316,7 +315,7 @@
 		</v-row>
 
 		<v-row>
-			<v-card class="w-100">
+			<v-card class="w-100 mt-5">
 				<v-toolbar density="compact" flat>
 					<v-toolbar-title class="white--text">
 						{{ translate("Preview") }}
@@ -347,18 +346,20 @@
 	const props = defineProps<{
 		moduleId: number;
 	}>();
-	const widgetContent = defineModel<InferAttributes<WidgetText>>({
-		default: {},
-	});
-	if (props.moduleId) widgetContent.value.moduleId = props.moduleId;
+	const widgetContent = defineModel<InferAttributes<WidgetText>>();
+	if (widgetContent?.value) {
+		if (props.moduleId) widgetContent.value.moduleId = props.moduleId;
 
-	// nested objects must be filled in as default like so
-	if (!widgetContent?.value.options)
-		widgetContent.value.options = structuredClone(widgetTextOptionsDefault);
-	else {
-		widgetContent.value.options = deepMergeObjects(
-			structuredClone(widgetTextOptionsDefault),
-			widgetContent.value.options
-		);
+		// nested objects must be filled in as default like so
+		if (!widgetContent?.value.options)
+			widgetContent.value.options = structuredClone(
+				widgetTextOptionsDefault
+			);
+		else {
+			widgetContent.value.options = deepMergeObjects(
+				structuredClone(widgetTextOptionsDefault),
+				widgetContent.value.options
+			);
+		}
 	}
 </script>
