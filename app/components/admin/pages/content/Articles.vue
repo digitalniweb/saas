@@ -165,6 +165,27 @@
 								size="small"
 								:disabled="indexMenuActivated"
 							></v-fab>
+							<!-- Nice to be impelemented -->
+							<!-- <div class="mt-2">
+								<v-chip variant="outlined" color="red">
+									<span class="count">1</span> widget deletion
+									pending
+								</v-chip>
+								<v-chip variant="outlined" color="green">
+									<span class="count">1</span> widget creation
+									pending
+								</v-chip>
+								<v-chip variant="outlined" color="green">
+									menu creation pending
+								</v-chip>
+								<v-chip variant="outlined" color="blue">
+									menu update pending
+								</v-chip>
+								<v-chip variant="outlined" color="blue">
+									<span class="count">1</span> widget update
+									pending
+								</v-chip>
+							</div> -->
 						</v-card>
 
 						<v-tabs-window v-model="tab">
@@ -527,19 +548,12 @@
 			cs: "Nemůžete zařadit menu do sebe sama.",
 		},
 		MenuParentTooltip: {
-			en: `Current menu's location; menu's parent.<br />
-			You can change this. <br />
-			Change of index page (main page)
-			can't be done, it can't be put into this menu. <br />
-			That is why it is not even listed as the first item in the menu and 'Main menu'
-			means first after the index page.`,
-			cs: `Aktuální zařazení do menu.<br />
-			Můžete jej změnit. <br />
-			Měnit zařazení indexové (hlavní stránky)
-			nemůžete měnit a nelze ani zařadit do
-			tohoto menu. <br />
-			Proto není ani v nabídce a pořadí první
-			se myslí první za indexovou stránkou.`,
+			en: `Current menu placement.<br />
+			You cannot change the placement of the index (main) page, nor can you assign other menus to it; therefore, it is not included in the options.<br>
+			Placement into the "Main menu" means assigning it to the root (top level) of the structure.`,
+			cs: `Aktuální zařazení menu.<br />
+			Zařazení indexové (hlavní) stránky nemůžete měnit a nelze do něj ani zařadit jiné menu; proto není ani v nabídce.<br>
+			Zařazení do "Hlavního menu" znamená zařazení do kořene (nejvyšší vrstvy) struktury.`,
 		},
 		Name: {
 			cs: "Název",
@@ -1522,10 +1536,18 @@
 	};
 
 	const deleteWidget = async (index: number) => {
-		let response = await confirmStore.open(translate("Delete?"), "", {
-			width: 400,
-			type: "yesNo",
-		});
+		let widget = widgetsdata.value?.[index];
+		if (!widget) return;
+		let response = await confirmStore.open(
+			translate("Delete?"),
+			widget.id == 0
+				? translate("ChangeImmediateNote")
+				: translate("ChangeAfterSaveNote"),
+			{
+				width: 400,
+				type: "yesNo",
+			}
+		);
 		if (!response) return;
 		widgetsdata.value?.splice(index, 1);
 

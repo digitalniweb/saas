@@ -1,9 +1,9 @@
+import { useCurrentPageStore } from "~/store/currentPage";
 import { useUserStore } from "~/store/user";
 import { useWebInformationStore } from "~/store/webInformation";
 import { useWebsiteStore } from "~/store/website";
-import { useCurrentPageStore } from "~/store/currentPage";
-import isObjectEmpty from "~~/digitalniweb-custom/functions/isObjectEmpty";
 import { filterStoreparams } from "~~/custom/users";
+import isObjectEmpty from "~~/digitalniweb-custom/functions/isObjectEmpty";
 
 import type { resourceIdsType } from "~~/digitalniweb-types/apps/communication";
 import type { tokensJWT, userLoginResponse } from "~~/digitalniweb-types/users";
@@ -70,10 +70,10 @@ export const useApiCall = () => {
 				};
 			} else {
 				if (!opts) opts = {};
-				if (!opts.params) opts.params = {};
-				(opts.params as Record<string, any>).resourceIds = {
+				if (!opts.query) opts.query = {};
+				(opts.query as Record<string, any>).resourceIds = {
 					...resourceIds,
-					...opts.params?.resourceIds,
+					...opts.query?.resourceIds,
 				};
 			}
 		}
@@ -164,8 +164,8 @@ export const useApiCall = () => {
 
 		if (!isObjectEmpty(resourceIds)) {
 			if (!opts) opts = {};
-			if (!opts.params) opts.params = {};
-			(opts.params as Record<string, any>).resourceIds = resourceIds;
+			if (!opts.query) opts.query = {};
+			(opts.query as Record<string, any>).resourceIds = resourceIds;
 		}
 
 		let response = await useFetch<T>(request, {
