@@ -159,7 +159,18 @@
 						</v-card>
 					</v-col>
 
-					<CustomTextEditor v-model="widgetContent.content" />
+					<v-col cols="12">
+						<v-card elevation="10" class="mt-4" color="border-md">
+							<v-card-title class="text-overline">
+								{{ translate("Text editor") }}
+							</v-card-title>
+							<v-card-text class="mt-4">
+								<CustomTextEditor
+									v-model="widgetContent.content"
+								/>
+							</v-card-text>
+						</v-card>
+					</v-col>
 				</v-row>
 			</v-col>
 			<v-col class="d-none d-sm-flex" style="flex: 0 0 10px">
@@ -168,7 +179,10 @@
 			<v-col>
 				<v-card>
 					<v-card-text>
-						<v-tabs v-model="tab">
+						<v-tabs
+							v-model="tab"
+							:direction="smAndDown ? 'vertical' : 'horizontal'"
+						>
 							<v-tab
 								prepend-icon="mdi-information-slab-circle-outline"
 								text="info"
@@ -332,6 +346,7 @@
 <script setup lang="ts">
 	const { translate } = useTranslations();
 	import type { InferAttributes } from "sequelize";
+	import { useDisplay } from "vuetify";
 	import deepMergeObjects from "~~/digitalniweb-custom/helpers/deepMergeObjects";
 	import { widgetTextOptionsDefault } from "~~/digitalniweb-custom/variables/widgets";
 	import type { WidgetText } from "~~/digitalniweb-types/models/content";
@@ -340,6 +355,8 @@
 		textClasses,
 		textWeight,
 	} from "../../../../digitalniweb-custom/variables/css";
+
+	const { smAndDown } = useDisplay();
 
 	const tab = ref("option-1");
 

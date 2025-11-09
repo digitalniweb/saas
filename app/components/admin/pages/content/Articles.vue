@@ -88,7 +88,83 @@
 		<v-col cols="12" md="6">
 			<v-scroll-x-transition origin="center right">
 				<v-form ref="form">
-					<v-card v-show="menuTreeActivated.length > 0">
+					<v-card v-show="menuTreeActivated.length > 0"
+						><div class="text-subtitle-1 pa-5 rounded bg-black">
+							<span class="font-weight-bold">
+								{{ menuTreeActivated[0]?.name }}
+							</span>
+							<div v-if="menudata">
+								<v-switch
+									id="menuActive"
+									color="green"
+									density="compact"
+									hide-details
+									:label="translate('Active')"
+									name="menuActive"
+									v-model="menudata.active"
+									:disabled="indexMenuActivated"
+								/>
+								<v-divider class="mb-4"></v-divider>
+								<div class="d-flex">
+									<v-btn
+										@click="saveCurrentMenu()"
+										color="green"
+										icon="mdi-check"
+										v-tooltip:bottom="
+											translate('Save') + ' menu'
+										"
+									></v-btn>
+									<v-btn
+										@click="deleteCurrentMenu()"
+										color="red"
+										icon="mdi-trash-can-outline"
+										v-tooltip:bottom="
+											translate('Delete') + ' menu'
+										"
+										size="small"
+										:disabled="indexMenuActivated"
+										class="mx-3 mt-1"
+									></v-btn>
+									<CustomDate
+										:date="menudata.createdAt"
+										title="Created"
+										icon="mdi-calendar-clock"
+										variant="plain"
+										class="ml-auto mr-2"
+										type="compact"
+									/>
+									<CustomDate
+										:date="menudata.updatedAt"
+										title="Updated"
+										icon="mdi-calendar-edit"
+										variant="plain"
+										class=""
+										type="compact"
+									/>
+								</div>
+							</div>
+							<!-- Nice to be impelemented -->
+							<!-- <div class="mt-2">
+								<v-chip variant="outlined" color="red">
+									<span class="count">1</span> widget deletion
+									pending
+								</v-chip>
+								<v-chip variant="outlined" color="green">
+									<span class="count">1</span> widget creation
+									pending
+								</v-chip>
+								<v-chip variant="outlined" color="green">
+									menu creation pending
+								</v-chip>
+								<v-chip variant="outlined" color="blue">
+									menu update pending
+								</v-chip>
+								<v-chip variant="outlined" color="blue">
+									<span class="count">1</span> widget update
+									pending
+								</v-chip>
+							</div> -->
+						</div>
 						<v-tabs
 							v-model="tab"
 							align-tabs="center"
@@ -112,82 +188,6 @@
 								{{ translate("Article") }}
 							</v-tab>
 						</v-tabs>
-						<v-card class="pa-5">
-							<div>
-								<div
-									class="text-subtitle-1 pa-5 border-s-xl rounded border-info bg-black"
-								>
-									<span class="font-weight-bold">
-										{{ menuTreeActivated[0]?.name }}
-									</span>
-									<div v-if="menudata">
-										<v-switch
-											id="menuActive"
-											color="green"
-											density="compact"
-											hide-details
-											:label="translate('Active')"
-											name="menuActive"
-											v-model="menudata.active"
-											:disabled="indexMenuActivated"
-										/>
-										<v-divider class="mb-4"></v-divider>
-										<CustomDate
-											:date="menudata.createdAt"
-											title="Created"
-											icon="mdi-calendar-clock"
-											variant="outlined"
-											class="mr-2 mb-2"
-										/>
-										<CustomDate
-											:date="menudata.updatedAt"
-											title="Updated"
-											icon="mdi-calendar-edit"
-											variant="outlined"
-											class="mb-2"
-										/>
-									</div>
-								</div>
-							</div>
-							<v-fab
-								@click="saveCurrentMenu()"
-								color="green"
-								icon="mdi-check"
-								v-tooltip:bottom="translate('Save') + ' menu'"
-								style="left: 10px"
-							></v-fab>
-							<v-fab
-								@click="deleteCurrentMenu()"
-								color="red"
-								icon="mdi-trash-can-outline"
-								v-tooltip:bottom="translate('Delete') + ' menu'"
-								style="left: 20px"
-								size="small"
-								:disabled="indexMenuActivated"
-							></v-fab>
-							<!-- Nice to be impelemented -->
-							<!-- <div class="mt-2">
-								<v-chip variant="outlined" color="red">
-									<span class="count">1</span> widget deletion
-									pending
-								</v-chip>
-								<v-chip variant="outlined" color="green">
-									<span class="count">1</span> widget creation
-									pending
-								</v-chip>
-								<v-chip variant="outlined" color="green">
-									menu creation pending
-								</v-chip>
-								<v-chip variant="outlined" color="blue">
-									menu update pending
-								</v-chip>
-								<v-chip variant="outlined" color="blue">
-									<span class="count">1</span> widget update
-									pending
-								</v-chip>
-							</div> -->
-						</v-card>
-
 						<v-tabs-window v-model="tab">
 							<v-tabs-window-item :value="'tab-assignment'">
 								<v-card class="pa-5">
