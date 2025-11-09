@@ -1,14 +1,14 @@
 <template>
-	<v-chip
-		v-if="props.date"
-		:variant="props.variant"
-		:color="props.color"
-		class="mr-2"
-	>
-		<v-icon v-if="props.icon" :icon="props.icon" class="mr-2"></v-icon>
-		{{ prettyDateTime(props.date) }}
+	<v-chip v-if="props.date" :variant="props.variant" :color="props.color">
+		<v-icon
+			v-if="props.icon"
+			:icon="props.icon"
+			:class="(props.type !== 'compact' && 'mr-2') || ''"
+		></v-icon>
+		{{ (props.type !== "compact" && prettyDateTime(props.date)) || "" }}
 		<v-tooltip v-if="props.title" activator="parent" location="top">
 			{{ translate(props.title) }}
+			{{ (props.type === "compact" && prettyDateTime(props.date)) || "" }}
 		</v-tooltip>
 	</v-chip>
 </template>
@@ -32,6 +32,7 @@
 				| "outlined"
 				| "plain";
 			color?: string;
+			type?: "compact";
 		}>(),
 		{
 			variant: "elevated",

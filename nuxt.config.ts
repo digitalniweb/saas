@@ -5,7 +5,7 @@ export default defineNuxtConfig({
 		dirs: ["~~/app/components"],
 	},
 	typescript: {
-		typeCheck: true,
+		// typeCheck: true, // checks types when compiling - better but slower
 		strict: true,
 		tsConfig: {
 			include: [

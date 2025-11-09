@@ -137,7 +137,7 @@
 											title="Created"
 											icon="mdi-calendar-clock"
 											variant="outlined"
-											class="mb-2"
+											class="mr-2 mb-2"
 										/>
 										<CustomDate
 											:date="menudata.updatedAt"
@@ -1132,7 +1132,9 @@
 
 				if (newMenuCreated.ArticleWidgets) {
 					formdataOriginalWidgetContent.value =
-						newMenuCreated.ArticleWidgets;
+						formDataFunctions.cloneData(
+							newMenuCreated.ArticleWidgets
+						);
 					widgetsdata.value = formDataFunctions.cloneData(
 						newMenuCreated.ArticleWidgets
 					);
@@ -1293,7 +1295,7 @@
 
 				if (menuUpdated.ArticleWidgets) {
 					formdataOriginalWidgetContent.value =
-						menuUpdated.ArticleWidgets;
+						formDataFunctions.cloneData(menuUpdated.ArticleWidgets);
 					widgetsdata.value = formDataFunctions.cloneData(
 						menuUpdated.ArticleWidgets
 					);
@@ -1394,7 +1396,7 @@
 			menudata.value = formDataFunctions.cloneData(data);
 			if (menudata.value?.ArticleWidgets) {
 				formdataOriginalWidgetContent.value =
-					menudata.value.ArticleWidgets;
+					formDataFunctions.cloneData(menudata.value.ArticleWidgets);
 				widgetsdata.value = formDataFunctions.cloneData(
 					formdataOriginalWidgetContent.value
 				);

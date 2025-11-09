@@ -14,6 +14,20 @@
 						color="green"
 						variant="flat"
 					></v-chip>
+					<CustomDate
+						:date="props.articleWidget?.createdAt"
+						title="Created"
+						icon="mdi-calendar-clock"
+						variant="plain"
+						type="compact"
+					/>
+					<CustomDate
+						:date="props.articleWidget?.updatedAt"
+						title="Updated"
+						icon="mdi-calendar-edit"
+						variant="plain"
+						type="compact"
+					/>
 				</v-toolbar-title>
 			</v-toolbar>
 			<v-card-text>

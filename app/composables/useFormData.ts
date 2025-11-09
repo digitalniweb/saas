@@ -1,4 +1,5 @@
 import { diff } from "deep-object-diff";
+import deepToRaw from "~~/custom/helpers/toRawDeep";
 /**
  * Use as `let formdataCustomName = useFormData(object);`
  */
@@ -6,8 +7,10 @@ export const useFormData = () => {
 	/**
 	 * use this as ref(formdataCustomName.dataClone) i.e. as data for form
 	 */
-	const cloneData = <T>(dataOriginal: T) =>
-		structuredClone(toRaw(dataOriginal));
+	const cloneData = <T extends Record<string, any>>(dataOriginal: T) =>
+		// JSON.parse(JSON.stringify(dataOriginal));
+		// structuredClone(toRaw(dataOriginal));
+		structuredClone(deepToRaw(dataOriginal));
 
 	const dataDifference = <T extends Record<string, any>>(
 		dataOriginal: T,
