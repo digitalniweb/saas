@@ -1093,6 +1093,7 @@
 			return false;
 		}
 
+		let loadWebMenu = false; // if menu was created or edited then recreate menu for web
 		if (menuIsNew) {
 			let newWCs = [] as newWidgetContent[];
 			newWCs = widgetsdata.value || [];
@@ -1154,6 +1155,7 @@
 				color: "success",
 				text: translate("Menu was successfully saved"),
 			});
+			loadWebMenu = true;
 		} else {
 			// edit menu
 
@@ -1339,14 +1341,15 @@
 				color: "success",
 				text: translate("Menu was edited"),
 			});
+			if (Object.keys(menudataSave).length || newMenuUrls?.length)
+				loadWebMenu = true;
 		}
 		if (newMenuLocation.length === 0)
 			delete newMenuLocationParent?.children;
 		if (originalMenuLocation?.length === 0)
 			delete originalMenuLocationParent?.children;
 
-		// change menu on the web
-		menusStore.loadData();
+		if (loadWebMenu) createWebMenus();
 	};
 
 	/**

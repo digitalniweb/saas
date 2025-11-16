@@ -5,7 +5,6 @@ import type {
 	deleteArticleRequestBody,
 	getDeleteArticleRequestBody,
 } from "~~/digitalniweb-types/apps/communication/modules/articles";
-import type { Article } from "~~/digitalniweb-types/models/content";
 export default eventHandler(async (event) => {
 	verifyUser(event);
 	let body = (await readBody(event)) as getDeleteArticleRequestBody;
@@ -16,7 +15,7 @@ export default eventHandler(async (event) => {
 		resourceIds = JSON.parse(resourceIds) as resourceIdsType;
 
 	try {
-		let { data: success } = await microserviceCall<Article>({
+		let { data: success } = await microserviceCall<boolean>({
 			id: resourceIds.contentMsId,
 			name: "content",
 			method: "DELETE",
