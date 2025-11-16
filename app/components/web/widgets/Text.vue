@@ -56,6 +56,7 @@
 		weight: {
 			black: "font-weight-black",
 			bold: "font-weight-bold",
+			"semi-bold": "font-weight-semi-bold",
 			light: "font-weight-light",
 			medium: "font-weight-medium",
 			regular: "font-weight-regular",

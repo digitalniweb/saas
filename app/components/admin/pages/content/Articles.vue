@@ -1019,17 +1019,17 @@
 			return;
 		}
 
-		let menuIsNew = false;
+		let menuIsNew = menudata.value?.id === 0;
 
-		let menuChangedLocation = false; // existing menu changed order on same location
-		let menuChangedLocationToOtherMenu = false; // existing menu changed location (and therefor order as well)
-
-		let originalMenuLocation = [] as menuTreeNode[];
-		let newMenuLocation = [] as menuTreeNode[];
+		let originalMenuLocation = null as menuTreeNode[] | null;
+		let newMenuLocation = null as menuTreeNode[] | null;
 		let originalMenuLocationParent = null as null | menuTreeNode;
 		let newMenuLocationParent = null as null | menuTreeNode;
 		let originalParentId = menuTreeActivated.value[0].parentId;
 		let newParentId = menudata.value.parentId;
+
+		// note: new menu has originalParentId = newParentId
+
 		if (originalParentId === null) originalMenuLocation = menus.value;
 		else {
 			let foundMenu = getObjectFromArray<menuTreeNode>(
@@ -1050,54 +1050,47 @@
 			return false;
 		}
 
-		if (newParentId === null) newMenuLocation = menus.value;
-		else if (originalParentId === newParentId)
-			newMenuLocation = originalMenuLocation;
-		else {
-			let foundMenu = getObjectFromArray<menuTreeNode>(
-				newParentId,
-				menus.value
-			);
-			if (foundMenu === false) {
-				snackBars.setSnackBar({
-					color: "error",
-					text: translate("Something went wrong"),
-				});
-				return false;
+		if (newParentId === null) {
+			// root
+			newMenuLocation = menus.value;
+		} else {
+			if (!menuIsNew && originalParentId === newParentId)
+				newMenuLocation = originalMenuLocation;
+			else {
+				// menu will be in other menu
+				let foundMenu = getObjectFromArray<menuTreeNode>(
+					newParentId,
+					menus.value
+				);
+				if (foundMenu === false) {
+					snackBars.setSnackBar({
+						color: "error",
+						text: translate("Something went wrong"),
+					});
+					return false;
+				}
+
+				newMenuLocationParent = foundMenu;
+				if (foundMenu.children === undefined) foundMenu.children = [];
+				newMenuLocation = foundMenu.children;
 			}
-			newMenuLocationParent = foundMenu;
-			if (foundMenu.children === undefined) foundMenu.children = [];
-			newMenuLocation = foundMenu.children;
+		}
+		if (!newMenuLocation) {
+			snackBars.setSnackBar({
+				color: "error",
+				text: translate("Something went wrong"),
+			});
+			return false;
 		}
 
 		let newMenuUrls: urlDataObject[] = [];
-		if (menudata.value?.id === 0) {
-			// new menu
-			menuIsNew = true;
-			if (menudata.value.name == translate("New menu")) {
-				snackBars.setSnackBar({
-					color: "orange",
-					text: translate("Please change menu's name"),
-				});
-				return false;
-			}
-		} else {
-			// already existing menu
-			if (originalParentId === newParentId) {
-				// only order was changed on same level
-				if (menuTreeActivated.value[0].order !== menudata.value.order)
-					menuChangedLocation = true;
-			} else {
-				// menu was put inside another one
-				menuChangedLocationToOtherMenu = true;
-			}
 
-			// change urls of children if location was changed
-			if (menudata.value.url !== menuTreeActivated.value[0].url)
-				newMenuUrls = updateChildrenUrls(
-					menuTreeActivated.value[0],
-					menudata.value.url
-				);
+		if (menudata.value.name == translate("New menu")) {
+			snackBars.setSnackBar({
+				color: "orange",
+				text: translate("Please change menu's name"),
+			});
+			return false;
 		}
 
 		if (menuIsNew) {
@@ -1163,6 +1156,24 @@
 			});
 		} else {
 			// edit menu
+
+			let menuChangedLocation = false; // existing menu changed order on same location
+			let menuChangedLocationToOtherMenu = false; // existing menu changed location (and therefor order as well)
+			if (originalParentId === newParentId) {
+				// only order was changed on same level
+				if (menuTreeActivated.value[0].order !== menudata.value.order)
+					menuChangedLocation = true;
+			} else {
+				// menu was put inside another one
+				menuChangedLocationToOtherMenu = true;
+			}
+
+			// change urls of children if location was changed
+			if (menudata.value.url !== menuTreeActivated.value[0].url)
+				newMenuUrls = updateChildrenUrls(
+					menuTreeActivated.value[0],
+					menudata.value.url
+				);
 
 			//  menu's WidgetContent - create new / edited / deleted
 			let deletedWCs = [] as number[];
@@ -1267,26 +1278,31 @@
 				let newOrder = menuUpdated.order;
 
 				let tmpList = originalMenuLocation?.splice(originalOrder, 1);
-				tmpList[0].parentId = menuUpdated.parentId;
-				tmpList[0].order = newOrder;
+				if (tmpList) {
+					tmpList[0].parentId = menuUpdated.parentId;
+					tmpList[0].order = newOrder;
 
-				newMenuLocation?.splice(newOrder, 0, tmpList[0]);
-				if (menuChangedLocation) {
-					changeObjectsOrderRange(
-						originalOrder,
-						newOrder,
-						newMenuLocation as []
-					);
-				} else if (menuChangedLocationToOtherMenu) {
-					changeObjectsOrderFrom(
-						originalOrder,
-						originalMenuLocation as []
-					);
+					newMenuLocation?.splice(newOrder, 0, tmpList[0]);
+					if (menuChangedLocation) {
+						changeObjectsOrderRange(
+							originalOrder,
+							newOrder,
+							newMenuLocation as []
+						);
+					} else if (menuChangedLocationToOtherMenu) {
+						changeObjectsOrderFrom(
+							originalOrder,
+							originalMenuLocation as []
+						);
 
-					changeObjectsOrderFrom(newOrder + 1, newMenuLocation as []);
+						changeObjectsOrderFrom(
+							newOrder + 1,
+							newMenuLocation as []
+						);
+					}
+					menuTreeActivated.value.pop();
+					menuTreeActivated.value.push(tmpList[0]);
 				}
-				menuTreeActivated.value.pop();
-				menuTreeActivated.value.push(tmpList[0]);
 			}
 
 			let key: keyof Partial<Article>;
@@ -1326,8 +1342,11 @@
 		}
 		if (newMenuLocation.length === 0)
 			delete newMenuLocationParent?.children;
-		if (originalMenuLocation.length === 0)
+		if (originalMenuLocation?.length === 0)
 			delete originalMenuLocationParent?.children;
+
+		// change menu on the web
+		menusStore.loadData();
 	};
 
 	/**
