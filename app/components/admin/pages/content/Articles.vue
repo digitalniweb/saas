@@ -599,6 +599,7 @@
 		Article,
 		ArticleWidget,
 	} from "~~/digitalniweb-types/models/content";
+
 	const snackBars = useSnackBarsStore();
 
 	import validator from "validator";
@@ -1208,15 +1209,20 @@
 				);
 
 				if (Object.keys(diff).length > 0) {
-					// widgetContent.options is json which I want to save whole, not just a difference
-					let widgetModelName = widgets.getWidgetById(wc.id)?.model;
-					if (widgetModelName && diff?.[widgetModelName]?.options) {
-						diff[widgetModelName].options =
-							editCandidateWC[widgetModelName]?.options;
+					// widgetContent.options is json which I want to save whole (without default values), not just a difference
+					let options = useRemoveWidgetContentDefaults(
+						wc.widgetId,
+						diff
+					);
+					if (options) {
+						let widgetModelName = widgets.getWidgetById(
+							wc.widgetId
+						)?.model!; // I know these exist cause of useRemoveWidgetContentDefaults
+						diff[widgetModelName]!.options = options;
 					}
+
 					editedWCs.push({
 						...diff,
-						// moduleId: currentModule?.id,
 						id: editCandidateWC.id,
 					});
 				}
@@ -1621,6 +1627,7 @@
 	import type { newWidgetContent } from "../../blocks/EditArticleWidgetContent.vue";
 
 	import { useWidgetsStore } from "~/store/widgets";
+	import useRemoveWidgetContentDefaults from "../../../../composables/useRemoveWidgetContentDefaults";
 	const widgets = useWidgetsStore();
 
 	const changeWidgetsOrder = (

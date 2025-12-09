@@ -225,7 +225,7 @@
 										<CustomPickersContainerSize
 											v-if="
 												widgetContent.options?.container
-													.width &&
+													?.width &&
 												widgetContent.options?.container
 													.height100 !== undefined
 											"
@@ -241,7 +241,7 @@
 										<CustomPickersSpacing
 											v-if="
 												widgetContent.options?.container
-													.margin &&
+													?.margin &&
 												widgetContent.options?.container
 													.padding
 											"
@@ -285,7 +285,8 @@
 											]"
 											v-if="
 												widgetContent?.options
-													?.container?.background
+													?.container?.background !==
+												undefined
 											"
 											v-model="
 												widgetContent.options.container

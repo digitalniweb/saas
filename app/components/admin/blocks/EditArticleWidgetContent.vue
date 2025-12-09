@@ -168,11 +168,20 @@
 				articleWidgetCopy.value[widget.model] = toRawDeep(
 					articleWidget.value
 				);
-				// JSON.parse(
-				// 	JSON.stringify(articleWidget.value)
-				// ); // structuredClone(toRaw()) doesn't work for nested proxies for some reason
 			}
-			emit("returnWidgetContent", toRawDeep(articleWidgetCopy.value)); // structuredClone(toRaw()) doesn't work for nested proxies for some reason
+
+			let options = useRemoveWidgetContentDefaults(
+				articleWidgetCopy.value.widgetId,
+				articleWidgetCopy.value
+			);
+			let widgetModelName = widgets.getWidgetById(
+				articleWidgetCopy.value.widgetId
+			)?.model!; // I know these exist cause of useRemoveWidgetContentDefaults
+			(articleWidgetCopy.value as modulesWidgetsContent)[
+				widgetModelName
+			]!.options = options;
+
+			emit("returnWidgetContent", toRawDeep(articleWidgetCopy.value));
 		}
 		articleWidget.value = null;
 		open.value = false;
